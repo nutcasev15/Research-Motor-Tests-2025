@@ -59,7 +59,7 @@ void checkTestbed() {
       Serial.println("GROUND STATE: LAUNCHED");
     }
     else if (response.equals("TESTBED STATE: DONE")) {
-      currentState = LAUNCHED;
+      currentState = DONE;
       Serial.println("GROUND STATE: DONE");
     }
     else if (response.equals("ERR=1; TESTBED STATE: FAILURE")) {
