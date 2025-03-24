@@ -116,7 +116,25 @@ void checkInput() {
       if (digitalRead(ARM_SW) == LOW && digitalRead(LCH_SW) == LOW) {
         if(doneFlag ==0) {
           Serial.println("SWITCHES IN DONE STATE");
-          sendState("DONE");
+          while(1){
+            sendState("DONE");
+            delay(100);
+            String reply = RYLR.readStringUntil("\n");
+            // if(reply.equals("TESTBED STATE: DONE"))
+            // {
+            //   Serial.println("TESTBED STATE: DONE");
+            //   break;
+            // }
+
+            // else 
+            if(reply.equals("ERR=2; TESTBED STATE: DONE"))
+            {
+              Serial.println("ERR=2; TESTBED STATE: DONE");
+              break;
+            }
+            
+          }
+          // sendState("DONE");
           delay(500);
           doneFlag = 1;
         }
