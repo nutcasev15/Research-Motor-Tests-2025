@@ -20,13 +20,16 @@ SoftwareSerial RYLR(RYLR_RX, RYLR_TX);
 
 AltSoftSerial ucComm;
 
-float temp1Read, temp2Read;
-int start;
+float temp1Buffer[4], temp2Buffer[4];
+int tempIndex = 0;
+unsigned long lastTempRead = 0;
+const unsigned long tempInterval = 250;
+unsigned long lastTransmitTime = 0;
+const unsigned long transmitInterval = 1000;
 
 typedef enum State {SAFE, ARMED, LAUNCHED, DONE, FAILURE};
 State currentState = SAFE;
 
-// Create an instance of the MAX6675 class with the specified pins
 MAX6675 thermocouple1(SCK, CS1, SO);
 MAX6675 thermocouple2(SCK, CS2, SO);
 
@@ -46,39 +49,34 @@ void sendState(String currState)
   int endIndex = 0;
 
   while (startIndex < currState.length()) {
-    // Find the next newline character after maxChunkSize
     endIndex = currState.indexOf('\n', startIndex + maxChunkSize);
-    
-    // If no newline found, use the end of the string
     if (endIndex == -1) {
       endIndex = currState.length();
     }
 
-    // Extract the chunk to send
     String chunk = currState.substring(startIndex, endIndex);
-    
-    // Prepare and send the transmission
     String transmit = "AT+SEND=0," + String(chunk.length()) + "," + chunk + "\r\n";
     RYLR.print(transmit);
-    
-    // Wait for transmission to complete
     delay(10);
 
-    // Move to the next chunk
     startIndex = endIndex + 1;
   }
 }
 
 void getData() 
 {
-  temp1Read = thermocouple1.readCelsius();
-  temp2Read = thermocouple2.readCelsius();
-  Serial.print("Temperature: ");
-  Serial.print(temp1Read);
-  Serial.print(" , ");
-  Serial.println(temp2Read);
-  String mess = String(temp1Read) + ";" + String(temp2Read);
-  sendState(mess);
+  temp1Buffer[tempIndex] = thermocouple1.readCelsius();
+  temp2Buffer[tempIndex] = thermocouple2.readCelsius();
+  tempIndex++;
+  
+  if (tempIndex >= 4) {
+    tempIndex = 0;
+    String mess = String(temp1Buffer[0]) + ";" + String(temp2Buffer[0]) + "|" +
+                  String(temp1Buffer[1]) + ";" + String(temp2Buffer[1]) + "|" +
+                  String(temp1Buffer[2]) + ";" + String(temp2Buffer[2]) + "|" +
+                  String(temp1Buffer[3]) + ";" + String(temp2Buffer[3]);
+    sendState(mess);
+  }
 }
 
 void checkInput(String receive) 
@@ -89,7 +87,7 @@ void checkInput(String receive)
   if (receive == "ARM" && currentState == SAFE) 
   {
     digitalWrite(N_ENABLE, LOW);
-    while(!(ucComm.available()||digitalRead(ACK)==LOW));
+    while(digitalRead(ACK)==HIGH);
     if(digitalRead(ACK)==LOW)
     {
       Serial.println("CURRENT STATE: ARMED");
@@ -117,56 +115,32 @@ void checkInput(String receive)
     Serial.println("CURRENT STATE: LAUNCHED");
     currentState = LAUNCHED;
     sendState("TESTBED STATE: LAUNCHED");
-    start = millis();
   }
-  // if (receive == "DONE" && currentState == LAUNCHED) 
-  // {
-  //   digitalWrite(N_ENABLE, HIGH);
-  //   Serial.println("'DONE' received. Halting MKR Zero.");
-  //   int delayTime = millis();
-  //   while(digitalRead(ACK)==LOW || millis()-delayTime <= 5000);
-  //   if(digitalRead(ACK)==HIGH)
-  //   {
-  //     Serial.println("DONE");
-  //     currentState = DONE;
-  //     sendState("TESTBED STATE: DONE");
-  //     // delay(500);
-  //   }
-    // else
-    // {
-    //   Serial.println("MKRZero did not respond to DONE");  
-    //   currentState = DONE;
-    //   sendState("ERR=2; TESTBED STATE: DONE");
-    // }
-    
-  //   return;
-  // }
+  if (receive == "DONE" && currentState == LAUNCHED) 
+  {
+    digitalWrite(N_ENABLE, HIGH);
+    Serial.println("'DONE' received. Halting MKR Zero.");
+
+    digitalWrite(D4184A, LOW);
+    digitalWrite(D4184B, LOW);
+
+    int delayTime = millis();
+    while(digitalRead(ACK)==LOW && millis()-delayTime <= 5000);
+    if(digitalRead(ACK)==HIGH)
+    {
+      Serial.println("DONE");
+      currentState = DONE;
+      sendState("TESTBED STATE: DONE");
+    }
+    else
+    {
+      Serial.println("MKRZero did not respond to DONE");  
+      currentState = DONE;
+      sendState("ERR=2; TESTBED STATE: DONE");
+    }
+    return;
+  }
 }
-
-// void sendCollectedData() 
-// {
-//   Serial.println("Transmitting collected data...");
-  
-//   for (int row = 0; row <= currentRow; row++)
-//   {
-//     for (int i = 0; i < tempIndex[row]; i += 200) 
-//     {  
-//       String packet = String((char*)tempArray[row]).substring(i, i + 200);
-//       ucComm.println(packet);
-//       delay(50);
-//     }
-//   }
-
-//   Serial.println("Data transmission complete!");
-//   currentRow = 0;
-//   for (int i = 0; i < maxRows; i++) 
-//   {
-//     tempIndex[i] = 0;
-//     tempLogs[i] = 0;
-//   }
-
-//   RYLR.println("Approach Testbed");
-// }
 
 void performOperations() 
 {
@@ -175,45 +149,31 @@ void performOperations()
     case SAFE:
       break;
 
-
     case ARMED:
       break;
 
     case LAUNCHED:
-      // Serial.println("D4184s LATCHED");
-      delay(20);
-      
+      if (millis() - lastTempRead >= tempInterval) {
+        lastTempRead = millis();
+        getData();
+      }
       digitalWrite(D4184A, HIGH);
       digitalWrite(D4184B, HIGH);
-
-      getData();
-
-      // if (ucComm.available()) {
-      //   String backup = ucComm.readString();
-      //   sendState(backup);
-      // }
       
-      // if(millis() - start < 20000) {
-      //   digitalWrite(N_ENABLE, HIGH); 
-      //   Serial.println("'DONE' received. Halting MKR Zero.");
-      //   int delayTime = millis();
-      //   while(digitalRead(ACK)==LOW || millis()-delayTime <= 5000);
-      //   if(digitalRead(ACK)==HIGH)
-      //   {
-      //     Serial.println("DONE");
-      //     currentState = DONE;
-      //     sendState("TESTBED STATE: DONE");
-      //     // delay(500);
-      //   }
-      // }
+      if (RYLR.available()) {
+        String input = RYLR.readStringUntil('\n');
+        checkInput(input);
+      }
+      
       break;
 
-    // case DONE:
-    //   digitalWrite(D4184A, LOW);
-    //   digitalWrite(D4184B, LOW);
-    //   while(1);  
-    //   // sendCollectedData();
-    //   break;
+    case DONE:
+      delay(100);
+      digitalWrite(D4184A, LOW);
+      digitalWrite(D4184B, LOW);
+      Serial.println("State: DONE - All outputs LOW");
+      while(1);
+      break;
 
     case FAILURE:
       break;
@@ -225,7 +185,6 @@ void setup()
   Serial.begin(9600);
   RYLR.begin(57600);
   ucComm.begin(19200);
-  //SPI.begin();
   
   pinMode(CS1, OUTPUT);
   pinMode(CS2, OUTPUT);
@@ -237,7 +196,6 @@ void setup()
   pinMode(D4184A,OUTPUT);
   pinMode(D4184B,OUTPUT);
 
-  // dataInit();
   Serial.println("Setup Complete.");
 }
 
