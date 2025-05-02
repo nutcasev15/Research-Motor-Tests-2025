@@ -1,0 +1,14 @@
+# Top Level Git Ignore List
+
+# PlatformIO Working Files and Folders
+.pio/*
+
+# VSCode Working Files and Folders
+.vscode/*
+
+# Ignore Binary and CSV Logger Outputs
+**/*.dat
+**/*.CSV
+
+# Ignore Any Python Script Output PDFs
+**/*.pdf
