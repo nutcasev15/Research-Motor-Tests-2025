@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <SD.h>
 #include <SoftwareSerial.h>
 
@@ -31,7 +32,7 @@ String parseRYLR(String input) {
   int end = input.indexOf(',', start);
   String parsed = input.substring(start, end);
   parsed.trim();
-  return parsed;  
+  return parsed;
 }
 
 void sendState(String data) {
@@ -119,20 +120,20 @@ void checkInput() {
           while(1){
             sendState("DONE");
             delay(100);
-            String reply = RYLR.readStringUntil("\n");
+            String reply = RYLR.readStringUntil('\n');
             // if(reply.equals("TESTBED STATE: DONE"))
             // {
             //   Serial.println("TESTBED STATE: DONE");
             //   break;
             // }
 
-            // else 
+            // else
             if(reply.equals("ERR=2; TESTBED STATE: DONE"))
             {
               Serial.println("ERR=2; TESTBED STATE: DONE");
               break;
             }
-            
+
           }
           // sendState("DONE");
           delay(500);
@@ -168,7 +169,7 @@ void setup() {
   // logFile = SD.open("loadcell.txt", FILE_WRITE);
   // if (!logFile) {
   //   Serial.println("Couldn't open log file");
-  // } 
+  // }
   // else {
   //   Serial.println("Logging to SD card...");
   // }
@@ -178,4 +179,4 @@ void setup() {
 void loop() {
   checkInput();
   checkTestbed();
-} 
+}

@@ -1,5 +1,6 @@
-#include <max6675.h>
-//#include <SPI.h>
+#include <Arduino.h>
+// #include <max6675.h>
+// #include <SPI.h>
 #include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
 
@@ -11,7 +12,7 @@
 #define RYLR_RX 7
 #define RYLR_TX 5
 SoftwareSerial RYLR(RYLR_RX, RYLR_TX);
- 
+
 #define D4184A 3
 #define D4184B 2
 
@@ -39,10 +40,10 @@ String parseRYLR(String input) {
   int end = input.indexOf(',', start);
   String parsed = input.substring(start, end);
   parsed.trim();
-  return parsed;  
+  return parsed;
 }
 
-void sendState(String currState) 
+void sendState(String currState)
 {
   const int maxChunkSize = 150;
   int startIndex = 0;
@@ -63,12 +64,12 @@ void sendState(String currState)
   }
 }
 
-void getData() 
+void getData()
 {
   temp1Buffer[tempIndex] = thermocouple1.readCelsius();
   temp2Buffer[tempIndex] = thermocouple2.readCelsius();
   tempIndex++;
-  
+
   if (tempIndex >= 4) {
     tempIndex = 0;
     String mess = String(temp1Buffer[0]) + ";" + String(temp2Buffer[0]) + "|" +
@@ -79,12 +80,12 @@ void getData()
   }
 }
 
-void checkInput(String receive) 
+void checkInput(String receive)
 {
   receive.trim();
   receive = parseRYLR(receive);
   Serial.println(receive);
-  if (receive == "ARM" && currentState == SAFE) 
+  if (receive == "ARM" && currentState == SAFE)
   {
     digitalWrite(N_ENABLE, LOW);
     while(digitalRead(ACK)==HIGH);
@@ -97,26 +98,26 @@ void checkInput(String receive)
     }
     else
     {
-      Serial.println("MKRZero didnt respond to signal");  
+      Serial.println("MKRZero didnt respond to signal");
       currentState = FAILURE;
       sendState("ERR=1; TESTBED STATE: FAILURE");
     }
     return;
   }
-  if (receive == "DISARM" && currentState == ARMED) 
+  if (receive == "DISARM" && currentState == ARMED)
   {
     Serial.println("CURRENT STATE: SAFE");
     currentState = SAFE;
     sendState("TESTBED STATE: SAFE");
     return;
   }
-  if (receive == "LAUNCH" && currentState == ARMED) 
+  if (receive == "LAUNCH" && currentState == ARMED)
   {
     Serial.println("CURRENT STATE: LAUNCHED");
     currentState = LAUNCHED;
     sendState("TESTBED STATE: LAUNCHED");
   }
-  if (receive == "DONE" && currentState == LAUNCHED) 
+  if (receive == "DONE" && currentState == LAUNCHED)
   {
     digitalWrite(N_ENABLE, HIGH);
     Serial.println("'DONE' received. Halting MKR Zero.");
@@ -134,7 +135,7 @@ void checkInput(String receive)
     }
     else
     {
-      Serial.println("MKRZero did not respond to DONE");  
+      Serial.println("MKRZero did not respond to DONE");
       currentState = DONE;
       sendState("ERR=2; TESTBED STATE: DONE");
     }
@@ -142,9 +143,9 @@ void checkInput(String receive)
   }
 }
 
-void performOperations() 
+void performOperations()
 {
-  switch (currentState) 
+  switch (currentState)
   {
     case SAFE:
       break;
@@ -159,12 +160,12 @@ void performOperations()
       }
       digitalWrite(D4184A, HIGH);
       digitalWrite(D4184B, HIGH);
-      
+
       if (RYLR.available()) {
         String input = RYLR.readStringUntil('\n');
         checkInput(input);
       }
-      
+
       break;
 
     case DONE:
@@ -180,12 +181,12 @@ void performOperations()
   }
 }
 
-void setup() 
+void setup()
 {
   Serial.begin(9600);
   RYLR.begin(57600);
   ucComm.begin(19200);
-  
+
   pinMode(CS1, OUTPUT);
   pinMode(CS2, OUTPUT);
   pinMode(N_ENABLE, OUTPUT);
@@ -199,15 +200,15 @@ void setup()
   Serial.println("Setup Complete.");
 }
 
-void loop() 
+void loop()
 {
-  if (Serial.available()) 
+  if (Serial.available())
   {
     String input = Serial.readStringUntil('\n');
     checkInput(input);
   }
 
-  if (RYLR.available()) 
+  if (RYLR.available())
   {
     String input = RYLR.readStringUntil('\n');
     checkInput(input);
