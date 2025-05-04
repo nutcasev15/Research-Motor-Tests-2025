@@ -1,182 +1,147 @@
+// #### Library Headers
+// Arduino Framework and Data Types
 #include <Arduino.h>
-#include <SD.h>
+
+// Software Serial for RYLR Communication
 #include <SoftwareSerial.h>
 
-// GPIO definitions
-#define RX_RYLR       4
-#define TX_RYLR       3
-#define ARM_SW        2
-#define LCH_SW        7
 
-SoftwareSerial RYLR (RX_RYLR, TX_RYLR);
+// #### Interface Definitions
+// Command Switch Pins
+#define ARM_SWITCH_PIN 2
+#define LAUNCH_SWITCH_PIN 7
 
-// State Machine Definition
-typedef enum {
-  SAFE,
-  ARMED,
-  LAUNCHED,
-  DONE,
-  FAILURE
-} STATE;
-STATE currentState = SAFE;
 
-// Variable Definitions
-File logFile;
-String message, response;
-static int safeFlag = 0, armFlag = 0, launchFlag = 0, doneFlag = 0;
-float calRead;
+// RYLR998 Module Hardware Interface
+// See REYAX RYLR998 Datasheet for UART Configuration
+#define RYLR_UART_BAUD 115200UL
+#define RYLR_UART_TX 3
+#define RYLR_UART_RX 4
 
-String parseRYLR(String input) {
-  int start = input.indexOf(',') + 1;
-  start = input.indexOf(',', start) + 1;
-  int end = input.indexOf(',', start);
-  String parsed = input.substring(start, end);
+// Software Serial on Pins 3 & 4
+SoftwareSerial RYLR(RYLR_UART_RX, RYLR_UART_TX);
+
+// Parses Incoming Data from RYLR module
+String ParseRYLR()
+{
+  if (!RYLR.available())
+  {
+    // Return Blank
+    return String("\r\n");
+  }
+
+  // Read the Incoming Data
+  String parsed = RYLR.readString();
+
+  // Extract Message Contents Following Last Comma
+  parsed = parsed.substring(
+    parsed.lastIndexOf(','),
+    parsed.lastIndexOf('\r') - 1
+  );
+
+  // Remove Whitespace
   parsed.trim();
+
   return parsed;
 }
 
-void sendState(String data) {
-  Serial.println("TRANSMIT: " + data);
-  message = "AT+SEND=0,"+ String(data.length()) + "," + data + "\r\n";
-  RYLR.flush();
-  RYLR.print(message);
-  delay(10);
-}
+// Sends State Commands via the RYLR module
+void SendRYLR(String state)
+{
+  // Check for Invalid Commands or Switches
+  bool DefaultResponse = false;
 
-void checkTestbed() {
-  if (RYLR.available()) {
-    response = RYLR.readStringUntil('\n');
-    response = parseRYLR(response);
-    if (response.equals("TESTBED STATE: SAFE")) {
-      currentState = SAFE;
-      Serial.println("GROUND STATE: SAFE");
-    }
-    else if (response.equals("TESTBED STATE: ARMED")) {
-      currentState = ARMED;
-      Serial.println("GROUND STATE: ARMED");
-    }
-    else if (response.equals("TESTBED STATE: LAUNCHED")) {
-      currentState = LAUNCHED;
-      Serial.println("GROUND STATE: LAUNCHED");
-    }
-    else if (response.equals("TESTBED STATE: DONE")) {
-      currentState = DONE;
-      Serial.println("GROUND STATE: DONE");
-    }
-    else if (response.equals("ERR=1; TESTBED STATE: FAILURE")) {
-      currentState = FAILURE;
-      Serial.println("GROUND STATE: FAILURE");
-    }
-    // if (response.length() > 3) {
-      Serial.println(response);
-      // logData();
-    // }
+  // Validate the State Command
+  if (!(state == "SAFE" \
+    || state == "ARM" \
+    || state == "LAUNCH" \
+    || state == "CONVERT"))
+  {
+    Serial.println("GS> INVALID COMMAND TO FIRESIDE");
+    DefaultResponse = true;
   }
-}
 
-void logData() {
-  //SD card store
-  logFile = SD.open("loadcell.txt", FILE_WRITE);
-  logFile.println(response);
-  logFile.close();
-}
-
-void checkInput() {
-  switch (currentState) {
-    case SAFE:
-      if (digitalRead(ARM_SW) == HIGH && digitalRead(LCH_SW) == LOW) {
-        if(safeFlag == 0) {
-          Serial.println("ARM SWITCH ON");
-          sendState("ARM");
-          delay(500);
-          safeFlag = 1;
-          armFlag = 0;
-        }
-      }
-      break;
-    case ARMED:
-      if (digitalRead(ARM_SW) == LOW) {
-        if(armFlag == 0) {
-          Serial.println("ARM SWITCH OFF");
-          sendState("DISARM");
-          delay(500);
-          armFlag = 1;
-          safeFlag = 0;
-        }
-      }
-      else if(digitalRead(LCH_SW) == HIGH) {
-        if(launchFlag == 0) {
-          Serial.println("LAUNCH SWITCH ON");
-          sendState("LAUNCH");
-          delay(500);
-          launchFlag = 1;
-        }
-      }
-      break;
-    case LAUNCHED:
-      if (digitalRead(ARM_SW) == LOW && digitalRead(LCH_SW) == LOW) {
-        if(doneFlag ==0) {
-          Serial.println("SWITCHES IN DONE STATE");
-          while(1){
-            sendState("DONE");
-            delay(100);
-            String reply = RYLR.readStringUntil('\n');
-            // if(reply.equals("TESTBED STATE: DONE"))
-            // {
-            //   Serial.println("TESTBED STATE: DONE");
-            //   break;
-            // }
-
-            // else
-            if(reply.equals("ERR=2; TESTBED STATE: DONE"))
-            {
-              Serial.println("ERR=2; TESTBED STATE: DONE");
-              break;
-            }
-
-          }
-          // sendState("DONE");
-          delay(500);
-          doneFlag = 1;
-        }
-      }
-      break;
-    case DONE:
-      Serial.println("LFGGG");
-      break;
-    default:
-      break;
+  // Check Switches for ARM State
+  if (state == "ARM")
+  {
+    if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
+      && digitalRead(LAUNCH_SWITCH_PIN) == LOW))
+    {
+      Serial.println("GS> ARM SIGNAL MISMATCH");
+      DefaultResponse = true;
+    }
   }
+
+  // Check Switches for LAUNCH State
+  if (state == "LAUNCH")
+  {
+    if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
+      && digitalRead(LAUNCH_SWITCH_PIN) == HIGH))
+    {
+      Serial.println("GS> LAUNCH SIGNAL MISMATCH");
+      DefaultResponse = true;
+    }
+  }
+
+  if (DefaultResponse)
+  {
+    // Default to SAFE if the Above Checks Fail
+    Serial.println("GS> SENDING SAFE COMMAND");
+    state = String("SAFE");
+  }
+
+  // Send the State Command to FireSide PCB
+  RYLR.println(
+    "AT+SEND=0," \
+    + String(state.length()) + ',' \
+    + state
+  );
 }
 
+
+// #### Arduino UNO Hardware Setup
 void setup() {
-  Serial.begin(9600);
+  // Initialize USB Serial Communication
+  Serial.begin(RYLR_UART_BAUD);
 
-  pinMode(ARM_SW, INPUT);
-  pinMode(LCH_SW, INPUT);
-  digitalWrite(ARM_SW, LOW);
-  digitalWrite(LCH_SW, LOW);
+  // Set Initial States for Switches
+  digitalWrite(ARM_SWITCH_PIN, LOW);
+  digitalWrite(LAUNCH_SWITCH_PIN, LOW);
+  Serial.println("GS> SYSTEM RESET");
 
-  //RYLR setup
-  RYLR.begin(57600);
+  // Configure Switch Pins as Input
+  pinMode(ARM_SWITCH_PIN, INPUT);
+  pinMode(LAUNCH_SWITCH_PIN, INPUT);
+  Serial.println("GS> SYSTEM READY");
 
-  //SD Card setup
-  Serial.println("\nSerial Comm. Initialised.");
-  // if (!SD.begin()) {
-  //   Serial.println("SD card initialisation failed.");
-  //   // return;
-  // }
-  // logFile = SD.open("loadcell.txt", FILE_WRITE);
-  // if (!logFile) {
-  //   Serial.println("Couldn't open log file");
-  // }
-  // else {
-  //   Serial.println("Logging to SD card...");
-  // }
-  Serial.println("GROUNDSTATION SET UP COMPLETE.");
+  // Establish Communication via RYLR module
+  Serial.println("GS> ESTABLISHING FIRESIDE LINK");
+  RYLR.begin(RYLR_UART_BAUD);
+
+  // Prompt User for FireSide PCB Initial State
+  Serial.println("GS> CHOOSE INITIAL STATE: SAFE || CONVERT");
+  while (!Serial.available());
+  // Send Initial State
+  SendRYLR(Serial.readString());
+
+  while (!RYLR.available());
+  Serial.println("GS> FIRESIDE LINK ACQUIRED");
 }
 
+
+// #### Arduino UNO Operations
 void loop() {
-  checkInput();
-  checkTestbed();
+  // Check for Incoming Data from FireSide PCB
+  // Parse and Print the Data to the USB Serial
+  if (RYLR.available())
+  {
+    Serial.println(ParseRYLR());
+  }
+
+  // Check for Incoming Commands from Serial Monitor
+  // Send the Received Command
+  if (Serial.available())
+  {
+    SendRYLR(Serial.readString());
+  }
 }
