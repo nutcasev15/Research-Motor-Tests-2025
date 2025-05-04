@@ -8,7 +8,7 @@
 
 # Ignore Binary and CSV Logger Outputs
 **/*.dat
-**/*.CSV
+**/*.csv
 
 # Ignore Any Python Script Output PDFs
 **/*.pdf

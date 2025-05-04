@@ -442,7 +442,7 @@ void ConvertLog(String path)
   }
 
   // Prepare the CSV Header
-  buffer = String("time (us)");
+  buffer = String("Time (us)");
   for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
     buffer += ", A" + String(3 + channel);
