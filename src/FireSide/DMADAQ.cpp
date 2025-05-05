@@ -105,7 +105,7 @@ void ConfigureADC()
   // Setup ADC Operation Mode
   // Enable Freerunning Mode for Automatic DMA Transfer
   // Use Maximum ADC Resolution
-  // NOTE: Only Positive Voltage Inputs are Allowed to the ADC
+  // NOTE: Only Positive Voltage Inputs are Allowed to ADC
   ADC->CTRLB.bit.FREERUN = 1;
   ADC->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_16BIT_Val;
   while (ADC->STATUS.bit.SYNCBUSY);
@@ -118,10 +118,10 @@ void ConfigureADC()
 
   // Configure ADC I/O
   // We Use A3 For First Input Channel
-  // Leaving A0 Free for DAC Output and Increment For The Next Channels
-  // The Pins A3-A6 are Wired to the ADC Input Channels 4 Through 7
-  // Necessary to use Input Scanning in the ADC Input Mux
-  // Pins A1 and A2 are Wired to the ADC Input Channels 10 and 11
+  // Leaving A0 Free for DAC Output and Increment For Next Channels
+  // The Pins A3-A6 are Wired to ADC Input Channels 4 Through 7
+  // Necessary to use Input Scanning in ADC Input Mux
+  // Pins A1 and A2 are Wired to ADC Input Channels 10 and 11
   // Input Channels 8 and 9 Will Also Be Sampled and Provide Junk Values
   // Refer: https://microchipsupport.force.com/s/article/
   // How-to-configure-input-scan-mode-of-ADC-module-in-SAMD10-D20-D21-R21-devices
@@ -414,8 +414,8 @@ void ConvertLog(String path)
   String CSVFileName, buffer;
   uint32_t time, progress;
 
-  // Check if the Last Buffer was Written Successfully
-  // Ensure the Log File Data is Complete Before Conversion
+  // Check if Last Buffer was Written Successfully
+  // Ensure Log File Data is Complete Before Conversion
   // Abort on Error
   if ((dump->status & BUF_SD_STATUS_MASK) != BUF_SD_DONE)
   {
@@ -426,34 +426,35 @@ void ConvertLog(String path)
     memset(dump, 0X00, sizeof(DMABuffer));
   }
 
-  // Open the Log File for Reading Only
+  // Open Log File for Reading Only
   LogFile = SD.open(path, O_RDONLY);
   // Copy Log File Name for CSV File
   CSVFileName = LogFile.name();
-  // Change the File Extension to .csv
+  // Change File Extension to .csv
   CSVFileName.replace(String(".dat"), String(".csv"));
-  // Create the CSV File
+  // Create CSV File
   CSVFile = SD.open(CSVFileName, (O_CREAT | O_WRITE));
-  // Check if the log file opened successfully
+  // Check if Log File Opened Successfully
   if (!LogFile)
   {
     ErrorBlink(ERR_SD_FILE);
     return;
   }
 
-  // Prepare the CSV Header
+  // Prepare CSV Header
+  // NOTE: Channels with Junk Data are Skipped
   buffer = String("Time (us)");
   for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
-    buffer += ", A" + String(3 + channel);
+    if (channel < 4)
+    {
+      buffer += ", A" + String(channel + 3);
+    } else if (channel > 5)
+    {
+      buffer += ", A" + String(channel - 5);
+    }
   }
-#if ADC_PARALLEL_CHANNELS > 4
-  // Replace Channel Names for Higher Channel Counts
-  // Label Junk Channels Correctly
-  buffer.replace(String(", A7, A8"), String(", JUNK, JUNK"));
-  buffer.replace(String("A9"), String("A1"));
-  buffer.replace(String("A10"), String("A2"));
-#endif
+
   // Write Header at Start of CSV file
   CSVFile.seek(0UL);
   CSVFile.println(buffer);
@@ -468,26 +469,30 @@ void ConvertLog(String path)
   // Iterate Through All Logged DMA Buffers
   do
   {
-    // Read Data from the Log File into the DMA Buffer
+    // Read Data from Log File into DMA Buffer
     LogFile.read(dump, sizeof(DMABuffer));
 
-    // Process Each ADC Sample in the DMA buffer in Blocks
+    // Process Each ADC Sample in DMA buffer in Blocks
     for (uint16_t index = 0; index < ADC_DMA_BUFFLEN; index += ADC_PARALLEL_CHANNELS)
     {
-      // Calculate the Timestamp for the Current Sample Block
+      // Calculate Timestamp for Current Sample Block
       buffer = String(
         static_cast<uint32_t>((dump->TimeStamp - time) \
         / ADC_DMA_BUFFLEN * index)
       );
 
-      // Deinterleave and Append ADC Sample Data to the Buffer
+      // Deinterleave and Append ADC Sample Data to Buffer
+      // NOTE: Channels with Junk Data are Skipped
       for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
       {
-        buffer += ", " + String(dump->DMA_ADCBuf[index + channel]);
+        if (channel < 4 || channel > 5)
+        {
+          buffer += ", " + String(dump->DMA_ADCBuf[index + channel]);
+        }
       }
     }
 
-    // Update the Timestamp and Write the Buffer to CSV File
+    // Update Timestamp and Write Buffer to CSV File
     time = dump->TimeStamp;
     CSVFile.println(buffer);
 
@@ -505,7 +510,7 @@ void ConvertLog(String path)
     }
   } while (LogFile.available());
 
-  // Close the Binary Log and CSV Files
+  // Close Binary Log and CSV Files
   LogFile.close();
   CSVFile.close();
 }
