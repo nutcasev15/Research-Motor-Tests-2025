@@ -30,7 +30,7 @@ String ParseRYLR()
     return String("\r\n");
   }
 
-  // Read the Incoming Data
+  // Read Incoming Data
   String parsed = RYLR.readString();
 
   // Extract Message Contents Following Last Comma
@@ -45,19 +45,19 @@ String ParseRYLR()
   return parsed;
 }
 
-// Sends State Commands via the RYLR module
+// Sends State Commands via RYLR module
 void SendRYLR(String state)
 {
   // Check for Invalid Commands or Switches
   bool DefaultResponse = false;
 
-  // Validate the State Command
-  if (!(state == "SAFE" \
-    || state == "ARM" \
-    || state == "LAUNCH" \
+  // Validate State Command
+  if (!(state == "SAFE"\
+    || state == "ARM"\
+    || state == "LAUNCH"\
     || state == "CONVERT"))
   {
-    Serial.println("GS> INVALID COMMAND TO FIRESIDE");
+    Serial.println("INVALID COMMAND TO FIRESIDE");
     DefaultResponse = true;
   }
 
@@ -67,7 +67,7 @@ void SendRYLR(String state)
     if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
       && digitalRead(LAUNCH_SWITCH_PIN) == LOW))
     {
-      Serial.println("GS> ARM SIGNAL MISMATCH");
+      Serial.println("ARM SIGNAL MISMATCH");
       DefaultResponse = true;
     }
   }
@@ -78,19 +78,19 @@ void SendRYLR(String state)
     if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
       && digitalRead(LAUNCH_SWITCH_PIN) == HIGH))
     {
-      Serial.println("GS> LAUNCH SIGNAL MISMATCH");
+      Serial.println("LAUNCH SIGNAL MISMATCH");
       DefaultResponse = true;
     }
   }
 
   if (DefaultResponse)
   {
-    // Default to SAFE if the Above Checks Fail
-    Serial.println("GS> SENDING SAFE COMMAND");
+    // Default to SAFE if Above Checks Fail
+    Serial.println("SENDING SAFE COMMAND");
     state = String("SAFE");
   }
 
-  // Send the State Command to FireSide PCB
+  // Send State Command to FireSide PCB
   RYLR.println(
     "AT+SEND=0," \
     + String(state.length()) + ',' \
@@ -107,39 +107,39 @@ void setup() {
   // Set Initial States for Switches
   digitalWrite(ARM_SWITCH_PIN, LOW);
   digitalWrite(LAUNCH_SWITCH_PIN, LOW);
-  Serial.println("GS> SYSTEM RESET");
+  Serial.println("SYSTEM RESET");
 
   // Configure Switch Pins as Input
   pinMode(ARM_SWITCH_PIN, INPUT);
   pinMode(LAUNCH_SWITCH_PIN, INPUT);
-  Serial.println("GS> SYSTEM READY");
+  Serial.println("SYSTEM READY");
 
   // Establish Communication via RYLR module
-  Serial.println("GS> ESTABLISHING FIRESIDE LINK");
+  Serial.println("ESTABLISHING FIRESIDE LINK");
   RYLR.begin(RYLR_UART_BAUD);
 
   // Prompt User for FireSide PCB Initial State
-  Serial.println("GS> CHOOSE INITIAL STATE: SAFE || CONVERT");
+  Serial.println("CHOOSE INITIAL STATE: SAFE || CONVERT");
   while (!Serial.available());
   // Send Initial State
   SendRYLR(Serial.readString());
 
   while (!RYLR.available());
-  Serial.println("GS> FIRESIDE LINK ACQUIRED");
+  Serial.println("FIRESIDE LINK ACQUIRED");
 }
 
 
 // #### Arduino UNO Operations
 void loop() {
   // Check for Incoming Data from FireSide PCB
-  // Parse and Print the Data to the USB Serial
+  // Parse and Print Data to USB Serial
   if (RYLR.available())
   {
     Serial.println(ParseRYLR());
   }
 
   // Check for Incoming Commands from Serial Monitor
-  // Send the Received Command
+  // Send Received Command
   if (Serial.available())
   {
     SendRYLR(Serial.readString());
