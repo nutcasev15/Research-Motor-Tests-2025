@@ -34,7 +34,7 @@ static inline String ParseRYLR()
   if (!RYLR.available())
   {
     // Return Blank
-    return String('\0');
+    return String("\r\n");
   }
 
   // Load Incoming Data
@@ -64,8 +64,8 @@ static inline void SendRYLR(String data)
 
 
 // Number of Concurrently Logged ADC Channels
-// 1 Channel Corresponds to A3 on the Pinout
-// 4 Channels Correspond to A3 to A6 on the Pinout
+// 1 Channel Corresponds to A3 on Pinout
+// 4 Channels Correspond to A3 to A6 on Pinout
 // 8 Channels Correspond to A3 to A6, 2 Junk Channels and A1 to A2
 #define ADC_PARALLEL_CHANNELS 8
 #if ADC_PARALLEL_CHANNELS < 1 || ADC_PARALLEL_CHANNELS > 8

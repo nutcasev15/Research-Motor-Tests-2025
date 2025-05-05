@@ -6,7 +6,7 @@
 
 
 // #### State Definitions
-// Possible States of the FSM
+// Possible States of FSM
 enum States : id_t
 {
   BOOT,     // Initial Boot State
@@ -26,7 +26,7 @@ bool BootProceedCheck(id_t state);
 // Check if Boot Should Redirect to CONVERT
 bool BootRedirectCheck(id_t state);
 
-// Check if the System can Proceed to ARM
+// Check if System can Proceed to ARM
 bool SafeCheck(id_t state);
 
 // Check if ARM can Proceed to LAUNCH
@@ -44,7 +44,7 @@ bool LoggingCheck(id_t state);
 // Check if CSV Conversion is Complete
 bool ConvertCheck(id_t state);
 
-// Check why the System is in a Failure State
+// Check why System is in a Failure State
 bool FailureCheck(id_t state);
 
 

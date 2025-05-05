@@ -34,7 +34,7 @@ const uint8_t TotalTransitions =
   sizeof(StateRelationships) \
   / sizeof(Transition);
 
-// Initialize Finite State Machine with the Defined Transitions
+// Initialize Finite State Machine with Defined Transitions
 FiniteState FSM(StateRelationships, TotalTransitions);
 
 
@@ -56,9 +56,11 @@ void setup()
   FSM.begin(BOOT);
 }
 
+
+// #### Arduino MKR Zero Operations
 void loop()
 {
-  // Evaluate the Predicate of the Current State
+  // Evaluate Predicate of Current State
   // Transition if Predicate Check Returns True
   FSM.execute();
 }

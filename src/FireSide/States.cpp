@@ -18,7 +18,7 @@
 
 
 // #### BOOT State Checks and Processes
-// Check The Boot State for RYLR Initialisation
+// Check Boot State for RYLR Initialisation
 bool BootCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
@@ -102,7 +102,7 @@ void BootConvertProcess(id_t state)
   }
   SendRYLR("BINARY FILENAME: " + FileName);
 
-  // Double Check if the Selected File Exists
+  // Double Check if Selected File Exists
   // Abort if File not Found
   if (!SD.exists(FileName))
   {
@@ -114,7 +114,7 @@ void BootConvertProcess(id_t state)
 
 
 // #### SAFE State Checks and Processes
-// Check if the System can Proceed to ARM
+// Check if System can Proceed to ARM
 bool SafeCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
@@ -165,7 +165,7 @@ void SafeArmProcess(id_t state)
 
 
 // #### ARM State Checks and Processes
-// Check if the System can Proceed to LAUNCH
+// Check if System can Proceed to LAUNCH
 bool ArmCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
@@ -248,7 +248,7 @@ bool LaunchCheck(id_t state)
   // Any RYLR Input After This Point Interrupts Logging
   TriggerLogging();
 
-  // Fire the Igniters
+  // Fire Igniters
   digitalWrite(FIRE_PIN_A, HIGH);
   digitalWrite(FIRE_PIN_B, HIGH);
 
@@ -288,7 +288,7 @@ void LoggingConvertProcess(id_t state)
 {
   SendRYLR("LOGGING STOPPED");
 
-  // Open the Log File to Output Diagnostics
+  // Open Log File to Output Diagnostics
   LogFile = SD.open(FileName, O_RDONLY);
   if (!LogFile)
   {
@@ -326,7 +326,7 @@ void ConvertSafeProcess(id_t state)
 {
   SendRYLR("BINARY CONVERSION COMPLETE");
 
-  // Close the Log File if Open
+  // Close Log File if Open
   if (LogFile)
   {
     LogFile.close();
@@ -345,7 +345,7 @@ void ConvertSafeProcess(id_t state)
 
 
 // #### FAILURE State Checks and Processes
-// Check why the System is in a Failure State
+// Check why System is in a Failure State
 bool FailureCheck(id_t state)
 {
   SendRYLR("FIRESIDE FAILURE");
