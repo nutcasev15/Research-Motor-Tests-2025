@@ -29,37 +29,48 @@
 #define RYLR Serial1
 
 // Parse Incoming GroundSide Commands via RYLR Module
-static inline String ParseRYLR()
+static inline void ParseRYLR(String &Buffer)
 {
   if (!RYLR.available())
   {
     // Return Blank
-    return String("\r\n");
+    Buffer = "\r\n";
+    return;
   }
 
   // Load Incoming Data
   String parsed = RYLR.readString();
 
-  // Extract Data After Last Comma
-  parsed = parsed.substring(
-    parsed.lastIndexOf(','),
-    parsed.lastIndexOf('\r') - 1
-  );
+
+  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
+  // Remove Data from Last 2 Fields
+  parsed.remove(parsed.lastIndexOf(','));
+  parsed.remove(parsed.lastIndexOf(','));
+
+  // Extract Data in 3rd Comma Separated Field
+  Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
 
   // Remove Whitespace
-  parsed.trim();
+  Buffer.trim();
 
-  return parsed;
+  return;
 }
 
 // Send Data to GroundSide via RYLR Module
-static inline void SendRYLR(String data)
+static inline void SendRYLR(const String &Data)
 {
-  RYLR.println(
-    "AT+SEND=0," \
-    + String(data.length() + 4) + ",FS> " \
-    + data
-  );
+  // Issue Send AT Command
+  // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
+  RYLR.print("AT+SEND=0,");
+
+  // Issue Payload Length
+  RYLR.print(Data.length() + 4);
+
+  // Issue FireSide PCB Header
+  RYLR.print(",FS> ");
+
+  // Issue Data and Complete Command with Line End
+  RYLR.println(Data);
 }
 
 
@@ -101,7 +112,8 @@ static inline void ErrorBlink(uint8_t CODE)
   const uint16_t period = 5000;
 
   // Assemble and Transmit Status over RYLR
-  String status = "Error Code: " + String(CODE);
+  String status = "Error Code: ";
+  status += CODE;
   SendRYLR(status);
 
   // Turn Indicator LED Off

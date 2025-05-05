@@ -34,9 +34,13 @@ bool BootCheck(id_t state)
     delay(500UL);
   }
 
+  // Parse Command from GroundSide
+  String command;
+  ParseRYLR(command);
+
   // React to GroundSide State Command
   // Proceed to SAFE State
-  if (ParseRYLR() == "SAFE")
+  if (command == "SAFE")
   {
     return true;
   } else {
@@ -94,9 +98,24 @@ void BootConvertProcess(id_t state)
   // Find Last Logging File Name
   for (short id = -1; (id + 1) >= 0; id++)
   {
-    if (!SD.exists(String(id + 1) + ".dat"))
+    // Clear Existing File Name
+    FileName = "";
+
+    // Build and Test File Name
+    FileName += (id + 1);
+    FileName += ".dat";
+
+    if (!SD.exists(FileName))
     {
-      FileName = String(id) + ".dat";
+      // Previous Tested ID was Last Log File
+      // Clear File Name
+      FileName = "";
+
+      // Build File Name of Last Log File
+      FileName += id;
+      FileName += ".dat";
+
+      // Select File and Stop Loop
       break;
     }
   }
@@ -127,8 +146,12 @@ bool SafeCheck(id_t state)
     delay(100UL);
   }
 
+  // Parse Command from GroundSide
+  String command;
+  ParseRYLR(command);
+
   // Check if GroundSide Sent Correct Command
-  if (ParseRYLR() == "ARM")
+  if (command == "ARM")
   {
     return true;
   } else {
@@ -142,14 +165,24 @@ void SafeArmProcess(id_t state)
   SendRYLR("ARMING FIRESIDE");
 
   // Assemble ADC Channel Debug Data
-  String debug;
+  String debug = " ";
   for(short channel = A1; channel <= A6; channel++)
   {
-    debug += "A" \
-      + String(channel - A1 + 1) \
-      + '=' \
-      + String(analogRead(channel) * 3.3 / 1024.0, 3) \
-      + "V ";
+    // Channel Label
+    debug += "A";
+    debug += (channel - A1 + 1);
+
+    // Separator
+    debug += '=';
+
+    // Channel Value
+    debug += (analogRead(channel) * 3.3 / 1024.0);
+
+    // Truncate Value to 3 Decimal Digits
+    debug.remove(debug.lastIndexOf('.') + 3);
+
+    // Value Units and Separator
+    debug += "V ";
   }
 
   // Transmit ADC Channel Debug Data over RYLR
@@ -185,8 +218,12 @@ bool ArmCheck(id_t state)
     delay(100UL);
   }
 
+  // Parse Command from GroundSide
+  String command;
+  ParseRYLR(command);
+
   // Check if GroundSide Sent Correct Command
-  if (ParseRYLR() == "LAUNCH")
+  if (command == "LAUNCH")
   {
     return true;
   } else {
@@ -227,7 +264,7 @@ void ArmLaunchProcess(id_t state)
   SendRYLR("ADC READY");
 
   // Configure Logging And Get Filename
-  FileName = ConfigureLogging();
+  ConfigureLogging(FileName);
   SendRYLR("BINARY LOGGER READY");
 
   SendRYLR("FIRING IGNITERS");
@@ -333,7 +370,7 @@ void ConvertSafeProcess(id_t state)
   }
 
   // Reset Log File Name
-  FileName = String();
+  FileName = "";
 
   // Indicate Conversion is Complete
   digitalWrite(STATUS_PIN, LOW);
@@ -376,14 +413,24 @@ bool FailureCheck(id_t state)
   }
 
   // Assemble ADC Channel Debug Data
-  String debug;
+  String debug = " ";
   for(short channel = A1; channel <= A6; channel++)
   {
-    debug += "A" \
-      + String(channel - A1 + 1) \
-      + '=' \
-      + String(analogRead(channel) * 3.3 / 1024.0, 3) \
-      + "V ";
+    // Channel Label
+    debug += "A";
+    debug += (channel - A1 + 1);
+
+    // Separator
+    debug += '=';
+
+    // Channel Value
+    debug += (analogRead(channel) * 3.3 / 1024.0);
+
+    // Truncate Value to 3 Decimal Digits
+    debug.remove(debug.lastIndexOf('.') + 3);
+
+    // Value Units and Separator
+    debug += "V ";
   }
 
   // Transmit ADC Channel Debug Data over RYLR
@@ -400,8 +447,12 @@ bool FailureCheck(id_t state)
     delay(500UL);
   }
 
+  // Parse Command from GroundSide
+  String command;
+  ParseRYLR(command);
+
   // Check Received Command
-  if (ParseRYLR() == "SAFE")
+  if (command == "SAFE")
   {
     // Only Proceed on Receipt of Safe Command
     return true;

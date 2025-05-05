@@ -272,7 +272,7 @@ void HandleTransferFail(Adafruit_ZeroDMA *)
 
 
 // Binary Log File and Initial DMA Buffer Configuration
-String ConfigureLogging()
+void ConfigureLogging(String &Name)
 {
   // Initialize Data Buffers and Buffer Pointers
   // Log Data in BufferA Initially
@@ -304,9 +304,16 @@ String ConfigureLogging()
   String path;
   for (short id = 0; id >= 0; id++)
   {
-    if (!SD.exists(String(id) + ".dat"))
+    // Clear Existing Path
+    path = "";
+
+    // Build and Test Path
+    path += id;
+    path += ".dat";
+
+    if (!SD.exists(path))
     {
-      path = String(id) + ".dat";
+      // Select Tested Path and Stop Loop
       break;
     }
   }
@@ -318,7 +325,10 @@ String ConfigureLogging()
     ErrorBlink(ERR_SD_FILE);
   }
 
-  return path;
+  // Set Output File Name
+  Name = path;
+
+  return;
 }
 
 
@@ -407,12 +417,15 @@ void LogBuffers()
 
 
 // Binary Log File to CSV File Converter
-void ConvertLog(String path)
+void ConvertLog(const String &Path)
 {
   // Containers for CSV File and Associated Data
   File CSVFile;
   String CSVFileName, buffer;
   uint32_t time, progress;
+
+  // Reserve Line Buffer Length
+  buffer.reserve(256UL);
 
   // Check if Last Buffer was Written Successfully
   // Ensure Log File Data is Complete Before Conversion
@@ -427,13 +440,8 @@ void ConvertLog(String path)
   }
 
   // Open Log File for Reading Only
-  LogFile = SD.open(path, O_RDONLY);
-  // Copy Log File Name for CSV File
-  CSVFileName = LogFile.name();
-  // Change File Extension to .csv
-  CSVFileName.replace(String(".dat"), String(".csv"));
-  // Create CSV File
-  CSVFile = SD.open(CSVFileName, (O_CREAT | O_WRITE));
+  LogFile = SD.open(Path, O_RDONLY);
+
   // Check if Log File Opened Successfully
   if (!LogFile)
   {
@@ -441,17 +449,29 @@ void ConvertLog(String path)
     return;
   }
 
-  // Prepare CSV Header
+  // Copy Log File Name for CSV File
+  CSVFileName = LogFile.name();
+
+  // Change File Extension to .csv
+  CSVFileName.remove(CSVFileName.lastIndexOf('.'));
+  CSVFileName += ".csv";
+
+  // Create CSV File
+  CSVFile = SD.open(CSVFileName, (O_CREAT | O_WRITE));
+
+  // Reset Line Buffer and Prepare CSV Header
   // NOTE: Channels with Junk Data are Skipped
-  buffer = String("Time (us)");
+  buffer = "Time (us)";
   for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
     if (channel < 4)
     {
-      buffer += ", A" + String(channel + 3);
+      buffer += ", A";
+      buffer += (channel + 3);
     } else if (channel > 5)
     {
-      buffer += ", A" + String(channel - 5);
+      buffer += ", A";
+      buffer += (channel - 5);
     }
   }
 
@@ -472,14 +492,14 @@ void ConvertLog(String path)
     // Read Data from Log File into DMA Buffer
     LogFile.read(dump, sizeof(DMABuffer));
 
+    // Clear Line Buffer
+    buffer = "";
+
     // Process Each ADC Sample in DMA buffer in Blocks
     for (uint16_t index = 0; index < ADC_DMA_BUFFLEN; index += ADC_PARALLEL_CHANNELS)
     {
       // Calculate Timestamp for Current Sample Block
-      buffer = String(
-        static_cast<uint32_t>((dump->TimeStamp - time) \
-        / ADC_DMA_BUFFLEN * index)
-      );
+      buffer += (uint32_t)((dump->TimeStamp - time) / ADC_DMA_BUFFLEN * index);
 
       // Deinterleave and Append ADC Sample Data to Buffer
       // NOTE: Channels with Junk Data are Skipped
@@ -487,7 +507,8 @@ void ConvertLog(String path)
       {
         if (channel < 4 || channel > 5)
         {
-          buffer += ", " + String(dump->DMA_ADCBuf[index + channel]);
+          buffer += ", ";
+          buffer += dump->DMA_ADCBuf[index + channel];
         }
       }
     }
@@ -501,12 +522,19 @@ void ConvertLog(String path)
     if ((LogFile.position() - progress) > 0X1FFFFUL)
     {
       progress = LogFile.position();
-      SendRYLR(
-        "PROGRESS: " \
-        + String(progress) + " / " \
-        + String(LogFile.size()) \
-        + " BYTES"
-      );
+
+      // Clear and Reuse Line Buffer
+      buffer = "";
+
+      // Build Progress Report
+      buffer += "PROGRESS: ";
+      buffer += progress;
+      buffer += " / ";
+      buffer += LogFile.size();
+      buffer += " BYTES";
+
+      // Send Progress Report
+      SendRYLR(buffer);
     }
   } while (LogFile.available());
 

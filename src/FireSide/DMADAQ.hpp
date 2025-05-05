@@ -19,7 +19,7 @@ void HandleTransferComplete(Adafruit_ZeroDMA *);
 void HandleTransferFail(Adafruit_ZeroDMA *);
 
 // Binary Log File and Initial DMA Buffer Configuration
-String ConfigureLogging();
+void ConfigureLogging(String &Name);
 
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging();
@@ -28,6 +28,6 @@ void TriggerLogging();
 void LogBuffers();
 
 // Binary Log File to CSV File Converter
-void ConvertLog(String path);
+void ConvertLog(const String &Path);
 
 #endif

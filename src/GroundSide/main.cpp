@@ -21,81 +21,97 @@
 // Software Serial on Pins 3 & 4
 SoftwareSerial RYLR(RYLR_UART_RX, RYLR_UART_TX);
 
-// Parses Incoming Data from RYLR module
-String ParseRYLR()
+// Parses Incoming Data from FireSide PCB via RYLR module
+void ParseRYLR(String &Buffer)
 {
   if (!RYLR.available())
   {
     // Return Blank
-    return String("\r\n");
+    Buffer = "\r\n";
+    return;
   }
 
-  // Read Incoming Data
+  // Load Incoming Data
   String parsed = RYLR.readString();
 
-  // Extract Message Contents Following Last Comma
-  parsed = parsed.substring(
-    parsed.lastIndexOf(','),
-    parsed.lastIndexOf('\r') - 1
-  );
+
+  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
+  // Remove Data from Last 2 Fields
+  parsed.remove(parsed.lastIndexOf(','));
+  parsed.remove(parsed.lastIndexOf(','));
+
+  // Extract Data in 3rd Comma Separated Field
+  Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
 
   // Remove Whitespace
-  parsed.trim();
+  Buffer.trim();
 
-  return parsed;
+  return;
 }
 
-// Sends State Commands via RYLR module
-void SendRYLR(String state)
+// Incoming Response Buffer for RYLR
+String FireSideResponse;
+
+// Sends State Commands to FireSide PCB via RYLR module
+void SendRYLR(const String &State)
 {
   // Check for Invalid Commands or Switches
-  bool DefaultResponse = false;
+  bool OverrideResponse = false;
 
   // Validate State Command
-  if (!(state == "SAFE"\
-    || state == "ARM"\
-    || state == "LAUNCH"\
-    || state == "CONVERT"))
+  if (!(State == "SAFE"\
+    || State == "ARM"\
+    || State == "LAUNCH"\
+    || State == "CONVERT"))
   {
     Serial.println("INVALID COMMAND TO FIRESIDE");
-    DefaultResponse = true;
+    OverrideResponse = true;
   }
 
   // Check Switches for ARM State
-  if (state == "ARM")
+  if (State == "ARM")
   {
     if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
       && digitalRead(LAUNCH_SWITCH_PIN) == LOW))
     {
       Serial.println("ARM SIGNAL MISMATCH");
-      DefaultResponse = true;
+      OverrideResponse = true;
     }
   }
 
   // Check Switches for LAUNCH State
-  if (state == "LAUNCH")
+  if (State == "LAUNCH")
   {
     if (!(digitalRead(ARM_SWITCH_PIN) == HIGH \
       && digitalRead(LAUNCH_SWITCH_PIN) == HIGH))
     {
       Serial.println("LAUNCH SIGNAL MISMATCH");
-      DefaultResponse = true;
+      OverrideResponse = true;
     }
   }
 
-  if (DefaultResponse)
-  {
-    // Default to SAFE if Above Checks Fail
-    Serial.println("SENDING SAFE COMMAND");
-    state = String("SAFE");
-  }
+  // Issue Send AT Command
+  // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
+  RYLR.print("AT+SEND=0,");
 
-  // Send State Command to FireSide PCB
-  RYLR.println(
-    "AT+SEND=0," \
-    + String(state.length()) + ',' \
-    + state
-  );
+  // Default to SAFE if Above Checks Fail
+  if (OverrideResponse)
+  {
+    Serial.println("SENDING SAFE COMMAND");
+
+    // Issue Payload Length
+    // 4 Characters for SAFE Command
+    RYLR.print(4);
+
+    // Issue and Complete Command with Line End
+    RYLR.println("SAFE");
+  } else {
+    // Issue Payload Length
+    RYLR.print(State.length());
+
+    // Issue and Complete Command with Line End
+    RYLR.println(State);
+  }
 }
 
 
@@ -118,6 +134,9 @@ void setup() {
   Serial.println("ESTABLISHING FIRESIDE LINK");
   RYLR.begin(RYLR_UART_BAUD);
 
+  // Reserve Memory for Incoming RYLR Data
+  FireSideResponse.reserve(256UL);
+
   // Prompt User for FireSide PCB Initial State
   Serial.println("CHOOSE INITIAL STATE: SAFE || CONVERT");
   while (!Serial.available());
@@ -135,7 +154,11 @@ void loop() {
   // Parse and Print Data to USB Serial
   if (RYLR.available())
   {
-    Serial.println(ParseRYLR());
+    // Clear Response Buffer and Load Data
+    FireSideResponse = "";
+    ParseRYLR(FireSideResponse);
+
+    Serial.println(FireSideResponse);
   }
 
   // Check for Incoming Commands from Serial Monitor
