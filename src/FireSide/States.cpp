@@ -145,11 +145,11 @@ void SafeArmProcess(id_t state)
   String debug;
   for(short channel = A1; channel <= A6; channel++)
   {
-    debug += " A" \
+    debug += "A" \
       + String(channel - A1 + 1) \
       + '=' \
       + String(analogRead(channel) * 3.3 / 1024.0, 3) \
-      + 'V';
+      + "V ";
   }
 
   // Transmit ADC Channel Debug Data over RYLR
@@ -350,7 +350,7 @@ bool FailureCheck(id_t state)
 {
   SendRYLR("FIRESIDE FAILURE");
 
-  // Turn Off Igniters MOSFETS
+  // Turn Off Igniter MOSFETS
   SendRYLR("TURNING OFF IGNITERS");
   digitalWrite(FIRE_PIN_A, LOW);
   digitalWrite(FIRE_PIN_B, LOW);

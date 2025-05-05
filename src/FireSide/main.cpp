@@ -44,7 +44,7 @@ void setup()
   // Setup Igniters Pins
   pinMode(FIRE_PIN_A, OUTPUT);
   pinMode(FIRE_PIN_B, OUTPUT);
-  // Ensure No Current to Igniters
+  // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, LOW);
   digitalWrite(FIRE_PIN_B, LOW);
 
