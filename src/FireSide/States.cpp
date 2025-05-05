@@ -176,7 +176,7 @@ bool ArmCheck(id_t state)
   SendRYLR("TESTING SDCARD");
   if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
   {
-    SendRYLR("SDCARD TEST FAILED");
+    ErrorBlink(ERR_SD_FILE);
   }
 
   // Wait for Command from GroundSide
@@ -332,9 +332,7 @@ void ConvertSafeProcess(id_t state)
     LogFile.close();
   }
 
-  // Stop SD Card Communication
   // Reset Log File Name
-  SD.end();
   FileName = String();
 
   // Indicate Conversion is Complete
