@@ -368,18 +368,46 @@ bool FailureCheck(id_t state)
     ErrorBlink(ERR_SD_INIT);
   }
 
+  // Ensure SD Card Functions
+  SendRYLR("TESTING SDCARD");
+  if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
+  {
+    ErrorBlink(ERR_SD_FILE);
+  }
+
+  // Assemble ADC Channel Debug Data
+  String debug;
+  for(short channel = A1; channel <= A6; channel++)
+  {
+    debug += "A" \
+      + String(channel - A1 + 1) \
+      + '=' \
+      + String(analogRead(channel) * 3.3 / 1024.0, 3) \
+      + "V ";
+  }
+
+  // Transmit ADC Channel Debug Data over RYLR
+  SendRYLR("ADC CHANNEL STATUS");
+  SendRYLR(debug);
+
   // Disable DMA
-  SendRYLR("DISABLING DMA");
   DMA.abort();
+  SendRYLR("DMA DISABLED");
 
   // Wait for GroundSide Command
-  if (RYLR.available() && ParseRYLR() == "SAFE")
+  while (!RYLR.available())
+  {
+    delay(500UL);
+  }
+
+  // Check Received Command
+  if (ParseRYLR() == "SAFE")
   {
     // Only Proceed on Receipt of Safe Command
     return true;
   } else {
     // Rerun Diagnostics
-    delay(100UL);
+    delay(500UL);
     return false;
   }
 }
