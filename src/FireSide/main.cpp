@@ -45,8 +45,8 @@ void setup()
   pinMode(FIRE_PIN_A, OUTPUT);
   pinMode(FIRE_PIN_B, OUTPUT);
   // Ensure Igniter MOSFETS are Off
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Setup Status Pin and Initialise Indicator
   pinMode(STATUS_PIN, OUTPUT);
