@@ -22,8 +22,8 @@
 bool BootCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
@@ -137,8 +137,8 @@ void BootConvertProcess(id_t state)
 bool SafeCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Wait for GroundSide Command
   while (!RYLR.available())
@@ -202,8 +202,8 @@ void SafeArmProcess(id_t state)
 bool ArmCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Ensure SD Card Functions
   SendRYLR("TESTING SDCARD");
@@ -250,8 +250,8 @@ void ArmFailureProcess(id_t state)
   SendRYLR("ARMING FAILURE");
 
   SendRYLR("ENSURING NO CURRENT TO IGNITERS");
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 }
 
 // Handle Launch Command
@@ -286,8 +286,8 @@ bool LaunchCheck(id_t state)
   TriggerLogging();
 
   // Fire Igniters
-  digitalWrite(FIRE_PIN_A, HIGH);
-  digitalWrite(FIRE_PIN_B, HIGH);
+  digitalWrite(FIRE_PIN_A, STATUS_FIRE);
+  digitalWrite(FIRE_PIN_B, STATUS_FIRE);
 
   // Always Proceed to LOGGING
   return true;
@@ -345,8 +345,8 @@ void LoggingConvertProcess(id_t state)
 bool ConvertCheck(id_t state)
 {
   // Ensure Igniter MOSFETS are Off
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Indicate Igniters are Safe
   digitalWrite(STATUS_PIN, HIGH);
@@ -387,8 +387,8 @@ bool FailureCheck(id_t state)
 
   // Turn Off Igniter MOSFETS
   SendRYLR("TURNING OFF IGNITERS");
-  digitalWrite(FIRE_PIN_A, LOW);
-  digitalWrite(FIRE_PIN_B, LOW);
+  digitalWrite(FIRE_PIN_A, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Indicate Igniter Status
   digitalWrite(STATUS_PIN, HIGH);

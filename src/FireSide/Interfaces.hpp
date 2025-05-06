@@ -15,6 +15,9 @@
 // MOSFET Latch Pins for Firing Igniters
 #define FIRE_PIN_A 3
 #define FIRE_PIN_B 4
+// Firing Circuit uses Inverted Logic
+#define STATUS_FIRE LOW
+#define STATUS_SAFE HIGH
 
 // Status Pin for Visual Output
 #define STATUS_PIN 5
