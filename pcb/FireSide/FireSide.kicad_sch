@@ -606,202 +606,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:Q_NPN"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "Q"
-				(at 5.08 1.27 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "Q_NPN"
-				(at 5.08 -1.27 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 5.08 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "NPN bipolar junction transistor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "BJT"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Q_NPN_0_1"
-				(polyline
-					(pts
-						(xy -2.54 0) (xy 0.635 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.635 1.905) (xy 0.635 -1.905)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.635 0.635) (xy 2.54 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.635 -0.635) (xy 2.54 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 1.27 0)
-					(radius 2.8194)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -1.778) (xy 1.778 -1.27) (xy 2.286 -2.286) (xy 1.27 -1.778)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-			)
-			(symbol "Q_NPN_1_1"
-				(pin input line
-					(at -5.08 0 0)
-					(length 2.54)
-					(name "B"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "B"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 5.08 270)
-					(length 2.54)
-					(name "C"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "C"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 2.54 -5.08 90)
-					(length 2.54)
-					(name "E"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "E"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:R"
 			(pin_numbers
 				(hide yes)
@@ -2067,7 +1871,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Transistor_BJT:BC557"
+		(symbol "Transistor_BJT:PN2222A"
 			(pin_names
 				(offset 0)
 				(hide yes)
@@ -2084,7 +1888,7 @@
 					(justify left)
 				)
 			)
-			(property "Value" "BC557"
+			(property "Value" "PN2222A"
 				(at 5.08 0 0)
 				(effects
 					(font
@@ -2104,7 +1908,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://www.onsemi.com/pub/Collateral/BC556BTA-D.pdf"
+			(property "Datasheet" "https://www.onsemi.com/pub/Collateral/PN2222-D.PDF"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2114,7 +1918,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "0.1A Ic, 45V Vce, PNP Small Signal Transistor, TO-92"
+			(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2123,7 +1927,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "PNP Transistor"
+			(property "ki_keywords" "NPN Transistor"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2141,7 +1945,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "BC557_0_1"
+			(symbol "PN2222A_0_1"
 				(polyline
 					(pts
 						(xy -2.54 0) (xy 0.635 0)
@@ -2166,6 +1970,19 @@
 						(type none)
 					)
 				)
+				(circle
+					(center 1.27 0)
+					(radius 2.8194)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PN2222A_1_1"
 				(polyline
 					(pts
 						(xy 0.635 0.635) (xy 2.54 2.54)
@@ -2190,20 +2007,9 @@
 						(type none)
 					)
 				)
-				(circle
-					(center 1.27 0)
-					(radius 2.8194)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
 				(polyline
 					(pts
-						(xy 2.286 -1.778) (xy 1.778 -2.286) (xy 1.27 -1.27) (xy 2.286 -1.778)
+						(xy 1.27 -1.778) (xy 1.778 -1.27) (xy 2.286 -2.286) (xy 1.27 -1.778)
 					)
 					(stroke
 						(width 0)
@@ -2213,8 +2019,6 @@
 						(type outline)
 					)
 				)
-			)
-			(symbol "BC557_1_1"
 				(pin input line
 					(at -5.08 0 0)
 					(length 2.54)
@@ -2243,7 +2047,7 @@
 							)
 						)
 					)
-					(number "1"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2261,7 +2065,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2593,7 +2397,7 @@
 					)
 				)
 			)
-			(property "Footprint" "Connector_AMASS:AMASS_XT60-M_1x02_P7.20mm_Vertical"
+			(property "Footprint" "XT60-M:AMASS_XT60-M"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3247,12 +3051,6 @@
 		(uuid "32d6b398-fb9f-44db-95b8-c994f796f56b")
 	)
 	(junction
-		(at 26.67 137.16)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "358710e1-fdeb-43ad-a54a-b2677dbd5f87")
-	)
-	(junction
 		(at 176.53 110.49)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3271,10 +3069,22 @@
 		(uuid "47078d78-5178-4538-a41c-9d5c6405ce1d")
 	)
 	(junction
+		(at 60.96 137.16)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "52e434e9-99c7-49d9-85a9-30186dc0e988")
+	)
+	(junction
 		(at 106.68 64.77)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "54a5facb-18b8-4f5a-812f-65a6d1e66a82")
+	)
+	(junction
+		(at 26.67 137.16)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "57c7421f-0e01-445f-859b-fc3022cfc46b")
 	)
 	(junction
 		(at 165.1 110.49)
@@ -3293,12 +3103,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "7d46b1d2-66f7-4d99-8ba1-fc7c8caa76c7")
-	)
-	(junction
-		(at 60.96 137.16)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "86f8a33d-4d61-4ddd-8574-89a88b72e1c8")
 	)
 	(junction
 		(at 173.99 110.49)
@@ -3427,16 +3231,6 @@
 			(type default)
 		)
 		(uuid "04dd7130-cda7-443b-a97e-39d9c3f62640")
-	)
-	(wire
-		(pts
-			(xy 34.29 124.46) (xy 39.37 124.46)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "07f0df5e-8bc2-4b64-bbda-8bf6b607be7a")
 	)
 	(wire
 		(pts
@@ -3660,13 +3454,13 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 115.57) (xy 26.67 119.38)
+			(xy 26.67 137.16) (xy 38.1 137.16)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "382089a2-c078-47ec-bf06-9b0df6fef31d")
+		(uuid "36099d06-e274-4c14-89a6-050965bc84da")
 	)
 	(wire
 		(pts
@@ -3687,26 +3481,6 @@
 			(type default)
 		)
 		(uuid "3b10b1d5-45c1-4c08-93f7-a66b2c40c172")
-	)
-	(wire
-		(pts
-			(xy 26.67 137.16) (xy 38.1 137.16)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3b7e84b1-d3c0-4f0b-8801-c654ccffb1a9")
-	)
-	(wire
-		(pts
-			(xy 68.58 124.46) (xy 73.66 124.46)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3c65ec50-2bd5-4c86-b0f6-591a60f2fd03")
 	)
 	(wire
 		(pts
@@ -3770,16 +3544,6 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 129.54) (xy 26.67 137.16)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "46518968-9392-4651-a8ed-1f49fbf28703")
-	)
-	(wire
-		(pts
 			(xy 77.47 163.83) (xy 77.47 173.99)
 		)
 		(stroke
@@ -3797,6 +3561,16 @@
 			(type default)
 		)
 		(uuid "48c04a71-e259-4e25-aff2-e30e9bfd68fe")
+	)
+	(wire
+		(pts
+			(xy 26.67 137.16) (xy 26.67 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "500f2466-2607-4d52-9dd0-4cfa1c21ad6e")
 	)
 	(wire
 		(pts
@@ -3837,16 +3611,6 @@
 			(type default)
 		)
 		(uuid "5d070295-3634-46c3-91f0-19a3eeba15d4")
-	)
-	(wire
-		(pts
-			(xy 26.67 137.16) (xy 26.67 144.78)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5f0c144c-4383-495c-a095-22fa58733b45")
 	)
 	(wire
 		(pts
@@ -3940,13 +3704,13 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 137.16) (xy 60.96 144.78)
+			(xy 53.34 147.32) (xy 53.34 151.13)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "73c26dc6-55a5-4ec7-8057-8ad130b74654")
+		(uuid "76af1981-0a05-4d4a-ab87-93daedcf1225")
 	)
 	(wire
 		(pts
@@ -4060,6 +3824,16 @@
 	)
 	(wire
 		(pts
+			(xy 26.67 115.57) (xy 26.67 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96bf8c52-e469-4fa8-a8b3-dbf650ffde05")
+	)
+	(wire
+		(pts
 			(xy 238.76 33.02) (xy 247.65 33.02)
 		)
 		(stroke
@@ -4160,16 +3934,6 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 129.54) (xy 60.96 137.16)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ab4cf84c-0da8-4c17-81ea-14d03a1fbbad")
-	)
-	(wire
-		(pts
 			(xy 45.72 115.57) (xy 45.72 132.08)
 		)
 		(stroke
@@ -4197,6 +3961,16 @@
 			(type default)
 		)
 		(uuid "b8b288a6-ec56-4c40-ac15-5b92d6eb332a")
+	)
+	(wire
+		(pts
+			(xy 26.67 130.81) (xy 26.67 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b9880047-49c8-49aa-8745-c730d88018db")
 	)
 	(wire
 		(pts
@@ -4300,6 +4074,26 @@
 	)
 	(wire
 		(pts
+			(xy 19.05 147.32) (xy 19.05 151.13)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1e22c9d-2e16-494d-826e-0dbbe474149c")
+	)
+	(wire
+		(pts
+			(xy 60.96 130.81) (xy 60.96 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d26b17f3-2033-46da-a666-438dc79229cc")
+	)
+	(wire
+		(pts
 			(xy 120.65 34.29) (xy 120.65 38.1)
 		)
 		(stroke
@@ -4330,7 +4124,7 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 115.57) (xy 60.96 119.38)
+			(xy 60.96 115.57) (xy 60.96 123.19)
 		)
 		(stroke
 			(width 0)
@@ -4417,6 +4211,16 @@
 			(type default)
 		)
 		(uuid "f2a404ce-9791-4809-a74e-a0e5036ccbff")
+	)
+	(wire
+		(pts
+			(xy 60.96 137.16) (xy 60.96 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f373e76d-8b7d-4202-98bc-f328efcbc2e0")
 	)
 	(wire
 		(pts
@@ -4509,7 +4313,7 @@
 		(uuid "1d1bccd5-bf04-4e50-a87e-67195da43c38")
 	)
 	(label "FIRE_PIN_A"
-		(at 39.37 124.46 270)
+		(at 19.05 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4569,7 +4373,7 @@
 		(uuid "76746ebd-7472-4329-839a-8b3034d35fca")
 	)
 	(label "FIRE_PIN_B"
-		(at 73.66 124.46 270)
+		(at 53.34 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4715,17 +4519,17 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_BJT:BC557")
-		(at 29.21 124.46 180)
+		(lib_id "Transistor_BJT:PN2222A")
+		(at 24.13 147.32 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "2183ecbb-1df5-42f3-811a-85309e98a72a")
+		(uuid "11674326-a4c8-4575-99c4-09a2467a8e27")
 		(property "Reference" "Q1"
-			(at 24.13 123.1899 0)
+			(at 29.21 146.0499 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4733,8 +4537,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "BC557"
-			(at 24.13 125.7299 0)
+		(property "Value" "2N2222"
+			(at 29.21 148.5899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4743,7 +4547,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
-			(at 24.13 122.555 0)
+			(at 29.21 149.225 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4753,8 +4557,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/bc557-pnp-transistor-pack-of-20"
-			(at 29.21 124.46 0)
+		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20/"
+			(at 24.13 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4763,8 +4567,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "0.1A Ic, 45V Vce, PNP Small Signal Transistor, TO-92"
-			(at 29.21 124.46 0)
+		(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
+			(at 24.13 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4772,89 +4576,19 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
-			(uuid "c8a9504f-3e25-4740-a0c5-2bfcba3ac16a")
+		(pin "1"
+			(uuid "5320e870-97ca-4d05-8a6a-ab32c0799656")
 		)
 		(pin "2"
-			(uuid "c79f7004-8947-4325-a9fc-a327951fd984")
+			(uuid "f097918f-b163-427a-8365-bf33f46ee5f4")
 		)
-		(pin "1"
-			(uuid "2f9e819d-48a9-4c9d-8b78-defea53827a2")
+		(pin "3"
+			(uuid "a4252c52-7e1d-4aa9-a863-f69b7401f134")
 		)
 		(instances
 			(project ""
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "Q1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 60.96 148.59 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "230fb08a-25be-47db-9248-b8c3ff442142")
-		(property "Reference" "R3"
-			(at 63.5 147.3199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1k"
-			(at 63.5 149.8599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
-			(at 59.182 148.59 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments"
-			(at 60.96 148.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 60.96 148.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "6ef12b58-3bf3-4361-b92b-32ea3f4c4310")
-		)
-		(pin "1"
-			(uuid "bf675a60-81e0-491f-a7b5-8697b1759227")
-		)
-		(instances
-			(project "FireSide"
-				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "R3")
 					(unit 1)
 				)
 			)
@@ -4897,7 +4631,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments"
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
 			(at 50.8 77.47 0)
 			(effects
 				(font
@@ -5354,6 +5088,82 @@
 		)
 	)
 	(symbol
+		(lib_id "Transistor_BJT:PN2222A")
+		(at 58.42 147.32 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5c5ae91b-bb27-447e-b4b7-927d5307a514")
+		(property "Reference" "Q3"
+			(at 63.5 146.0499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N2222"
+			(at 63.5 148.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
+			(at 63.5 149.225 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20/"
+			(at 58.42 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
+			(at 58.42 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "47f5a986-3d3b-4bf6-9186-9a6483e31aa4")
+		)
+		(pin "2"
+			(uuid "e6f782ff-c098-4d9f-afeb-4c723a1e9a0a")
+		)
+		(pin "3"
+			(uuid "486cb7b4-9520-4089-84a4-b8e872aa1871")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "Q3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 120.65 53.34 0)
 		(unit 1)
@@ -5390,7 +5200,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments"
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
 			(at 120.65 53.34 0)
 			(effects
 				(font
@@ -5425,7 +5235,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 26.67 148.59 0)
+		(at 26.67 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5434,7 +5244,7 @@
 		(fields_autoplaced yes)
 		(uuid "639a7d52-2fd8-43e9-8e8c-474bc0dc2cbe")
 		(property "Reference" "R2"
-			(at 29.21 147.3199 0)
+			(at 29.21 125.7299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5443,7 +5253,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 29.21 149.8599 0)
+			(at 29.21 128.2699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5452,7 +5262,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
-			(at 24.892 148.59 90)
+			(at 24.892 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5460,8 +5270,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments"
-			(at 26.67 148.59 0)
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 26.67 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5470,7 +5280,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 26.67 148.59 0)
+			(at 26.67 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5488,79 +5298,6 @@
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:Q_NPN")
-		(at 48.26 91.44 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "744917ae-f8d8-41fc-b144-319787763a6f")
-		(property "Reference" "Q5"
-			(at 53.34 90.1699 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2N2222"
-			(at 53.34 92.7099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92L_HandSolder"
-			(at 53.34 88.9 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20"
-			(at 48.26 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "NPN bipolar junction transistor"
-			(at 48.26 91.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "C"
-			(uuid "885224fd-44d5-4145-babe-e4134d3c9162")
-		)
-		(pin "E"
-			(uuid "a779be13-1288-4211-ac4c-e7dfd6ddaf69")
-		)
-		(pin "B"
-			(uuid "6065c2eb-4357-4f39-9a8b-6d10cf62955c")
-		)
-		(instances
-			(project "FireSide"
-				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "Q5")
 					(unit 1)
 				)
 			)
@@ -5817,7 +5554,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_AMASS:AMASS_XT60-M_1x02_P7.20mm_Vertical"
+		(property "Footprint" "XT60-M:AMASS_XT60-M"
 			(at 29.21 26.67 0)
 			(effects
 				(font
@@ -6164,7 +5901,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/l7805abv-stmicroelectronics-voltage-regulator"
+		(property "Datasheet" "https://robu.in/product/l7805abv-stmicroelectronics-voltage-regulator/"
 			(at 76.2 39.37 0)
 			(effects
 				(font
@@ -6345,17 +6082,17 @@
 		)
 	)
 	(symbol
-		(lib_id "Transistor_BJT:BC557")
-		(at 63.5 124.46 180)
+		(lib_id "Device:R")
+		(at 60.96 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "cd3c90ba-a8dd-4729-b279-e200523c0870")
-		(property "Reference" "Q3"
-			(at 58.42 123.1899 0)
+		(uuid "cacb4544-66a5-4f66-9c12-2ce4a65004c9")
+		(property "Reference" "R3"
+			(at 63.5 125.7299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6363,8 +6100,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "BC557"
-			(at 58.42 125.7299 0)
+		(property "Value" "1k"
+			(at 63.5 128.2699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6372,29 +6109,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
-			(at 58.42 122.555 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/bc557-pnp-transistor-pack-of-20"
-			(at 63.5 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Description" "0.1A Ic, 45V Vce, PNP Small Signal Transistor, TO-92"
-			(at 63.5 124.46 0)
+		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
+			(at 59.182 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6402,19 +6118,34 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
-			(uuid "4717ed3a-21e2-4043-96f9-e6cedbbd15da")
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 60.96 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 60.96 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
 		)
 		(pin "2"
-			(uuid "59ae2c6c-c663-4fb7-915c-60f9e7ac64e6")
+			(uuid "7d44705c-2256-485f-b09f-d72e85659c5a")
 		)
 		(pin "1"
-			(uuid "d7df8029-3481-4a18-abc9-25a8b8ccda8c")
+			(uuid "57740f03-f039-4e1f-97d3-80b5341f3868")
 		)
 		(instances
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "Q3")
+					(reference "R3")
 					(unit 1)
 				)
 			)
@@ -6484,6 +6215,82 @@
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "J5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_BJT:PN2222A")
+		(at 48.26 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d2ff5c15-988f-4b79-b7fe-19a9bf7c01f1")
+		(property "Reference" "Q5"
+			(at 53.34 90.1699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2N2222"
+			(at 53.34 92.7099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
+			(at 53.34 93.345 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20/"
+			(at 48.26 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
+			(at 48.26 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2ac63eb1-88fa-4e02-93a2-8b68a40d44f4")
+		)
+		(pin "2"
+			(uuid "30592e84-9e81-4c73-b60a-39b79af21de4")
+		)
+		(pin "3"
+			(uuid "79067de2-2670-4b3b-b5b7-e4a3d9c2963a")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "Q5")
 					(unit 1)
 				)
 			)
