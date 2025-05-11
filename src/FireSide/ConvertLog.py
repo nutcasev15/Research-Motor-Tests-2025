@@ -38,6 +38,7 @@ ADC_PARALLEL_CHANNELS = 8
 
 # Calculate Buffer Length
 # Offset by 4 bytes for uint32_t Variables in Structure
+# See ConvertLog Function in DMADAQ.cpp
 ADC_DMA_BUFLEN = (ADC_PARALLEL_CHANNELS * 512 - 4)
 
 # Print Configuration and Notify User
@@ -103,7 +104,7 @@ with open(LogPath, 'rb') as LogFile:
       # Clear Dictionary Buffer
       CurrentRow = {}
 
-      # Calculate the TimeTimeStamp for the Current Sample Block
+      # Calculate the TimeStamp for the Current Sample Block
       CurrentRow.update(
         {'Time (us)' : int((TimeStamp - time) / ADC_DMA_BUFLEN * index)}
       )
@@ -125,7 +126,7 @@ with open(LogPath, 'rb') as LogFile:
       # Append Converted ADC Sample Data to Table
       CSVDataTable.append(CurrentRow)
 
-    # Update the TimeTimeStamp for the Next DMA Buffer
+    # Update the TimeStamp for the Next DMA Buffer
     time = TimeStamp
 
 
