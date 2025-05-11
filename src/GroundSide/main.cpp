@@ -103,13 +103,19 @@ void SendRYLR(const String &State)
     // 4 Characters for SAFE Command
     RYLR.print(4);
 
-    // Issue and Complete Command with Line End
+    // Add Comma Separator
+    RYLR.print(',');
+
+    // Complete Command with Line End
     RYLR.println("SAFE");
   } else {
     // Issue Payload Length
     RYLR.print(State.length());
 
-    // Issue and Complete Command with Line End
+    // Add Comma Separator
+    RYLR.print(',');
+
+    // Complete Command with Line End
     RYLR.println(State);
   }
 }
