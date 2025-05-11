@@ -44,7 +44,6 @@ static inline void ParseRYLR(String &Buffer)
   // Load Incoming Data
   String parsed = RYLR.readString();
 
-
   // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
   // Remove Data from Last 2 Fields
   parsed.remove(parsed.lastIndexOf(','));

@@ -96,7 +96,7 @@ void BootConvertProcess(id_t state)
   }
 
   // Find Last Logging File Name
-  for (short id = -1; (id + 1) >= 0; id++)
+  for (short id = 0; (id + 1) >= 0; id++)
   {
     // Clear Existing File Name
     FileName = "";
@@ -165,7 +165,7 @@ void SafeArmProcess(id_t state)
   SendRYLR("ARMING FIRESIDE");
 
   // Assemble ADC Channel Debug Data
-  String debug = " ";
+  String debug = "";
   for(short channel = A1; channel <= A6; channel++)
   {
     // Channel Label
@@ -413,7 +413,7 @@ bool FailureCheck(id_t state)
   }
 
   // Assemble ADC Channel Debug Data
-  String debug = " ";
+  String debug = "";
   for(short channel = A1; channel <= A6; channel++)
   {
     // Channel Label
