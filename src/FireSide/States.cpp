@@ -76,6 +76,7 @@ void BootSafeProcess(id_t state)
   if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
+    return;
   }
 
   SendRYLR("BOOT COMPLETE");
@@ -93,6 +94,7 @@ void BootConvertProcess(id_t state)
   if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
+    return;
   }
 
   // Find Last Logging File Name
@@ -126,6 +128,7 @@ void BootConvertProcess(id_t state)
   if (!SD.exists(FileName))
   {
     ErrorBlink(ERR_SD_FILE);
+    return;
   }
 
   SendRYLR("OVERRIDE SUCCESSFUL");
@@ -206,10 +209,12 @@ bool ArmCheck(id_t state)
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
 
   // Ensure SD Card Functions
+  // Abort on Failure
   SendRYLR("TESTING SDCARD");
   if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
   {
     ErrorBlink(ERR_SD_FILE);
+    return false;
   }
 
   // Wait for Command from GroundSide
@@ -310,7 +315,7 @@ bool LoggingCheck(id_t state)
 
   // Check if Logging is Finished
   // Stop Signal Checked in DMA Transfer Handler
-  // See HandleTransferComplete() in DMADAQ.cpp
+  // See HandleTransferComplete Function in DMADAQ.cpp
   if (finished)
   {
     // Proceed to CONVERT State
@@ -326,10 +331,12 @@ void LoggingConvertProcess(id_t state)
   SendRYLR("LOGGING STOPPED");
 
   // Open Log File to Output Diagnostics
+  // Abort if SD Card IO Fails
   LogFile = SD.open(FileName, O_RDONLY);
   if (!LogFile)
   {
     ErrorBlink(ERR_SD_FILE);
+    return;
   } else {
     SendRYLR("FILENAME: " + FileName);
     SendRYLR("FILESIZE: " + String(LogFile.size()));
@@ -403,13 +410,16 @@ bool FailureCheck(id_t state)
   if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
+    return false;
   }
 
   // Ensure SD Card Functions
+  // Abort on Failure
   SendRYLR("TESTING SDCARD");
   if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
   {
     ErrorBlink(ERR_SD_FILE);
+    return false;
   }
 
   // Assemble ADC Channel Debug Data

@@ -162,7 +162,7 @@ void ConfigureDMA()
 
   // Configure DMAC Channel for ADC DMA Transfers
   // NOTE: Destination is not Initialised Here
-  // See ConfigureLogging() for Final Initialisation
+  // See ConfigureLogging Function for Final Initialisation
   DMAdesc = DMA.addDescriptor(
     (void *)&ADC->RESULT.reg,
     NULL,
@@ -323,6 +323,7 @@ void ConfigureLogging(String &Name)
   LogFile = SD.open(path, (O_CREAT | O_WRITE));
   if (!LogFile) {
     ErrorBlink(ERR_SD_FILE);
+    return;
   }
 
   // Set Output File Name
@@ -370,6 +371,9 @@ void LogBuffers()
 
     // Indicate SD Write Buffer Error on LED
     ErrorBlink(ERR_SD_BUFF);
+
+    // Abort Logging
+    return;
   }
 
   // Check if SD Buffer is Ready For Write
@@ -461,6 +465,7 @@ void ConvertLog(const String &Path)
 
   // Reset Line Buffer and Prepare CSV Header
   // NOTE: Channels with Junk Data are Skipped
+  // NOTE: See Interfaces.hpp
   buffer = "Time (us)";
   for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
@@ -503,6 +508,7 @@ void ConvertLog(const String &Path)
 
       // Deinterleave and Append ADC Sample Data to Buffer
       // NOTE: Channels with Junk Data are Skipped
+      // NOTE: See Interfaces.hpp
       for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
       {
         if (channel < 4 || channel > 5)
