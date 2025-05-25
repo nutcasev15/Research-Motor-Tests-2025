@@ -13,8 +13,8 @@
 
 // #### HW Configuration Declarations
 // MOSFET Latch Pins for Firing Igniters
-#define FIRE_PIN_A 3
-#define FIRE_PIN_B 4
+#define FIRE_PIN_A 11
+#define FIRE_PIN_B 12
 // Firing Circuit uses Inverted Logic
 #define STATUS_FIRE LOW
 #define STATUS_SAFE HIGH

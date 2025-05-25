@@ -12,6 +12,169 @@
 		(comment 1 "FireSide PCB for Solid Rocket Motors")
 	)
 	(lib_symbols
+		(symbol "Connector:Conn_01x02_Pin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_Pin"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x02_Pin_1_1"
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector:Screw_Terminal_01x02"
 			(pin_names
 				(offset 1.016)
@@ -192,249 +355,6 @@
 						)
 					)
 					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Connector:Screw_Terminal_01x03"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "Screw_Terminal_01x03"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "screw terminal"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "TerminalBlock*:*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Screw_Terminal_01x03_1_1"
-				(rectangle
-					(start -1.27 3.81)
-					(end 1.27 -3.81)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.5334 2.8702) (xy 0.3302 2.032)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.5334 0.3302) (xy 0.3302 -0.508)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.5334 -2.2098) (xy 0.3302 -3.048)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.3556 3.048) (xy 0.508 2.2098)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.3556 0.508) (xy 0.508 -0.3302)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -0.3556 -2.032) (xy 0.508 -2.8702)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 0 2.54)
-					(radius 0.635)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 0 0)
-					(radius 0.635)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(circle
-					(center 0 -2.54)
-					(radius 0.635)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at -5.08 2.54 0)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -5.08 0 0)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -5.08 -2.54 0)
-					(length 3.81)
-					(name "Pin_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2990,10 +2910,10 @@
 	)
 	(text "Igniter Firing Circuits"
 		(exclude_from_sim no)
-		(at 66.548 192.532 0)
+		(at 33.528 193.04 0)
 		(effects
 			(font
-				(size 3 3)
+				(size 2 2)
 			)
 		)
 		(uuid "c27321e3-e0e0-41fe-9119-c3e8703f693c")
@@ -3015,13 +2935,7 @@
 		(uuid "079cf8c4-38d7-4d93-a677-246dd438fe54")
 	)
 	(junction
-		(at 179.07 110.49)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "101b2c3e-28ba-46f0-b984-8265872fb1b3")
-	)
-	(junction
-		(at 26.67 115.57)
+		(at 33.02 115.57)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "116a4802-5a31-4a61-8a1d-7183584f4eae")
@@ -3033,28 +2947,16 @@
 		(uuid "12624b7d-8bb9-4671-b6c7-ba7dabc18aee")
 	)
 	(junction
-		(at 162.56 110.49)
+		(at 59.69 115.57)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "13ae8cb6-3ef1-41a4-a273-260fa28a3074")
+		(uuid "339ec580-2a2c-4b3e-9cfc-1a7d322ff27c")
 	)
 	(junction
-		(at 45.72 115.57)
+		(at 50.8 38.1)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "17c69259-ed16-4e1b-b79e-602835697453")
-	)
-	(junction
-		(at 236.22 45.72)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "32d6b398-fb9f-44db-95b8-c994f796f56b")
-	)
-	(junction
-		(at 176.53 110.49)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3aa202b9-8cbf-4128-9979-e037016c9593")
+		(uuid "3810db9b-1b66-45fa-9c97-3f6cef60bb7f")
 	)
 	(junction
 		(at 50.8 29.21)
@@ -3063,13 +2965,19 @@
 		(uuid "4093e364-6da6-4d77-ae6d-be5d0e21a245")
 	)
 	(junction
-		(at 60.96 163.83)
+		(at 21.59 115.57)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "453521d9-9431-420b-8b13-0da1b882fa75")
+	)
+	(junction
+		(at 71.12 163.83)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "47078d78-5178-4538-a41c-9d5c6405ce1d")
 	)
 	(junction
-		(at 60.96 137.16)
+		(at 71.12 137.16)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "52e434e9-99c7-49d9-85a9-30186dc0e988")
@@ -3081,19 +2989,19 @@
 		(uuid "54a5facb-18b8-4f5a-812f-65a6d1e66a82")
 	)
 	(junction
-		(at 26.67 137.16)
+		(at 33.02 137.16)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "57c7421f-0e01-445f-859b-fc3022cfc46b")
 	)
 	(junction
-		(at 165.1 110.49)
+		(at 59.69 147.32)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "5f037933-3be9-4f3f-80b1-2936edadea28")
+		(uuid "69cbb1be-34e4-4848-bc16-cd133a3669ac")
 	)
 	(junction
-		(at 26.67 163.83)
+		(at 33.02 163.83)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "71a8b4d9-152d-4e6a-afca-38d70bd0ead5")
@@ -3103,12 +3011,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "7d46b1d2-66f7-4d99-8ba1-fc7c8caa76c7")
-	)
-	(junction
-		(at 173.99 110.49)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "8b3c468b-47aa-4f9f-987a-780e486e9785")
 	)
 	(junction
 		(at 106.68 38.1)
@@ -3123,7 +3025,19 @@
 		(uuid "b5004769-f361-4ac8-9068-dfea1e7af928")
 	)
 	(junction
-		(at 60.96 115.57)
+		(at 45.72 115.57)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "b94e180c-caa3-4901-819c-3e29b66ae8ab")
+	)
+	(junction
+		(at 59.69 163.83)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "bb9bb1e2-0ab1-494b-809d-4ac020759a9d")
+	)
+	(junction
+		(at 71.12 115.57)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c61bd334-916f-48e3-aba2-059b653eb9ca")
@@ -3135,16 +3049,16 @@
 		(uuid "c6f3c734-05eb-47da-ba56-fa5afa6d279a")
 	)
 	(junction
+		(at 21.59 147.32)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e1f6ae4b-e18f-408c-ade5-c1ad9746be2e")
+	)
+	(junction
 		(at 43.18 163.83)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eb95aeff-26ef-488c-b7cf-49929b1ff09b")
-	)
-	(junction
-		(at 236.22 30.48)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "edd3a205-4e8d-458d-9f6c-eb032c6ff7fe")
 	)
 	(no_connect
 		(at 133.35 83.82)
@@ -3155,8 +3069,8 @@
 		(uuid "11a2f92a-3c59-4ccc-a4fe-b893bb3aee71")
 	)
 	(no_connect
-		(at 184.15 78.74)
-		(uuid "13c63bd8-5a3c-438c-8c28-c701009948d7")
+		(at 133.35 81.28)
+		(uuid "367d5c7e-881d-4369-89d9-0f966c3c51a4")
 	)
 	(no_connect
 		(at 133.35 68.58)
@@ -3167,16 +3081,16 @@
 		(uuid "54a8861b-a96d-4f48-9969-667467baee8a")
 	)
 	(no_connect
-		(at 184.15 81.28)
-		(uuid "679816f2-13d4-42a8-ba22-7de42c2f29d7")
-	)
-	(no_connect
 		(at 133.35 38.1)
 		(uuid "71f3af4e-21f9-4d28-bcbd-9a525f54c8ef")
 	)
 	(no_connect
 		(at 184.15 53.34)
 		(uuid "7a7193e3-550c-48c1-b358-8e8de9ab97ef")
+	)
+	(no_connect
+		(at 133.35 78.74)
+		(uuid "9498bfe3-d3b5-4c1f-aa07-7fdbee73ffa5")
 	)
 	(no_connect
 		(at 184.15 40.64)
@@ -3204,7 +3118,17 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 115.57) (xy 80.01 115.57)
+			(xy 184.15 83.82) (xy 186.69 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "00d9806b-778f-4466-95ac-51a210513497")
+	)
+	(wire
+		(pts
+			(xy 71.12 115.57) (xy 86.36 115.57)
 		)
 		(stroke
 			(width 0)
@@ -3214,43 +3138,33 @@
 	)
 	(wire
 		(pts
-			(xy 179.07 110.49) (xy 179.07 114.3)
+			(xy 247.65 100.33) (xy 247.65 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0273cbc5-b148-4022-b031-34dd985ea7f2")
+		(uuid "03b6bab6-b771-466d-9a1d-448d966d1e1c")
 	)
 	(wire
 		(pts
-			(xy 232.41 30.48) (xy 236.22 30.48)
+			(xy 76.2 27.94) (xy 76.2 30.48)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "04dd7130-cda7-443b-a97e-39d9c3f62640")
+		(uuid "07d1cf6c-761a-4144-825c-c19c942dba2d")
 	)
 	(wire
 		(pts
-			(xy 165.1 110.49) (xy 165.1 114.3)
+			(xy 106.68 20.32) (xy 106.68 38.1)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0890c950-6cfb-45b9-a99e-73bdf3e0812c")
-	)
-	(wire
-		(pts
-			(xy 173.99 110.49) (xy 176.53 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "0f53410a-30c3-467b-b8b9-0cc8e13422a1")
+		(uuid "0ab99b01-c43a-4506-b290-f4fcbfd8c6c4")
 	)
 	(wire
 		(pts
@@ -3274,7 +3188,27 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 115.57) (xy 45.72 115.57)
+			(xy 50.8 38.1) (xy 50.8 40.64)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "15faa3ff-7d5e-4eb0-9190-140f31697a1a")
+	)
+	(wire
+		(pts
+			(xy 191.77 66.04) (xy 247.65 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "169f9a98-0c71-44b8-bedb-a685352968cb")
+	)
+	(wire
+		(pts
+			(xy 33.02 115.57) (xy 45.72 115.57)
 		)
 		(stroke
 			(width 0)
@@ -3284,17 +3218,17 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 110.49) (xy 173.99 114.3)
+			(xy 241.3 124.46) (xy 241.3 147.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "184bf8c1-4068-44d9-aded-ef843f4d6940")
+		(uuid "1a193a23-9502-49da-a610-1647ee8ccf43")
 	)
 	(wire
 		(pts
-			(xy 80.01 115.57) (xy 80.01 132.08)
+			(xy 86.36 115.57) (xy 86.36 132.08)
 		)
 		(stroke
 			(width 0)
@@ -3304,23 +3238,43 @@
 	)
 	(wire
 		(pts
-			(xy 232.41 106.68) (xy 191.77 66.04)
+			(xy 184.15 68.58) (xy 189.23 68.58)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1d0fdca2-93fe-47d6-b664-6663ce8e1b7e")
+		(uuid "1f3aacb6-fb37-454f-bad2-d37286f4ed18")
 	)
 	(wire
 		(pts
-			(xy 50.8 29.21) (xy 68.58 29.21)
+			(xy 59.69 163.83) (xy 71.12 163.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1e34f3e2-c8f1-4b2b-96a3-30a9877cc723")
+		(uuid "20364d44-66e9-4382-802f-7f2ed53a773b")
+	)
+	(wire
+		(pts
+			(xy 45.72 115.57) (xy 59.69 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20e46263-de5e-4030-8b0f-183084a463b2")
+	)
+	(wire
+		(pts
+			(xy 50.8 20.32) (xy 50.8 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "215cd54a-1ebf-46a6-87f6-6906ae4d0e8c")
 	)
 	(wire
 		(pts
@@ -3334,47 +3288,17 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 110.49) (xy 162.56 114.3)
+			(xy 21.59 115.57) (xy 21.59 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "240da178-9617-479a-ba8e-91e98c23f471")
+		(uuid "262a65f2-ef8a-46a5-9ab4-fe8cd76df4dd")
 	)
 	(wire
 		(pts
-			(xy 116.84 81.28) (xy 133.35 81.28)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2674d224-6be1-4362-a5ae-12ba7b1d5e5b")
-	)
-	(wire
-		(pts
-			(xy 106.68 78.74) (xy 133.35 78.74)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "27e6d8ab-714c-47ec-b785-3a4ffc58ac7e")
-	)
-	(wire
-		(pts
-			(xy 227.33 106.68) (xy 191.77 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "298c9a7c-fa93-4094-a37c-cb0e50b7a410")
-	)
-	(wire
-		(pts
-			(xy 26.67 40.64) (xy 26.67 115.57)
+			(xy 21.59 40.64) (xy 21.59 115.57)
 		)
 		(stroke
 			(width 0)
@@ -3384,7 +3308,17 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 163.83) (xy 77.47 163.83)
+			(xy 247.65 138.43) (xy 247.65 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c5fcd6b-a646-442c-9e42-43ad192ac242")
+	)
+	(wire
+		(pts
+			(xy 71.12 163.83) (xy 83.82 163.83)
 		)
 		(stroke
 			(width 0)
@@ -3404,13 +3338,13 @@
 	)
 	(wire
 		(pts
-			(xy 232.41 45.72) (xy 236.22 45.72)
+			(xy 50.8 38.1) (xy 68.58 38.1)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2e7dfd54-4bf3-4540-b4d4-e600db04c4f6")
+		(uuid "2fa72548-2e25-402b-83c8-63ecf3bd9783")
 	)
 	(wire
 		(pts
@@ -3434,33 +3368,53 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 63.5) (xy 191.77 63.5)
+			(xy 241.3 45.72) (xy 232.41 36.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3527602a-7792-4d92-a84c-3a24d68a97db")
+		(uuid "34be21dd-b8f4-4616-af09-8374dbeaa370")
 	)
 	(wire
 		(pts
-			(xy 160.02 110.49) (xy 160.02 114.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "357bcfe9-6a6b-4569-a018-d6214c7dd082")
-	)
-	(wire
-		(pts
-			(xy 26.67 137.16) (xy 38.1 137.16)
+			(xy 33.02 137.16) (xy 38.1 137.16)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "36099d06-e274-4c14-89a6-050965bc84da")
+	)
+	(wire
+		(pts
+			(xy 59.69 147.32) (xy 59.69 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "362ecd5a-2c95-431b-89fd-76fe5b464bd5")
+	)
+	(wire
+		(pts
+			(xy 243.84 123.19) (xy 243.84 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "365fb868-acb8-4b80-ab44-a9ab96ec9eac")
+	)
+	(wire
+		(pts
+			(xy 201.93 63.5) (xy 247.65 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36e4562c-18f2-421f-a4ba-49afe18106a7")
 	)
 	(wire
 		(pts
@@ -3484,6 +3438,26 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 147.32) (xy 63.5 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3c459498-a3fb-4153-8f63-c74a3710bf44")
+	)
+	(wire
+		(pts
+			(xy 21.59 115.57) (xy 33.02 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3eaf8317-40f1-4dd9-9b7a-81aac34a21a3")
+	)
+	(wire
+		(pts
 			(xy 106.68 64.77) (xy 120.65 64.77)
 		)
 		(stroke
@@ -3491,26 +3465,6 @@
 			(type default)
 		)
 		(uuid "3edb7b86-9932-4b25-8a03-dc3fe5e4be9c")
-	)
-	(wire
-		(pts
-			(xy 236.22 45.72) (xy 247.65 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3efc70c8-8e03-4b87-a5f6-8337443d3c22")
-	)
-	(wire
-		(pts
-			(xy 236.22 30.48) (xy 236.22 35.56)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3fe4152e-e9d5-4453-b158-b38b86d5d7dd")
 	)
 	(wire
 		(pts
@@ -3524,6 +3478,16 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 115.57) (xy 71.12 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "42e58f7f-bec2-4da4-b383-03fd557f4f63")
+	)
+	(wire
+		(pts
 			(xy 184.15 35.56) (xy 190.5 35.56)
 		)
 		(stroke
@@ -3534,17 +3498,7 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 45.72) (xy 238.76 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "454d50a5-38b9-4a37-b4c8-ee9cb639929d")
-	)
-	(wire
-		(pts
-			(xy 77.47 163.83) (xy 77.47 173.99)
+			(xy 83.82 163.83) (xy 83.82 173.99)
 		)
 		(stroke
 			(width 0)
@@ -3554,33 +3508,13 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 66.04) (xy 191.77 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "48c04a71-e259-4e25-aff2-e30e9bfd68fe")
-	)
-	(wire
-		(pts
-			(xy 26.67 137.16) (xy 26.67 142.24)
+			(xy 33.02 137.16) (xy 33.02 142.24)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "500f2466-2607-4d52-9dd0-4cfa1c21ad6e")
-	)
-	(wire
-		(pts
-			(xy 68.58 29.21) (xy 68.58 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "556cf4f0-2a42-4582-9123-a4c8e322e4b2")
 	)
 	(wire
 		(pts
@@ -3594,13 +3528,13 @@
 	)
 	(wire
 		(pts
-			(xy 45.72 115.57) (xy 60.96 115.57)
+			(xy 184.15 78.74) (xy 187.96 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "5b7bf1d9-8f5c-4e95-af3d-cde11dacdfb9")
+		(uuid "5c1134bc-d4ae-4ce8-81a5-c1e91e66172d")
 	)
 	(wire
 		(pts
@@ -3614,23 +3548,43 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 110.49) (xy 179.07 110.49)
+			(xy 57.15 147.32) (xy 59.69 147.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "5f82a6f7-a9f1-448a-a769-64f9bfee7ace")
+		(uuid "6199304b-1b03-41b4-8520-326e1070d807")
 	)
 	(wire
 		(pts
-			(xy 60.96 152.4) (xy 60.96 163.83)
+			(xy 212.09 60.96) (xy 247.65 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64cbc5eb-330b-4ff0-8a03-d4335b5cfb35")
+	)
+	(wire
+		(pts
+			(xy 71.12 152.4) (xy 71.12 163.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "6775b9f4-8ac5-44fc-aec9-ac46575befc1")
+	)
+	(wire
+		(pts
+			(xy 184.15 63.5) (xy 201.93 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6c954803-77f4-4814-a016-23d169124c53")
 	)
 	(wire
 		(pts
@@ -3664,16 +3618,6 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 45.72) (xy 236.22 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "6fbcecbb-432b-4268-9d88-4fa540d0879d")
-	)
-	(wire
-		(pts
 			(xy 50.8 67.31) (xy 50.8 73.66)
 		)
 		(stroke
@@ -3684,7 +3628,7 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 40.64) (xy 50.8 40.64)
+			(xy 21.59 40.64) (xy 50.8 40.64)
 		)
 		(stroke
 			(width 0)
@@ -3694,17 +3638,17 @@
 	)
 	(wire
 		(pts
-			(xy 160.02 110.49) (xy 162.56 110.49)
+			(xy 247.65 87.63) (xy 247.65 93.98)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "738991a3-9890-4d11-9fd8-088db0e1c4bd")
+		(uuid "757075d9-6771-411d-a62a-1da1d94d718c")
 	)
 	(wire
 		(pts
-			(xy 53.34 147.32) (xy 53.34 151.13)
+			(xy 57.15 147.32) (xy 57.15 151.13)
 		)
 		(stroke
 			(width 0)
@@ -3714,7 +3658,7 @@
 	)
 	(wire
 		(pts
-			(xy 43.18 163.83) (xy 60.96 163.83)
+			(xy 43.18 163.83) (xy 59.69 163.83)
 		)
 		(stroke
 			(width 0)
@@ -3724,13 +3668,13 @@
 	)
 	(wire
 		(pts
-			(xy 162.56 110.49) (xy 165.1 110.49)
+			(xy 59.69 115.57) (xy 59.69 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "77563d64-f3ab-40a1-ad99-a3168ecf9ecc")
+		(uuid "79884ff8-ba59-4ba6-a989-d5ce133b965d")
 	)
 	(wire
 		(pts
@@ -3744,23 +3688,13 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 35.56) (xy 247.65 35.56)
+			(xy 247.65 113.03) (xy 247.65 119.38)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7b3c87a0-022a-4e24-aefc-ad417e5fb752")
-	)
-	(wire
-		(pts
-			(xy 184.15 68.58) (xy 191.77 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7f2938ec-84fe-49ef-8a12-3c82d4730b1b")
+		(uuid "81ded6ba-9320-4224-b154-5ca303bcaacf")
 	)
 	(wire
 		(pts
@@ -3774,7 +3708,17 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 163.83) (xy 26.67 168.91)
+			(xy 247.65 125.73) (xy 247.65 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82e3b081-eed8-45c5-aa60-65c738889a62")
+	)
+	(wire
+		(pts
+			(xy 33.02 163.83) (xy 33.02 168.91)
 		)
 		(stroke
 			(width 0)
@@ -3784,13 +3728,13 @@
 	)
 	(wire
 		(pts
-			(xy 165.1 110.49) (xy 173.99 110.49)
+			(xy 50.8 20.32) (xy 68.58 20.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "847b4493-7d49-4513-908c-4645b7500770")
+		(uuid "8b04d0ff-11ec-495d-ac9e-7c1d90489011")
 	)
 	(wire
 		(pts
@@ -3804,6 +3748,16 @@
 	)
 	(wire
 		(pts
+			(xy 21.59 130.81) (xy 21.59 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8c5a91f5-ca29-4134-a167-656ad7367b66")
+	)
+	(wire
+		(pts
 			(xy 106.68 38.1) (xy 106.68 43.18)
 		)
 		(stroke
@@ -3814,17 +3768,17 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 50.8) (xy 247.65 50.8)
+			(xy 19.05 147.32) (xy 21.59 147.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "9678251c-75d5-4217-8d58-390fab38582c")
+		(uuid "8f873ae1-6ba8-4eec-82eb-71d77651cad5")
 	)
 	(wire
 		(pts
-			(xy 26.67 115.57) (xy 26.67 123.19)
+			(xy 33.02 115.57) (xy 33.02 123.19)
 		)
 		(stroke
 			(width 0)
@@ -3834,37 +3788,7 @@
 	)
 	(wire
 		(pts
-			(xy 238.76 33.02) (xy 247.65 33.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9716e2c7-ae5d-4ffe-896a-4fd36693e1f2")
-	)
-	(wire
-		(pts
-			(xy 241.3 113.03) (xy 241.3 114.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "97467d8a-7c43-4397-ade5-3949ccbe1776")
-	)
-	(wire
-		(pts
-			(xy 229.87 106.68) (xy 229.87 114.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "98222da2-63dd-4c89-a368-c37970cfdf46")
-	)
-	(wire
-		(pts
-			(xy 26.67 152.4) (xy 26.67 163.83)
+			(xy 33.02 152.4) (xy 33.02 163.83)
 		)
 		(stroke
 			(width 0)
@@ -3884,16 +3808,6 @@
 	)
 	(wire
 		(pts
-			(xy 191.77 68.58) (xy 229.87 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9d23220c-7d15-4dc7-9a57-8a079dcfac8b")
-	)
-	(wire
-		(pts
 			(xy 205.74 48.26) (xy 195.58 38.1)
 		)
 		(stroke
@@ -3904,33 +3818,33 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 58.42) (xy 191.77 58.42)
+			(xy 59.69 160.02) (xy 59.69 163.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a32896ce-4f65-4c8d-87a8-be3fceb78fd9")
+		(uuid "a55bdeb8-6fec-4a5d-b9b9-4df727ce3d05")
 	)
 	(wire
 		(pts
-			(xy 236.22 30.48) (xy 247.65 30.48)
+			(xy 21.59 160.02) (xy 21.59 163.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a7e3a2ea-e28a-40bc-91fc-c687379d972d")
+		(uuid "ad654301-fb56-4882-b418-edb2e6b8ebac")
 	)
 	(wire
 		(pts
-			(xy 176.53 110.49) (xy 176.53 114.3)
+			(xy 218.44 58.42) (xy 243.84 83.82)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "aa454eaa-a755-4be1-b1d6-9e28c98affa5")
+		(uuid "ae4ef063-e15e-4711-8ab0-62148517b4a1")
 	)
 	(wire
 		(pts
@@ -3944,7 +3858,7 @@
 	)
 	(wire
 		(pts
-			(xy 80.01 142.24) (xy 80.01 173.99)
+			(xy 86.36 142.24) (xy 86.36 173.99)
 		)
 		(stroke
 			(width 0)
@@ -3954,33 +3868,43 @@
 	)
 	(wire
 		(pts
-			(xy 227.33 106.68) (xy 227.33 114.3)
+			(xy 184.15 66.04) (xy 191.77 66.04)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b8b288a6-ec56-4c40-ac15-5b92d6eb332a")
+		(uuid "b4358850-f62d-4a15-b5b3-1ccc21aa41d3")
 	)
 	(wire
 		(pts
-			(xy 26.67 130.81) (xy 26.67 137.16)
+			(xy 247.65 74.93) (xy 247.65 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b71ca206-9303-4dd6-924c-a5bb4ba863a8")
+	)
+	(wire
+		(pts
+			(xy 247.65 36.83) (xy 247.65 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7b11e11-02e0-44ba-9ee4-a0a6743b77b6")
+	)
+	(wire
+		(pts
+			(xy 33.02 130.81) (xy 33.02 137.16)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "b9880047-49c8-49aa-8745-c730d88018db")
-	)
-	(wire
-		(pts
-			(xy 184.15 60.96) (xy 191.77 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b9f8818f-f83d-4242-971a-31a95cd4db31")
 	)
 	(wire
 		(pts
@@ -3994,7 +3918,17 @@
 	)
 	(wire
 		(pts
-			(xy 26.67 163.83) (xy 43.18 163.83)
+			(xy 247.65 21.59) (xy 247.65 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be01e278-770c-4a5d-b3a6-ac7e8995befe")
+	)
+	(wire
+		(pts
+			(xy 33.02 163.83) (xy 43.18 163.83)
 		)
 		(stroke
 			(width 0)
@@ -4014,17 +3948,27 @@
 	)
 	(wire
 		(pts
-			(xy 246.38 113.03) (xy 246.38 114.3)
+			(xy 184.15 81.28) (xy 184.15 83.82)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c2e7f050-a2a2-4093-b24c-8f5bdbaeacdf")
+		(uuid "c1a6833f-97c9-4522-866a-c3980a691b36")
 	)
 	(wire
 		(pts
-			(xy 50.8 29.21) (xy 50.8 40.64)
+			(xy 59.69 130.81) (xy 59.69 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c1d55ed2-db03-44cd-aacd-52e7058559fb")
+	)
+	(wire
+		(pts
+			(xy 50.8 29.21) (xy 50.8 38.1)
 		)
 		(stroke
 			(width 0)
@@ -4034,13 +3978,23 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 137.16) (xy 72.39 137.16)
+			(xy 71.12 137.16) (xy 78.74 137.16)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "c6cf6136-5880-4dda-812a-03a33b505444")
+	)
+	(wire
+		(pts
+			(xy 184.15 60.96) (xy 212.09 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c9232191-2dd3-48cb-912d-47c306bd96e8")
 	)
 	(wire
 		(pts
@@ -4054,13 +4008,13 @@
 	)
 	(wire
 		(pts
-			(xy 191.77 60.96) (xy 243.84 113.03)
+			(xy 83.82 20.32) (xy 106.68 20.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "cbdb18ac-bb2d-42fb-a364-9a28c28a6cc2")
+		(uuid "ce178a81-dc71-4315-a4bf-e70fca5a0a27")
 	)
 	(wire
 		(pts
@@ -4074,6 +4028,16 @@
 	)
 	(wire
 		(pts
+			(xy 243.84 134.62) (xy 247.65 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cf41dc23-5e69-4251-8ad3-48ecc8ab253c")
+	)
+	(wire
+		(pts
 			(xy 19.05 147.32) (xy 19.05 151.13)
 		)
 		(stroke
@@ -4084,13 +4048,33 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 130.81) (xy 60.96 137.16)
+			(xy 184.15 58.42) (xy 218.44 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d2237a5e-be6a-4301-8075-cdb92525d419")
+	)
+	(wire
+		(pts
+			(xy 71.12 130.81) (xy 71.12 137.16)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "d26b17f3-2033-46da-a666-438dc79229cc")
+	)
+	(wire
+		(pts
+			(xy 21.59 147.32) (xy 21.59 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d3be7225-6448-4fed-ba76-6ab441066627")
 	)
 	(wire
 		(pts
@@ -4104,27 +4088,27 @@
 	)
 	(wire
 		(pts
-			(xy 232.41 106.68) (xy 232.41 114.3)
+			(xy 243.84 83.82) (xy 247.65 83.82)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d9bd676c-95b5-4b71-9957-a58718fc73eb")
+		(uuid "d7e78593-4e29-443d-9d6a-22559f808b70")
 	)
 	(wire
 		(pts
-			(xy 179.07 106.68) (xy 179.07 110.49)
+			(xy 247.65 45.72) (xy 241.3 45.72)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "dda5f329-5bec-4e1c-a67b-b33c6fdcf608")
+		(uuid "dc08b578-d088-4fb6-bacd-7fb33c120753")
 	)
 	(wire
 		(pts
-			(xy 60.96 115.57) (xy 60.96 123.19)
+			(xy 71.12 115.57) (xy 71.12 123.19)
 		)
 		(stroke
 			(width 0)
@@ -4144,6 +4128,26 @@
 	)
 	(wire
 		(pts
+			(xy 76.2 45.72) (xy 76.2 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e62982ce-83e6-4ee3-afde-118d20ebad0f")
+	)
+	(wire
+		(pts
+			(xy 21.59 147.32) (xy 25.4 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e75e459f-3ba3-461d-a31e-ba0f8afb0b0c")
+	)
+	(wire
+		(pts
 			(xy 50.8 96.52) (xy 50.8 104.14)
 		)
 		(stroke
@@ -4154,33 +4158,33 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 30.48) (xy 238.76 33.02)
+			(xy 241.3 147.32) (xy 247.65 147.32)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e9e9b6d3-0a99-434f-8c6a-4c751475010c")
+		(uuid "e9fedc90-0ced-4a32-b8f3-81439b5eca1b")
 	)
 	(wire
 		(pts
-			(xy 191.77 58.42) (xy 246.38 113.03)
+			(xy 184.15 71.12) (xy 187.96 71.12)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ec49e913-b9a0-4083-8037-56688379c1c7")
+		(uuid "ea0d8329-669f-46f3-a788-369f6cc955a7")
 	)
 	(wire
 		(pts
-			(xy 238.76 48.26) (xy 247.65 48.26)
+			(xy 187.96 76.2) (xy 187.96 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ee101bd8-fa40-4df4-87e4-830be5ff7d1a")
+		(uuid "ed43b3c5-8102-400a-b5d6-5dc82f28831f")
 	)
 	(wire
 		(pts
@@ -4194,13 +4198,33 @@
 	)
 	(wire
 		(pts
-			(xy 76.2 45.72) (xy 76.2 49.53)
+			(xy 232.41 30.48) (xy 232.41 36.83)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f1ceda24-dcca-4401-a4cd-93e41f39cff9")
+		(uuid "f0319a52-fbe4-4bf5-9cf6-c644eb929542")
+	)
+	(wire
+		(pts
+			(xy 232.41 30.48) (xy 247.65 30.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0ac36c6-9034-4d74-b951-f58ca6dc8beb")
+	)
+	(wire
+		(pts
+			(xy 21.59 163.83) (xy 33.02 163.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0ca5272-95ce-4444-aa7e-d4e467b9b1bf")
 	)
 	(wire
 		(pts
@@ -4214,13 +4238,23 @@
 	)
 	(wire
 		(pts
-			(xy 60.96 137.16) (xy 60.96 142.24)
+			(xy 71.12 137.16) (xy 71.12 142.24)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "f373e76d-8b7d-4202-98bc-f328efcbc2e0")
+	)
+	(wire
+		(pts
+			(xy 187.96 71.12) (xy 241.3 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f3d9e46a-af4d-41a5-a24e-91462c7cf439")
 	)
 	(wire
 		(pts
@@ -4234,33 +4268,13 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 71.12) (xy 191.77 71.12)
+			(xy 189.23 68.58) (xy 243.84 123.19)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f77ba41b-be27-4564-bf12-808cc8e1db08")
-	)
-	(wire
-		(pts
-			(xy 191.77 63.5) (xy 241.3 113.03)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fbccd539-0f55-405f-a975-80c899610269")
-	)
-	(wire
-		(pts
-			(xy 243.84 114.3) (xy 243.84 113.03)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fc315466-40df-45f3-b52f-ae9d645ecea4")
+		(uuid "fd0d43a3-3746-422c-a17f-c3e1d6ff2f81")
 	)
 	(wire
 		(pts
@@ -4273,12 +4287,12 @@
 		(uuid "ff8a36ff-7ce9-4898-9c02-433163c83567")
 	)
 	(label "FIRE_PIN_A"
-		(at 116.84 81.28 0)
+		(at 187.96 76.2 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left bottom)
+			(justify right bottom)
 		)
 		(uuid "049853dd-ce54-4e4f-9c5f-aace241d98aa")
 	)
@@ -4293,7 +4307,7 @@
 		(uuid "0a5f845b-b336-4287-afd7-d9697d473bf5")
 	)
 	(label "FIRE_PIN_B"
-		(at 106.68 78.74 0)
+		(at 186.69 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4301,6 +4315,16 @@
 			(justify left bottom)
 		)
 		(uuid "13343c2f-5ee0-427a-ade6-f1f0a4e4053c")
+	)
+	(label "GND"
+		(at 247.65 74.93 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "17d8d34b-e7a0-4929-923c-846642bdbbdc")
 	)
 	(label "GND"
 		(at 40.64 26.67 0)
@@ -4311,6 +4335,26 @@
 			(justify left bottom)
 		)
 		(uuid "1d1bccd5-bf04-4e50-a87e-67195da43c38")
+	)
+	(label "GND"
+		(at 247.65 113.03 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "24db1c14-1ea4-4814-b8a4-2d4f11cb785c")
+	)
+	(label "GND"
+		(at 247.65 100.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "25f7ad76-e2b8-45ea-82a5-e9b7d310dc3e")
 	)
 	(label "FIRE_PIN_A"
 		(at 19.05 151.13 270)
@@ -4333,6 +4377,26 @@
 		(uuid "3ddb73b6-f2e2-47fa-9d03-827630e056f6")
 	)
 	(label "GND"
+		(at 247.65 87.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6561d0d7-1612-4ab7-bac3-2ad65c4b7a02")
+	)
+	(label "GND"
+		(at 76.2 30.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "6ac35f58-e2f2-4c62-9ede-78210554dddb")
+	)
+	(label "GND"
 		(at 190.5 35.56 0)
 		(effects
 			(font
@@ -4341,16 +4405,6 @@
 			(justify left bottom)
 		)
 		(uuid "6c7fc090-1371-4df9-8bf1-5f5e24342308")
-	)
-	(label "GND"
-		(at 179.07 106.68 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "72471541-b52c-4b25-9c41-d4c7f5ade663")
 	)
 	(label "STATUS_PIN"
 		(at 116.84 76.2 0)
@@ -4363,7 +4417,7 @@
 		(uuid "725364ab-dade-4a3d-a5c3-56dcd566d6f7")
 	)
 	(label "GND"
-		(at 76.2 49.53 0)
+		(at 76.2 48.26 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4372,8 +4426,18 @@
 		)
 		(uuid "76746ebd-7472-4329-839a-8b3034d35fca")
 	)
+	(label "GND"
+		(at 247.65 125.73 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "7ae38125-3bdc-4c3d-8760-bb0c56f696b7")
+	)
 	(label "FIRE_PIN_B"
-		(at 53.34 151.13 270)
+		(at 57.15 151.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4402,6 +4466,16 @@
 		)
 		(uuid "98c734a1-e13a-4c21-b0c9-10cf75d17912")
 	)
+	(label "GND"
+		(at 247.65 138.43 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "af3c90fb-f080-4165-9672-cab0c1267867")
+	)
 	(label "VIN"
 		(at 232.41 30.48 0)
 		(effects
@@ -4413,7 +4487,7 @@
 		(uuid "bc0e154e-f401-40fc-83fd-0e45b03b5ae2")
 	)
 	(label "GND"
-		(at 26.67 168.91 0)
+		(at 33.02 168.91 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4433,7 +4507,7 @@
 		(uuid "e0b35885-3fb4-4952-a915-5007a55ba767")
 	)
 	(label "GND"
-		(at 232.41 45.72 0)
+		(at 247.65 21.59 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4451,6 +4525,16 @@
 			(justify left bottom)
 		)
 		(uuid "f69aee51-7aa2-4fbd-8092-b791c0ca800c")
+	)
+	(label "GND"
+		(at 247.65 36.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f8e2bf69-5be7-4038-a514-62e3829cd675")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -4519,8 +4603,78 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 96.52 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1047871b-f947-4457-9bea-0418e4c5be8e")
+		(property "Reference" "J5"
+			(at 254 93.9799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "A2_01x02_JST"
+			(at 254 96.5199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "042cce50-7943-4765-8fa9-c3bbe4c5080d")
+		)
+		(pin "1"
+			(uuid "67e0cef9-ac66-4d6c-b360-8f42fbcb5077")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Transistor_BJT:PN2222A")
-		(at 24.13 147.32 0)
+		(at 30.48 147.32 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4529,7 +4683,7 @@
 		(fields_autoplaced yes)
 		(uuid "11674326-a4c8-4575-99c4-09a2467a8e27")
 		(property "Reference" "Q1"
-			(at 29.21 146.0499 0)
+			(at 35.56 146.0499 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4538,7 +4692,7 @@
 			)
 		)
 		(property "Value" "2N2222"
-			(at 29.21 148.5899 0)
+			(at 35.56 148.5899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4546,8 +4700,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
-			(at 29.21 149.225 0)
+		(property "Footprint" "Package_TO_SOT_THT:TO-92L_Wide"
+			(at 35.56 149.225 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4558,7 +4712,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20/"
-			(at 24.13 147.32 0)
+			(at 30.48 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4568,7 +4722,7 @@
 			)
 		)
 		(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
-			(at 24.13 147.32 0)
+			(at 30.48 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4589,6 +4743,76 @@
 			(project ""
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 121.92 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2769c334-8c0e-4e7b-bd3f-80cc1de4794a")
+		(property "Reference" "J7"
+			(at 254 119.3799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "A4_01x02_JST"
+			(at 254 121.9199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "195ff6ca-3a8c-4acf-a82a-4e1c781daa1d")
+		)
+		(pin "1"
+			(uuid "89f93a1f-9280-49a9-9f75-f4e7e1c9496c")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J7")
 					(unit 1)
 				)
 			)
@@ -4665,78 +4889,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 229.87 119.38 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3072fa9c-53bf-4a9c-aaed-283eea0eb813")
-		(property "Reference" "J7"
-			(at 234.95 118.1099 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Spring_Terminal_A4toA6_SIG"
-			(at 234.95 120.6499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 229.87 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 229.87 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 229.87 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "3"
-			(uuid "04d7fab2-e19a-42c4-8669-0495a58e8a77")
-		)
-		(pin "2"
-			(uuid "fbdc6fd6-6dc4-425e-9e3a-4f3096715587")
-		)
-		(pin "1"
-			(uuid "a8240ed4-024f-463c-8b08-30f24a14b355")
-		)
-		(instances
-			(project "FireSide"
-				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:Screw_Terminal_01x02")
 		(at 45.72 179.07 270)
 		(unit 1)
@@ -4745,7 +4897,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "385e54e4-84aa-47d0-83f7-0e3abf78705b")
-		(property "Reference" "J4"
+		(property "Reference" "J2"
 			(at 48.26 177.7999 90)
 			(effects
 				(font
@@ -4754,8 +4906,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Screw_Terminal_Igniter_A"
-			(at 33.02 182.118 90)
+		(property "Value" "Igniter_A_Screws"
+			(at 36.576 181.864 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4799,7 +4951,77 @@
 		(instances
 			(project ""
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J4")
+					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 59.69 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4262c020-f639-462b-b248-0c8f07abc834")
+		(property "Reference" "R7"
+			(at 62.23 125.7299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 62.23 128.2699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
+			(at 57.912 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 59.69 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 59.69 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "a55cb9d9-d8e2-4cef-bc87-d77ef463824c")
+		)
+		(pin "1"
+			(uuid "d08744c0-b4e2-4e94-9e94-3c14b78b63a0")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -4870,6 +5092,216 @@
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "C2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 55.88 64.77 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4dd3c950-e5c6-4812-9356-c5c202be002b")
+		(property "Reference" "J13"
+			(at 57.15 67.3101 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Status_01x02_JST"
+			(at 57.15 64.7701 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "8e981664-0014-4cce-b4cd-94226019025e")
+		)
+		(pin "1"
+			(uuid "7ba38b87-9a6c-4488-b3bc-83b2ffa156f9")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 30.48 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "510ea3bb-7f5e-4a27-abd3-24d631530d15")
+		(property "Reference" "J10"
+			(at 254 27.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "5V_01x02_JST"
+			(at 254 30.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "225a2622-9ff1-4ea8-be2f-c0dd08ac5eb4")
+		)
+		(pin "1"
+			(uuid "0ce6a569-b5ac-4717-ba95-2b77d1f2f2e8")
+		)
+		(instances
+			(project ""
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 83.82 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "525d5a98-7019-4e6c-ae75-d03e77ddde7c")
+		(property "Reference" "J4"
+			(at 254 81.2799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "A1_01x02_JST"
+			(at 254 83.8199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "ecfe308f-5611-4459-b9f4-dbd3d2b07fe8")
+		)
+		(pin "1"
+			(uuid "03f17937-414e-4eeb-95a6-f18db71e849e")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -5089,7 +5521,7 @@
 	)
 	(symbol
 		(lib_id "Transistor_BJT:PN2222A")
-		(at 58.42 147.32 0)
+		(at 68.58 147.32 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5098,7 +5530,7 @@
 		(fields_autoplaced yes)
 		(uuid "5c5ae91b-bb27-447e-b4b7-927d5307a514")
 		(property "Reference" "Q3"
-			(at 63.5 146.0499 0)
+			(at 73.66 146.0499 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5107,7 +5539,7 @@
 			)
 		)
 		(property "Value" "2N2222"
-			(at 63.5 148.5899 0)
+			(at 73.66 148.5899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5115,8 +5547,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
-			(at 63.5 149.225 0)
+		(property "Footprint" "Package_TO_SOT_THT:TO-92L_Wide"
+			(at 73.66 149.225 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5127,7 +5559,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/2n2222-npn-transistor-pack-of-20/"
-			(at 58.42 147.32 0)
+			(at 68.58 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5137,7 +5569,7 @@
 			)
 		)
 		(property "Description" "1A Ic, 40V Vce, NPN Transistor, General Purpose Transistor, TO-92"
-			(at 58.42 147.32 0)
+			(at 68.58 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5158,6 +5590,76 @@
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
 					(reference "Q3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 147.32 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5d645982-26a8-4303-93e4-b8d5bb2674bb")
+		(property "Reference" "J9"
+			(at 254 144.7799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "A6_01x02_JST"
+			(at 254 147.3199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "affe92f8-2a8f-44d2-85a0-596948933357")
+		)
+		(pin "1"
+			(uuid "33398c26-907b-4cbc-9a11-fdade39acf6c")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J9")
 					(unit 1)
 				)
 			)
@@ -5235,7 +5737,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 26.67 127 0)
+		(at 33.02 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5244,7 +5746,7 @@
 		(fields_autoplaced yes)
 		(uuid "639a7d52-2fd8-43e9-8e8c-474bc0dc2cbe")
 		(property "Reference" "R2"
-			(at 29.21 125.7299 0)
+			(at 35.56 125.7299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5253,7 +5755,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 29.21 128.2699 0)
+			(at 35.56 128.2699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5262,7 +5764,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
-			(at 24.892 127 90)
+			(at 31.242 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5271,7 +5773,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
-			(at 26.67 127 0)
+			(at 33.02 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5280,7 +5782,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 26.67 127 0)
+			(at 33.02 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5304,6 +5806,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R")
+		(at 59.69 156.21 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "66724cd7-9035-4bfd-bb43-55d0020836e2")
+		(property "Reference" "R8"
+			(at 62.23 154.9399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "50k"
+			(at 62.23 157.4799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
+			(at 57.912 156.21 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 59.69 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 59.69 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "8f8e41b2-1afd-47b8-9ac3-3177deb63412")
+		)
+		(pin "1"
+			(uuid "068c57cf-32b8-443d-a1d9-45efb58e26d9")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "R8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Transistor_FET:IRLZ44N")
 		(at 43.18 137.16 0)
 		(unit 1)
@@ -5311,10 +5883,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "78a8bbdf-2549-4249-b46c-5b987324949d")
 		(property "Reference" "Q2"
-			(at 49.53 135.8899 0)
+			(at 48.514 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5323,7 +5894,7 @@
 			)
 		)
 		(property "Value" "IRLZ44N"
-			(at 49.53 138.4299 0)
+			(at 49.53 138.4299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5450,6 +6021,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 45.72 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9608261e-59c2-4f4f-8b68-c35a26610bf8")
+		(property "Reference" "J11"
+			(at 254 43.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "5V_01x02_JST"
+			(at 254 45.7199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "e52f1cb1-f389-4f7a-b1c7-985e5bbb31d4")
+		)
+		(pin "1"
+			(uuid "9becad32-227a-4942-9ab4-f597d49e3c7e")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "J11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "RYLR998:RYLR998")
 		(at 215.9 35.56 0)
 		(unit 1)
@@ -5459,7 +6100,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a02a0fd0-f018-4880-a55d-73932e6a39e7")
-		(property "Reference" "U2"
+		(property "Reference" "U3"
 			(at 224.79 32.0039 0)
 			(effects
 				(font
@@ -5522,7 +6163,77 @@
 		(instances
 			(project ""
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "U2")
+					(reference "U3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 21.59 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a6586a05-4294-472f-a4dc-8b27776da058")
+		(property "Reference" "R5"
+			(at 24.13 125.7299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100k"
+			(at 24.13 128.2699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
+			(at 19.812 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 21.59 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 21.59 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "7932d82c-9dc0-4e22-bdec-14b6805ba86d")
+		)
+		(pin "1"
+			(uuid "38b78127-4ecc-458f-a770-1154ca9c3d4b")
+		)
+		(instances
+			(project "FireSide"
+				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
+					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -5719,16 +6430,15 @@
 	)
 	(symbol
 		(lib_id "Transistor_FET:IRLZ44N")
-		(at 77.47 137.16 0)
+		(at 83.82 137.16 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "b79801b0-2bd1-4f84-941f-cc5cc387a37e")
 		(property "Reference" "Q4"
-			(at 83.82 135.8899 0)
+			(at 89.154 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5737,7 +6447,7 @@
 			)
 		)
 		(property "Value" "IRLZ44N"
-			(at 83.82 138.4299 0)
+			(at 90.17 138.4299 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5746,7 +6456,7 @@
 			)
 		)
 		(property "Footprint" "Package_TO_SOT_THT:TO-220-3_Horizontal_TabDown"
-			(at 82.55 139.065 0)
+			(at 88.9 139.065 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5757,7 +6467,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/irlz44n/"
-			(at 82.55 140.97 0)
+			(at 88.9 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5767,7 +6477,7 @@
 			)
 		)
 		(property "Description" "47A Id, 55V Vds, 22mOhm Rds Single N-Channel HEXFET Power MOSFET, TO-220AB"
-			(at 77.47 137.16 0)
+			(at 83.82 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5794,34 +6504,43 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 162.56 119.38 270)
+		(lib_id "Regulator_Linear:LM7805_TO220")
+		(at 76.2 20.32 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c1d3e230-bd39-461b-94d2-15ab7246cbf5")
-		(property "Reference" "J9"
-			(at 167.64 118.1099 90)
+		(fields_autoplaced yes)
+		(uuid "c0c42b9e-a5cd-4b40-a101-f3cc582bdca3")
+		(property "Reference" "U1"
+			(at 76.2 13.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Value" "Spring_Terminal_A4toA6_GND"
-			(at 167.64 120.6499 0)
+		(property "Value" "LM7805ABV"
+			(at 76.2 16.51 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 162.56 119.38 0)
+		(property "Footprint" "Package_TO_SOT_THT:TO-220-3_Horizontal_TabDown"
+			(at 76.2 14.605 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/l7805abv-stmicroelectronics-voltage-regulator/"
+			(at 76.2 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5829,17 +6548,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 162.56 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 162.56 119.38 0)
+		(property "Description" "Positive 1A 35V Linear Regulator, Fixed Output 5V, TO-220"
+			(at 76.2 20.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5848,18 +6558,18 @@
 			)
 		)
 		(pin "3"
-			(uuid "f257b83d-359d-45a0-8119-5f70509a3dd2")
-		)
-		(pin "2"
-			(uuid "29ca41ca-0bfe-4e3c-9a54-05e4b3aa960b")
+			(uuid "07972f4f-5506-42fd-b80a-3293dbcdebed")
 		)
 		(pin "1"
-			(uuid "1e25a2bf-cad0-4916-bd0a-fdb59f58eefb")
+			(uuid "48cbc789-70ea-4e81-8079-a663ba2cd176")
+		)
+		(pin "2"
+			(uuid "2740b842-3e96-4c38-b8c5-b8625e964414")
 		)
 		(instances
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J9")
+					(reference "U1")
 					(unit 1)
 				)
 			)
@@ -5875,7 +6585,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c2307de5-7855-4028-8d6d-4bd0ac085892")
-		(property "Reference" "U1"
+		(property "Reference" "U2"
 			(at 76.2 31.75 0)
 			(effects
 				(font
@@ -5931,151 +6641,7 @@
 		(instances
 			(project ""
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 176.53 119.38 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "caa83b28-134d-4525-9b85-fd50b7d9992e")
-		(property "Reference" "J8"
-			(at 181.61 118.1099 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Spring_Terminal_A1toA3_GND"
-			(at 181.61 120.6499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 176.53 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 176.53 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 176.53 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "3"
-			(uuid "f2769547-93a4-45f2-ada0-d397841f8361")
-		)
-		(pin "2"
-			(uuid "80e0d9d5-82fd-461a-b7c5-5de6275253d7")
-		)
-		(pin "1"
-			(uuid "8e9409a0-f326-466d-9bdd-ba0c2379a160")
-		)
-		(instances
-			(project "FireSide"
-				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 243.84 119.38 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "cab20ed2-90b6-4f10-bfe7-8565a521de83")
-		(property "Reference" "J6"
-			(at 248.92 118.1099 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Spring_Terminal_A1toA3_SIG"
-			(at 248.92 120.6499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 243.84 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 243.84 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 243.84 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "3"
-			(uuid "8c53b461-fbc2-4e76-91c5-1a0d1f210a66")
-		)
-		(pin "2"
-			(uuid "63ff98bb-eaf5-45d5-a148-3c904420b99d")
-		)
-		(pin "1"
-			(uuid "4482ef48-86fd-4db0-99d5-e1cd47d185bd")
-		)
-		(instances
-			(project "FireSide"
-				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J6")
+					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -6083,7 +6649,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 60.96 127 0)
+		(at 71.12 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6092,7 +6658,7 @@
 		(fields_autoplaced yes)
 		(uuid "cacb4544-66a5-4f66-9c12-2ce4a65004c9")
 		(property "Reference" "R3"
-			(at 63.5 125.7299 0)
+			(at 73.66 125.7299 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6101,7 +6667,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 63.5 128.2699 0)
+			(at 73.66 128.2699 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6110,7 +6676,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
-			(at 59.182 127 90)
+			(at 69.342 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6119,7 +6685,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
-			(at 60.96 127 0)
+			(at 71.12 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6128,7 +6694,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 60.96 127 0)
+			(at 71.12 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6153,15 +6719,15 @@
 	)
 	(symbol
 		(lib_id "Connector:Screw_Terminal_01x02")
-		(at 80.01 179.07 270)
+		(at 86.36 179.07 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "cf36d7f5-b15d-48ed-99ce-7f6271422105")
-		(property "Reference" "J5"
-			(at 82.55 177.7999 90)
+		(property "Reference" "J3"
+			(at 88.9 177.7999 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6169,8 +6735,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Screw_Terminal_Igniter_B"
-			(at 67.31 182.118 90)
+		(property "Value" "Igniter_B_Screws"
+			(at 77.47 182.118 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6179,7 +6745,7 @@
 			)
 		)
 		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type059_RT06302HBWC_1x02_P3.50mm_Horizontal"
-			(at 80.01 179.07 0)
+			(at 86.36 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6188,7 +6754,7 @@
 			)
 		)
 		(property "Datasheet" "https://robu.in/product/2-pin-straight-pcb-screw-terminal-block-connector-3-5mm-pitch/"
-			(at 80.01 179.07 0)
+			(at 86.36 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6197,7 +6763,7 @@
 			)
 		)
 		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 80.01 179.07 0)
+			(at 86.36 179.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6214,7 +6780,7 @@
 		(instances
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J5")
+					(reference "J3")
 					(unit 1)
 				)
 			)
@@ -6248,7 +6814,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_HandSolder"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92L_Wide"
 			(at 53.34 93.345 0)
 			(effects
 				(font
@@ -6297,44 +6863,35 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 252.73 33.02 0)
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 134.62 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "efb5829a-bc03-4bb0-aee5-887e62171a8d")
-		(property "Reference" "J2"
-			(at 255.27 31.7499 0)
+		(uuid "f73a5d0a-4317-4f26-be0c-6de32f747509")
+		(property "Reference" "J8"
+			(at 254 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
-		(property "Value" "Spring_Terminal_Sensor_5V"
-			(at 255.27 34.2899 0)
+		(property "Value" "A5_01x02_JST"
+			(at 254 134.6199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 252.73 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 252.73 33.02 0)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6342,8 +6899,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 252.73 33.02 0)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6351,36 +6908,42 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
-			(uuid "30fb58c0-46a0-43af-b9f7-2dcbe2b010db")
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
 		)
 		(pin "2"
-			(uuid "87ada1d3-29a7-47e6-a164-b4e23a80fc00")
+			(uuid "4b7f260d-c390-4213-b6bd-7b846da686e9")
 		)
 		(pin "1"
-			(uuid "036d09f3-ea18-487b-adcd-b24cfd3d7be3")
+			(uuid "c368224f-df98-4b6e-bb85-da9e8e1ab6bb")
 		)
 		(instances
-			(project ""
+			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J2")
+					(reference "J8")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "Connector:Screw_Terminal_01x02")
-		(at 55.88 64.77 0)
+		(lib_id "Device:R")
+		(at 21.59 156.21 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "f065bfa4-9daf-465b-b46e-307273e0a4d8")
-		(property "Reference" "J10"
-			(at 58.42 64.7699 0)
+		(uuid "f82f9e6e-9685-45b7-8409-2e9bf36810a4")
+		(property "Reference" "R6"
+			(at 24.13 154.9399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6388,8 +6951,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Screw_Terminal_Status_LED"
-			(at 58.42 67.3099 0)
+		(property "Value" "50k"
+			(at 24.13 157.4799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6397,8 +6960,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type059_RT06302HBWC_1x02_P3.50mm_Horizontal"
-			(at 55.88 64.77 0)
+		(property "Footprint" "Resistor_THT:R_Box_L8.4mm_W2.5mm_P5.08mm"
+			(at 19.812 156.21 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6406,8 +6969,8 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://robu.in/product/2-pin-straight-pcb-screw-terminal-block-connector-3-5mm-pitch/"
-			(at 55.88 64.77 0)
+		(property "Datasheet" "https://robu.in/product/100pcs-1-4w-metal-film-resistors-assortment-for-diy-electronic-projects-and-experiments/"
+			(at 21.59 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6415,69 +6978,60 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic screw terminal, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 55.88 64.77 0)
+		(property "Description" "Resistor"
+			(at 21.59 156.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
 			)
-		)
-		(pin "1"
-			(uuid "70505893-7437-471d-a5a7-ab38a7b8687d")
 		)
 		(pin "2"
-			(uuid "78e11bde-37bf-4179-8ca5-7dc7c041d434")
+			(uuid "50ab43f6-a76a-4ced-9fd3-c69e27e85fbe")
+		)
+		(pin "1"
+			(uuid "e097d994-8259-4074-901e-64e8071d679e")
 		)
 		(instances
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J10")
+					(reference "R6")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(symbol
-		(lib_id "Connector:Screw_Terminal_01x03")
-		(at 252.73 48.26 0)
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 252.73 109.22 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "f63fc09b-8988-4199-aaf4-b3cbe5e1f9be")
-		(property "Reference" "J3"
-			(at 255.27 46.9899 0)
+		(uuid "fa347cf0-20f0-446c-972f-86233d3e12dc")
+		(property "Reference" "J6"
+			(at 254 106.6799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
-		(property "Value" "Spring_Terminal_Sensor_GND"
-			(at 255.27 49.5299 0)
+		(property "Value" "A3_01x02_JST"
+			(at 254 109.2199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
-		(property "Footprint" "TerminalBlock_MetzConnect:TerminalBlock_MetzConnect_Type011_RT05503HBLC_1x03_P5.00mm_Horizontal"
-			(at 252.73 48.26 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://robu.in/product/xy118-5-0-xinya-3-pin-spring-terminal-blockblue/"
-			(at 252.73 48.26 0)
+		(property "Footprint" "Connector_JST:JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical"
+			(at 252.73 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6485,8 +7039,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Generic screw terminal, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 252.73 48.26 0)
+		(property "Datasheet" "https://robu.in/product/2-pin-jst-xh-2-54mm-pitch-plug-and-socket-with-cable-10-pcs"
+			(at 252.73 109.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6494,19 +7048,25 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
-			(uuid "67f2ad96-75c2-4b54-bd05-71c2484efdc1")
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 252.73 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
 		)
 		(pin "2"
-			(uuid "9e107b92-998f-4ce3-94b3-946dc151ecb0")
+			(uuid "765aded5-8cc6-4fc5-85ed-0d0e223b0e51")
 		)
 		(pin "1"
-			(uuid "b802d5c0-a951-495d-bc87-64ece6514a98")
+			(uuid "db9a9725-5675-4e63-b26d-1a16433edb22")
 		)
 		(instances
 			(project "FireSide"
 				(path "/a07bc954-927c-4b4a-9453-0e46d58f2fca"
-					(reference "J3")
+					(reference "J6")
 					(unit 1)
 				)
 			)
