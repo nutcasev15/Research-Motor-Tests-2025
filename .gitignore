@@ -6,6 +6,12 @@
 # VSCode Working Files and Folders
 .vscode/*
 
+# Ignore PyInstaller Build Files for GroundSide
+**/build
+**/dist
+**/*.exe
+**/*.spec
+
 # Ignore Binary and CSV Logger Outputs
 **/*.dat
 **/*.csv
