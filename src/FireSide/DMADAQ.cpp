@@ -8,9 +8,6 @@
 // SD Card Interface and File Class
 #include <SD.h>
 
-// Adafruit ZeroDMA Class and Descriptors
-#include <Adafruit_ZeroDMA.h>
-
 
 // #### Internal Headers
 // Hardware Interface Definitions and Functions
@@ -21,286 +18,296 @@
 
 
 // #### Internal Definitions
-// Compensated ADC DMA Buffer Length
-// Align Buffer to SD Card 512 Byte Boundary to Optimise IO
-// Compensate for Space for Timestamp and Buffer Status Containers
-#define ADC_DMA_BUFFLEN (ADC_PARALLEL_CHANNELS * 512 - sizeof(uint32_t))
-
-// Buffer Status Flags and Flag Masks
-// Bit 0 and Bit 1 of uint32_t status - DMA Access Status
-#define BUF_DMA_STATUS_MASK 0X03
-// Buffer is not being used for DMA
-#define BUF_DMA_INACTIVE 0x0
-// DMA is Writing to Buffer
-#define BUF_DMA_ACTIVE   0x1
-// DMA has Finished Writing to Buffer
-#define BUF_DMA_DONE     0x2
-
-// Bit 2 and Bit 3 of uint32_t status - SD Write Status
-#define BUF_SD_STATUS_MASK 0X0C
-// Buffer is not Ready for SD Write
-#define BUF_SD_WAITING 0x0
-// Buffer is being Written to SD Card
-#define BUF_SD_WRITING 0x4
-// Buffer Data has been Written to SD Card
-#define BUF_SD_DONE 0x8
+// Analog Pin Readout Buffer
+uint16_t ReadoutBuffer[ADC_PARALLEL_CHANNELS];
 
 
-// Adafruit ZeroDMA Descriptor
-DmacDescriptor *DMAdesc;
+// Compensated ADC DMA Buffer Block Length
+// Align Block to SD Card 512 Byte Boundary to Optimise IO
+// Compensate for Space for Timestamp Container
+#define ADC_DMA_BLOCKLEN (ADC_PARALLEL_CHANNELS * 512 - sizeof(uint32_t))
 
-// DMA Buffer Data Storage Structure
-struct DMABuffer
-{
-  // Flag Container to Track Buffer Status
-  uint32_t status;
-  // Buffer Write Time Referenced to Controller Power Up
-  uint32_t TimeStamp;
-  // Buffer for DMA Transfer of ADC Results
-  uint16_t DMA_ADCBuf[ADC_DMA_BUFFLEN];
-} BufferA, BufferB;
+// Circular DMA Buffer Data Storage Structure
+// By Convention, Circular DMA Buffers are 2 Blocks Long
+uint16_t DMABuffer[2 * ADC_DMA_BLOCKLEN];
 
-// Pointers to DMA Buffers
-// Pointer to Buffer Which Stores Currently Logging Data
-DMABuffer *current;
-// Temporary Pointer for Buffer Swapping
-DMABuffer *swap;
-// Pointer to Buffer Being Written to SD Card
-DMABuffer *dump;
+// Pointer to Blocks in Circular DMA Buffer for SD Card SDWriting
+// Updated in Half and Full Transfer Complete Callbacks
+uint16_t *SDWriteBlockStart;
+
+// Boolean to Track Current Block Write Status
+volatile bool SDWriteBlockReady;
 
 // Boolean to Signal SD Write Buffer Error
-volatile bool DumpError;
+volatile bool SDWriteError;
 
 
 // #### Hardware Configuration Functions
 // ADC Module Configuration
-void ConfigureADC()
+void ConfigureADC(bool Continuous)
 {
-  // Start ADC Module Setup
-  // Flush ADC Pipeline
-  ADC->SWTRIG.bit.FLUSH = 1;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  ADC_MultiModeTypeDef multimode = {0};
+  ADC_ChannelConfTypeDef sConfig = {0};
 
-  // Setup ADC Module Clock
-  // Supply GCLK3 8 MHz Output to ADC
-  // See SAMD21 Datasheet for Clock Generator Data
-  GCLK->CLKCTRL.reg = GCLK_CLKCTRL_ID_ADC \
-    | GCLK_CLKCTRL_GEN_GCLK3 \
-    | GCLK_CLKCTRL_CLKEN;
-  while (GCLK->STATUS.bit.SYNCBUSY);
+  // Select ADC Module One on MCU
+  hadc1.Instance = ADC1;
 
-  // Setup ADC Internal Clock
-  // ADC Max Clock is 2.1 MHz, Input Clock is 8 MHz
-  // Set ADC Clock to 2 MHz
-  ADC->CTRLB.bit.PRESCALER = ADC_CTRLB_PRESCALER_DIV4_Val;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Sync ADC to Core Clock: 80 MHz
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV1;
 
-  // Setup Internal References to 0.5 * VDDANA = 1.65 V
-  // Enable Reference Offset Compensation
-  // Select 0.5 * VDDANA Reference
-  ADC->REFCTRL.bit.REFCOMP = 1;
-  ADC->REFCTRL.bit.REFSEL = ADC_REFCTRL_REFSEL_INTVCC1_Val;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Setup ADC Data Frame
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
 
-  // Setup ADC Operation Mode
-  // Enable Freerunning Mode for Automatic DMA Transfer
-  // Use Maximum ADC Resolution
-  // NOTE: Only Positive Voltage Inputs are Allowed to ADC
-  ADC->CTRLB.bit.FREERUN = 1;
-  ADC->CTRLB.bit.RESSEL = ADC_CTRLB_RESSEL_16BIT_Val;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Enable Oversampling to Gain 3 Bits of Resolution
+  // Total Sampling Speed:
+  // ADC Clock / (Oversampling Ratio * No. of Channels * Cycles per Sample)
+  hadc1.Init.OversamplingMode = ENABLE;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_64;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_3;
+  hadc1.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+  hadc1.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
 
-  // Scale Down Input to 0.5 * VDDANA Range to Reduce Noise
-  // Use Internal Ground for 2nd Input
-  ADC->INPUTCTRL.bit.GAIN = ADC_INPUTCTRL_GAIN_DIV2_Val;
-  ADC->INPUTCTRL.bit.MUXNEG = ADC_INPUTCTRL_MUXNEG_GND_Val;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Instruct ADC to Scan Input Pins in Sequence
+  hadc1.Init.NbrOfConversion = ADC_PARALLEL_CHANNELS;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
 
-  // Configure ADC I/O
-  // We Use A3 For First Input Channel
-  // Leaving A0 Free for DAC Output and Increment For Next Channels
-  // The Pins A3-A6 are Wired to ADC Input Channels 4 Through 7
-  // Necessary to use Input Scanning in ADC Input Mux
-  // Pins A1 and A2 are Wired to ADC Input Channels 10 and 11
-  // Input Channels 8 and 9 Will Also Be Sampled and Provide Junk Values
-  // Refer: https://microchipsupport.force.com/s/article/
-  // How-to-configure-input-scan-mode-of-ADC-module-in-SAMD10-D20-D21-R21-devices
-  // Setup Input Pins as Analog
-  pinPeripheral(A1, PIO_ANALOG); // ADC Input Channel 10
-  pinPeripheral(A2, PIO_ANALOG); // ADC Input Channel 11
-  pinPeripheral(A3, PIO_ANALOG); // ADC Input Channel 4
-  pinPeripheral(A4, PIO_ANALOG); // ADC Input Channel 5
-  pinPeripheral(A5, PIO_ANALOG); // ADC Input Channel 6
-  pinPeripheral(A6, PIO_ANALOG); // ADC Input Channel 7
+  // // Disable Power Saving Features
+  // hadc1.Init.LowPowerAutoWait = DISABLE;
+  // hadc1.Init.DiscontinuousConvMode = DISABLE;
 
-  // Select Pin For 1st Input
-  ADC->INPUTCTRL.bit.MUXPOS = g_APinDescription[A3].ulADCChannelNumber;
-  ADC->INPUTCTRL.bit.INPUTSCAN = ADC_PARALLEL_CHANNELS - 1;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Set Conversion Trigger to Internal Software Only
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
 
-  // Enable ADC Interrupts on Result Conversion Completion
-  // NOTE: Required for DMA Transfer to Trigger
-  ADC->INTENSET.bit.RESRDY = 1;
-  while (ADC->STATUS.bit.SYNCBUSY);
+  // Preserve Data on Overrun Error
+  // hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+
+  // Specify if ADC Should Continue After First Scan of Inputs
+  if (Continuous)
+  {
+    hadc1.Init.DMAContinuousRequests = ENABLE;
+    hadc1.Init.ContinuousConvMode = ENABLE;
+  } else {
+    hadc1.Init.DMAContinuousRequests = DISABLE;
+    hadc1.Init.ContinuousConvMode = DISABLE;
+  }
+
+  // Write Settings to ADC Module
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_ADC);
+  }
+
+  /** Configure the ADC multi-mode
+  */
+  // multimode.Mode = ADC_MODE_INDEPENDENT;
+  // if (HAL_ADCEx_MultiModeConfigChannel(&hadc1, &multimode) != HAL_OK)
+  // {
+  //   Error_Handler();
+  // }
+
+  // Configure ADC Channels
+  // Set Single Ended Conversion with No Assumed Offset
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  sConfig.Offset = 0;
+
+  // Configure Channel Sample Time
+  sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+
+  // Loop Over All Channels and Write the Settings to Them
+  for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
+  {
+    // Assign Hardware Input Channel to ADC Rank
+    sConfig.Channel = ADCInputChannels[channel];
+    sConfig.Rank = ADCRegularRanks[channel];
+
+    // Write Settings to Each ADC Input Channel
+    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+    {
+      ErrorBlink(ERR_HAL_ADC);
+    }
+  }
+
+  // Enable Clock to ADC Module After Setup
+  __HAL_RCC_ADC_CLK_ENABLE();
 }
 
 
-// Adafruit ZeroDMA Configuration
-void ConfigureDMA()
+// DMA Module Configuration
+void ConfigureDMA(bool Continuous)
 {
-  // Setup DMAC Module
-  DMA.allocate();
+  // Select Channel 1 on DMA Module One
+  hdma_adc1.Instance = DMA1_Channel1;
 
-  // Use ADC Interrupt as Transfer Trigger
-  DMA.setTrigger(ADC_DMAC_ID_RESRDY);
+  // Select Highest Priority Request
+  hdma_adc1.Init.Request = DMA_REQUEST_0;
+  hdma_adc1.Init.Priority = DMA_PRIORITY_HIGH;
 
-  // Transfer One Unit on Each Trigger of ADC Interrupt
-  DMA.setAction(DMA_TRIGGER_ACTON_BEAT);
+  // Configure Transfer Direction and Address Increment
+  // Only Memory Addresses Should Increment
+  hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
+  hdma_adc1.Init.PeriphInc = DMA_PINC_DISABLE;
+  hdma_adc1.Init.MemInc = DMA_MINC_ENABLE;
 
-  // Set Priority to Highest Available
-  DMA.setPriority(DMA_PRIORITY_3);
+  // Inform DMA that ADC Data Frame is 16 Bit
+  hdma_adc1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+  hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
 
-  // Configure DMAC Channel for ADC DMA Transfers
-  // NOTE: Destination is not Initialised Here
-  // See ConfigureLogging Function for Final Initialisation
-  DMAdesc = DMA.addDescriptor(
-    (void *)&ADC->RESULT.reg,
-    NULL,
-    sizeof(current->DMA_ADCBuf) / 2,
-    DMA_BEAT_SIZE_HWORD,
-    false,
-    true
-  );
+  // Specify DMA Buffer Usage
+  // Use the Buffer in Circular Mode if ADC Runs Continuously
+  // Run in Single Shot Mode for Analog Pin Readout
+  if (Continuous)
+  {
+    hdma_adc1.Init.Mode = DMA_CIRCULAR;
+  } else {
+    hdma_adc1.Init.Mode = DMA_NORMAL;
+  }
 
-  // Register Successful Transfer Handler
-  DMA.setCallback(HandleTransferComplete, DMA_CALLBACK_TRANSFER_DONE);
+  // Write Settings to DMA Module
+  if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_DMA);
+  }
 
-  // Register Failed Transfer Handler
-  DMA.setCallback(HandleTransferFail, DMA_CALLBACK_TRANSFER_ERROR);
+  // Link DMA and ADC Modules
+  __HAL_LINKDMA(&hadc1, DMA_Handle, hdma_adc1);
+
+  // Enable Clock to ADC Module One After Setup
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  // Enable Interrupts from Channel 1 of DMA Module
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 }
 
 
-// Successful DMA Transfer Handler
-void HandleTransferComplete(Adafruit_ZeroDMA *)
+// Successful Block One DMA Transfer Completion Callback
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
 {
-  // Mark DMA to Buffer as Complete
-  // Clear Previous DMA Status Flag
-  current->status &= ~BUF_DMA_STATUS_MASK;
-  current->status |= BUF_DMA_DONE;
-
-  // Swap Data Buffer
-  swap = current;
-
-  // Signal SD Buffer Error if SD Buffer is Not Free
-  if ((dump->status & BUF_SD_STATUS_MASK) == BUF_SD_WRITING)
+  // Check If Previous Block is Still Being Written
+  // Otherwise Check for Logging Finish Signal
+  if (SDWriting || finished)
   {
-    // Disable ADC
-    ADC->CTRLA.bit.ENABLE = 0;
+    // Stop ADC Conversion
+    HAL_ADC_Stop_DMA(&hadc1);
 
-    // Signal DMA Error to DAQ System
-    DumpError = true;
+    // If Previous Block Write is Incomplete
+    if (SDWriting)
+    {
+      // Signal SD Buffer Write Error
+      SDWriteError = true;
 
-    // Abort DMA and Exit Handler
-    DMA.abort();
-    return;
+      // Force Signal Logging Stop and Close File
+      finished = true;
+    }
   }
 
-  // Setup New Buffer for ADC DMA Transfers
-  current = dump;
+  // Reset Block Write Pointer to 1st Block in the Circular Buffer
+  SDWriteBlockStart = DMABuffer;
 
-  // Queue New Buffer if Finish Signal Not Received
-  if (!RYLR.available())
-  {
-    // Reconfigure ADC Transfer Descriptor
-    DMA.changeDescriptor(
-      DMAdesc,
-      (void *)&ADC->RESULT.reg,
-      (void *)&current->DMA_ADCBuf[ADC_DMA_BUFFLEN],
-      sizeof(current->DMA_ADCBuf) / 2
-    );
-
-    // Mark DMA to Buffer as Active
-    // Clear Previous DMA Status Flag
-    current->status &= ~BUF_DMA_STATUS_MASK;
-    current->status |= BUF_DMA_ACTIVE;
-
-    // Mark Buffer as Waiting for DMA to Complete Before SD Write
-    // Clear Previous SD Write Status Flag
-    current->status &= ~BUF_SD_STATUS_MASK;
-    current->status |= BUF_SD_WAITING;
-
-    // Enable ADC DMA Transfers Again
-    DMA.startJob();
-  }
-  else
-  {
-    // Disable ADC
-    ADC->CTRLA.bit.ENABLE = 0;
-
-    // Stop Further DMA Transfers
-    DMA.abort();
-
-    // Signal DAQ System to Stop Logging and Close File
-    finished = true;
-  }
-
-  // Complete Swap and Mark Buffer for SD Write
-  dump = swap;
+  // Update Block Write Status for Logging Routine
+  SDWriteBlockReady = true;
 }
 
 
-// Failed DMA Transfer Handler
-void HandleTransferFail(Adafruit_ZeroDMA *)
+// Successful Block Two DMA Transfer Completion Callback
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-    // Disable ADC
-    ADC->CTRLA.bit.ENABLE = 0;
+  // Check If Previous Block is Still Being Written
+  // Otherwise Check for Logging Finish Signal
+  if (SDWriting || finished)
+  {
+    // Stop ADC Conversion
+    HAL_ADC_Stop_DMA(&hadc1);
 
-    // Stop Further DMA Transfers
-    DMA.abort();
+    // If Previous Block Write is Incomplete
+    if (SDWriting)
+    {
+      // Signal SD Buffer Write Error
+      SDWriteError = true;
 
-    // Mark DMA to Buffer as Inactive
-    // Clear Previous DMA Status Flag
-    current->status &= ~BUF_DMA_STATUS_MASK;
-    current->status |= BUF_DMA_INACTIVE;
+      // Force Signal Logging Stop and Close File
+      finished = true;
+    }
+  }
 
-    // Clear Previous SD Write Status Flag
-    current->status &= ~BUF_SD_STATUS_MASK;
+  // Reset Block Write Pointer to 2nd Block in the Circular Buffer
+  SDWriteBlockStart = &DMABuffer[ADC_DMA_BLOCKLEN];
 
-    // Signal DAQ System to Stop Logging and Close File
-    finished = true;
+  // Update Block Write Status for Logging Routine
+  SDWriteBlockReady = true;
+}
+
+
+// Readout Analog Pins to Check Input
+void ReadoutAnalogPins()
+{
+  // Configure ADC and DMA Modules in Single Shot Mode
+  ConfigureADC();
+  ConfigureDMA();
+
+  // Trigger ADC for Single Scan of Input Pins
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ReadoutBuffer, ADC_PARALLEL_CHANNELS);
+
+  // Wait Some Time for Conversion to Complete
+  delay(100UL);
+
+  // Assemble ADC Channel Debug Data
+  String debug = "";
+  for(short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
+  {
+    // Channel Label
+    // NOTE: See Interfaces.hpp
+    if (channel == 0)
+    {
+      debug += "A7";
+    } else {
+      debug += 'A';
+      debug += (channel + 1);
+    }
+
+    // Separator
+    debug += '=';
+
+    // Channel Value
+    debug += (analogRead(channel) * 3.3 / 1024.0);
+
+    // Truncate Value to 3 Decimal Digits
+    debug.remove(debug.lastIndexOf('.') + 3);
+
+    // Value Units and Separator
+    debug += "V ";
+  }
+
+  // Transmit ADC Channel Debug Data over RYLR
+  SendRYLR("ADC CHANNEL STATUS");
+  SendRYLR(debug);
 }
 
 
 // Binary Log File and Initial DMA Buffer Configuration
 void ConfigureLogging(String &Name)
 {
-  // Initialize Data Buffers and Buffer Pointers
-  // Log Data in BufferA Initially
-  current = &BufferA;
-  dump = &BufferB;
-  memset(current, 0X00, sizeof(DMABuffer));
-  memset(dump, 0X00, sizeof(DMABuffer));
+  // Initialise Circular Buffer and Write Block Pointer
+  // Log Data in 1st Block Initially
+  SDWriteBlockStart = DMABuffer;
+  memset(SDWriteBlockStart, 0X00, sizeof(DMABuffer));
 
-  // Initialize Handler Buffer Pointer
-  swap = NULL;
-  // Initialize SD Write Buffer Error Signal Boolean
-  DumpError = false;
-  // Initialize Logging Status Boolean
+  // Initialise Current Block Status for SD Card Write
+  SDWriteBlockReady = false;
+
+  // Initialise SD Write Buffer Error Signal Boolean
+  SDWriteError = false;
+
+  // Initialise Logging Status Boolean
   finished = false;
-
-
-  // Configure ADC DMA Transfer Descriptor
-  DMA.changeDescriptor(
-    DMAdesc,
-    (void *)&ADC->RESULT.reg,
-    (void *)&current->DMA_ADCBuf[ADC_DMA_BUFFLEN],
-    sizeof(current->DMA_ADCBuf) / 2
-  );
-
 
   // Select Logging File Path
   // Loop Until a Free Filename is Found
-  // Avoid Overwriting Files
+  // Avoid OverSDWriting Files
   String path;
   for (short id = 0; id >= 0; id++)
   {
@@ -336,22 +343,8 @@ void ConfigureLogging(String &Name)
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging()
 {
-  // Enable ADC and Trigger Freerunning Conversion
-  ADC->CTRLA.bit.ENABLE = 1;
-  ADC->SWTRIG.bit.START = 1;
-
-  // Start DMA Transfer of Results from ADC
-  DMA.startJob();
-
-  // Mark DMA to Buffer as Active
-  // Clear Previous DMA Status Flag
-  current->status &= ~BUF_DMA_STATUS_MASK;
-  current->status |= BUF_DMA_ACTIVE;
-
-  // Mark Buffer as Waiting for DMA to Complete Before SD Write
-  // Clear Previous SD Write Status Flag
-  dump->status &= ~BUF_SD_STATUS_MASK;
-  dump->status |= BUF_SD_WAITING;
+  // Enable ADC and Trigger Conversion
+  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)DMABuffer, sizeof(DMABuffer));
 
   // Log Starting Time
   uint32_t start = micros();
@@ -363,7 +356,7 @@ void TriggerLogging()
 void LogBuffers()
 {
   // Check if DMA Handler Aborted
-  if (DumpError)
+  if (SDWriteError)
   {
     // Force any Data in File Buffer to be Written to SD Card
     LogFile.flush();
@@ -376,19 +369,24 @@ void LogBuffers()
     return;
   }
 
-  // Check if SD Buffer is Ready For Write
-  if ((dump->status & BUF_DMA_STATUS_MASK) == BUF_DMA_DONE)
+  // Check if SD Buffer Block is Ready For Write
+  if (SDWriteBlockReady)
   {
-    // Add Buffer Timestamp
-    dump->TimeStamp = micros();
+    // Reset SD Write Block Status
+    SDWriteBlockReady = false;
 
-    // Mark SD Write from Buffer as Active
-    // Clear Previous SD Write Status Flag
-    dump->status &= ~BUF_SD_STATUS_MASK;
-    dump->status |= BUF_SD_WRITING;
+    // Set SD Card Write Flag
+    SDWriting = true;
 
-    // Dump Buffer to SD Card
-    LogFile.write((const uint8_t *)dump, sizeof(DMABuffer));
+    // Write Timestamp to SD Card
+    uint32_t time = micros();
+    LogFile.write((const uint8_t *)&time, sizeof(uint32_t));
+
+    // Dump Block to SD Card
+    LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
+
+    // Reset SD Card Write Flag
+    SDWriting = false;
 
     // Check if Finish Signal was Received from RYLR
     if (finished)
@@ -397,24 +395,8 @@ void LogBuffers()
       LogFile.flush();
       LogFile.close();
 
-      // Clear All Buffers
-      memset(current, 0X00, sizeof(DMABuffer));
-      memset(dump, 0X00, sizeof(DMABuffer));
-    }
-    else
-    {
-      // Clear ADC Data Array for DMA Transfer Handler
-      memset(dump->DMA_ADCBuf, 0X00, sizeof(dump->DMA_ADCBuf));
-
-      // Mark SD Write from Buffer as Complete
-      // Clear Previous SD Write Status Flag
-      dump->status &= ~BUF_SD_STATUS_MASK;
-      dump->status |= BUF_SD_DONE;
-
-      // Mark Buffer Ready For DMA
-      // Clear Previous DMA Status Flag
-      dump->status &= ~BUF_DMA_STATUS_MASK;
-      dump->status |= BUF_DMA_INACTIVE;
+      // Clear Circular DMA Buffer
+      memset(DMABuffer, 0X00, sizeof(DMABuffer));
     }
   }
 }
@@ -426,7 +408,7 @@ void ConvertLog(const String &Path)
   // Containers for CSV File and Associated Data
   File CSVFile;
   String CSVFileName, buffer;
-  uint32_t time, progress;
+  uint32_t start, end, progress;
 
   // Reserve Line Buffer Length
   buffer.reserve(256UL);
@@ -434,13 +416,13 @@ void ConvertLog(const String &Path)
   // Check if Last Buffer was Written Successfully
   // Ensure Log File Data is Complete Before Conversion
   // Abort on Error
-  if ((dump->status & BUF_SD_STATUS_MASK) != BUF_SD_DONE)
+  if (SDWriting || LogFile)
   {
     ErrorBlink(ERR_SD_BUFF);
     return;
   } else {
     // Clear DMA Buffer for Conversion Purposes
-    memset(dump, 0X00, sizeof(DMABuffer));
+    memset(DMABuffer, 0X00, sizeof(DMABuffer));
   }
 
   // Open Log File for Reading Only
@@ -464,20 +446,12 @@ void ConvertLog(const String &Path)
   CSVFile = SD.open(CSVFileName, (O_CREAT | O_WRITE));
 
   // Reset Line Buffer and Prepare CSV Header
-  // NOTE: Channels with Junk Data are Skipped
   // NOTE: See Interfaces.hpp
-  buffer = "Time (us)";
-  for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
+  buffer = "Time (us), A7";
+  for (short channel = 1; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
-    if (channel < 4)
-    {
-      buffer += ", A";
-      buffer += (channel + 3);
-    } else if (channel > 5)
-    {
-      buffer += ", A";
-      buffer += (channel - 5);
-    }
+    buffer += ", A";
+    buffer += (channel + 1);
   }
 
   // Write Header at Start of CSV file
@@ -489,38 +463,37 @@ void ConvertLog(const String &Path)
   progress = 0UL;
 
   // Read Starting Time
-  LogFile.read(&time, sizeof(uint32_t));
+  LogFile.read(&start, sizeof(uint32_t));
 
-  // Iterate Through All Logged DMA Buffers
+  // Iterate Through All Logged DMA Buffer Blocks
   do
   {
-    // Read Data from Log File into DMA Buffer
-    LogFile.read(dump, sizeof(DMABuffer));
-
     // Clear Line Buffer
     buffer = "";
 
+    // Read Timestamp from Log File
+    LogFile.read(&end, sizeof(uint32_t));
+
+    // Read Data from Log File into 1st Block of Circular Buffer
+    LogFile.read(DMABuffer, ADC_DMA_BLOCKLEN);
+
     // Process Each ADC Sample in DMA buffer in Blocks
-    for (uint16_t index = 0; index < ADC_DMA_BUFFLEN; index += ADC_PARALLEL_CHANNELS)
+    for (uint16_t index = 0; index < ADC_DMA_BLOCKLEN; index += ADC_PARALLEL_CHANNELS)
     {
       // Calculate Timestamp for Current Sample Block
-      buffer += (uint32_t)((dump->TimeStamp - time) / ADC_DMA_BUFFLEN * index);
+      buffer += (uint32_t)((end - start) / ADC_DMA_BLOCKLEN * index);
 
       // Deinterleave and Append ADC Sample Data to Buffer
-      // NOTE: Channels with Junk Data are Skipped
       // NOTE: See Interfaces.hpp
       for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
       {
-        if (channel < 4 || channel > 5)
-        {
-          buffer += ", ";
-          buffer += dump->DMA_ADCBuf[index + channel];
-        }
+        buffer += ", ";
+        buffer += DMABuffer[index + channel];
       }
     }
 
     // Update Timestamp and Write Buffer to CSV File
-    time = dump->TimeStamp;
+    start = end;
     CSVFile.println(buffer);
 
     // Send Progress Update on Significant Progress

@@ -1,22 +1,27 @@
 #ifndef _DMADAQ_H_
 #define _DMADAQ_H_
 // #### Library Headers
-// Adafruit ZeroDMA Class Definition
-#include <Adafruit_ZeroDMA.h>
+// STM32 L4 Board HAL Include
+#include <stm32l4xx_hal.h>
+// Disable Arduino Framework Access to ADC
+#define HAL_ADC_MODULE_ONLY
 
 
 // #### DMA Data Logging Functions
 // ADC Module Configuration
-void ConfigureADC();
+void ConfigureADC(bool Continuous = false);
 
-// Adafruit ZeroDMA Configuration
-void ConfigureDMA();
+// DMA Module Configuration
+void ConfigureDMA(bool Continuous = false);
 
-// Successful Transfer Handler
-void HandleTransferComplete(Adafruit_ZeroDMA *);
+// Successful Block One DMA Transfer Completion Callback
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc);
 
-// Failed Transfer Handler
-void HandleTransferFail(Adafruit_ZeroDMA *);
+// Successful Block Two DMA Transfer Completion Callback
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc);
+
+// Readout Analog Pins to Check Input
+void ReadoutAnalogPins();
 
 // Binary Log File and Initial DMA Buffer Configuration
 void ConfigureLogging(String &Name);

@@ -8,22 +8,15 @@ from sys import exit
 from csv import DictWriter
 
 # User Interaction for File Location and Status Updates
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Tk
 
 # C/C++ Structure Unpacking Utility
 from struct import unpack
 
 
-# The C/C++ DMA Buffer Data Storage Structure
-# struct DMABuffer
-# {
-#   Flag Container to Track Buffer Status
-#   uint32_t status;
-#   Buffer Write Time Referenced to Controller Power Up
-#   uint32_t TimeStamp;
-#   Buffer for DMA Transfer of ADC Results
-#   uint16_t DMA_ADCBuf[ADC_DMA_BUFLEN];
-# } BufferA, BufferB;
+# The C/C++ Data Storage Sequence
+# uint32_t Timestamp
+# uint16_t Buffer[ADC_DMA_BLOCKLEN]
 
 
 # Display Script Startup
@@ -33,18 +26,23 @@ print('#########')
 print('')
 
 
+# Create Background Window Context for TKinter
+context = Tk()
+context.withdraw()
+
+
 # Set Number of ADC Channels
-ADC_PARALLEL_CHANNELS = 8
+ADC_PARALLEL_CHANNELS = 6
 
 # Calculate Buffer Length
-# Offset by 4 bytes for uint32_t Variables in Structure
+# Offset by 4 Bytes for uint32_t Variable Sequence
 # See ConvertLog Function in DMADAQ.cpp
-ADC_DMA_BUFLEN = (ADC_PARALLEL_CHANNELS * 512 - 4)
+ADC_DMA_BLOCKLEN = (ADC_PARALLEL_CHANNELS * 512 - 4)
 
 # Print Configuration and Notify User
 print('>> Converter Settings')
 print('ADC Parallel Channels: ' + str(ADC_PARALLEL_CHANNELS))
-print('ADC DMA Buffer Size: ' + str(ADC_DMA_BUFLEN))
+print('ADC DMA Block Size: ' + str(ADC_DMA_BLOCKLEN))
 print('')
 
 
@@ -82,9 +80,9 @@ with open(LogPath, 'rb') as LogFile:
   time = unpack('<I', LogFile.read(4))[0]
 
   while True:
-    # Read DMA Buffer from Log File
-    # Remove Offset and Calculate Size of Entire Structure
-    buffer = LogFile.read(2 * (ADC_DMA_BUFLEN + 4))
+    # Read Block from Log File
+    # Remove Offset and Calculate Size of Block in Bytes
+    buffer = LogFile.read(4 + 2 * ADC_DMA_BLOCKLEN)
 
     # Check for End of File
     if not buffer:
@@ -92,12 +90,11 @@ with open(LogPath, 'rb') as LogFile:
 
     # Decode the DMA Buffer and Unpack the Tuple
     # See C/C++ Structure at Start of Script
-    buffer : tuple = unpack(
-      f'<II{ADC_DMA_BUFLEN}H', buffer
+    buffer = unpack(
+      f'<I{ADC_DMA_BLOCKLEN}H', buffer
     )
-    status = buffer[0]
-    TimeStamp = buffer[1]
-    data = buffer[2:]
+    TimeStamp = buffer[0]
+    data = buffer[1:]
 
     # Process Each ADC Sample in the DMA buffer in Blocks
     for index in range(0, len(data), ADC_PARALLEL_CHANNELS):
@@ -106,27 +103,27 @@ with open(LogPath, 'rb') as LogFile:
 
       # Calculate the TimeStamp for the Current Sample Block
       CurrentRow.update(
-        {'Time (us)' : int((TimeStamp - time) / ADC_DMA_BUFLEN * index)}
+        {'Time (us)' : int((TimeStamp - time) / ADC_DMA_BLOCKLEN * index)}
       )
 
       # Deinterleave and Append ADC Sample Data to Dictionary
-      # NOTE : Channels with Junk Data are Skipped
+      # NOTE : See Interfaces.hpp
       for channel in range(ADC_PARALLEL_CHANNELS):
-        # Decode Data from A3 to A6 in Pinout
-        if channel < 4:
+        # Decode Data from First Channel (A7 in Pinout)
+        if channel == 0:
           CurrentRow.update(
-            {'A' + str(channel + 3) : data[index + channel]}
+            {'A7' : data[index + channel]}
           )
-        # Decode Data From A1 and A2 in Pinout
-        elif channel > 5:
+        # Decode Data From A2 Onwards in Pinout
+        else:
           CurrentRow.update(
-            {'A' + str(channel - 5) : data[index + channel]}
+            {'A' + str(channel + 1) : data[index + channel]}
           )
 
       # Append Converted ADC Sample Data to Table
       CSVDataTable.append(CurrentRow)
 
-    # Update the TimeStamp for the Next DMA Buffer
+    # Update the TimeStamp for the Next Block
     time = TimeStamp
 
 

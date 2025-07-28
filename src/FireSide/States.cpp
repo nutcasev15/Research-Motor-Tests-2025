@@ -2,9 +2,6 @@
 // Arduino Framework and Data Types
 #include <Arduino.h>
 
-// SD Card SPI Initialisation Clock Rates
-#include <SPI.h>
-
 
 // #### Internal Headers
 // Hardware Interface Definitions and Functions
@@ -24,6 +21,7 @@ bool BootCheck(id_t state)
   // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
@@ -72,8 +70,7 @@ void BootSafeProcess(id_t state)
 
   // Initialize Dedicated SPI Interface to SD Card
   // Abort if Initialization Fails
-  // Use Maximum SPI SCK Frequency Provided in SAMD21 Datasheet
-  if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
+  if (!SD.begin())
   {
     ErrorBlink(ERR_SD_INIT);
     return;
@@ -90,8 +87,7 @@ void BootConvertProcess(id_t state)
 
   // Initialize Dedicated SPI Interface to SD Card
   // Abort if Initialization Fails
-  // Use Maximum SPI SCK Frequency Provided in SAMD21 Datasheet
-  if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
+  if (!SD.begin())
   {
     ErrorBlink(ERR_SD_INIT);
     return;
@@ -142,6 +138,7 @@ bool SafeCheck(id_t state)
   // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Wait for GroundSide Command
   while (!RYLR.available())
@@ -167,34 +164,8 @@ void SafeArmProcess(id_t state)
 {
   SendRYLR("ARMING FIRESIDE");
 
-  // Assemble ADC Channel Debug Data
-  String debug = "";
-  for(short channel = A1; channel <= A6; channel++)
-  {
-    // Channel Label
-    debug += "A";
-    debug += (channel - A1 + 1);
-
-    // Separator
-    debug += '=';
-
-    // Channel Value
-    debug += (analogRead(channel) * 3.3 / 1024.0);
-
-    // Truncate Value to 3 Decimal Digits
-    debug.remove(debug.lastIndexOf('.') + 3);
-
-    // Value Units and Separator
-    debug += "V ";
-  }
-
-  // Transmit ADC Channel Debug Data over RYLR
-  SendRYLR("ADC CHANNEL STATUS");
-  SendRYLR(debug);
-
-  // Configure DMA For Data Acquisition
-  ConfigureDMA();
-  SendRYLR("DMA READY");
+  // Check Analog Inputs
+  ReadoutAnalogPins();
 
   SendRYLR("FIRESIDE ARMED");
 }
@@ -207,6 +178,7 @@ bool ArmCheck(id_t state)
   // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Ensure SD Card Functions
   // Abort on Failure
@@ -257,6 +229,7 @@ void ArmFailureProcess(id_t state)
   SendRYLR("ENSURING NO CURRENT TO IGNITERS");
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 }
 
 // Handle Launch Command
@@ -264,9 +237,16 @@ void ArmLaunchProcess(id_t state)
 {
   SendRYLR("FIRESIDE LAUNCH COMMAND");
 
+  // Override Configuration Mode to Continuous
+  bool ContinuousLogging = true;
+
   // Configure ADC for Data Acquisition
-  ConfigureADC();
+  ConfigureADC(ContinuousLogging);
   SendRYLR("ADC READY");
+
+  // Configure DMA for Data Acquisition
+  ConfigureDMA(ContinuousLogging);
+  SendRYLR("DMA READY");
 
   // Configure Logging And Get Filename
   ConfigureLogging(FileName);
@@ -293,6 +273,7 @@ bool LaunchCheck(id_t state)
   // Fire Igniters
   digitalWrite(FIRE_PIN_A, STATUS_FIRE);
   digitalWrite(FIRE_PIN_B, STATUS_FIRE);
+  digitalWrite(FIRE_PIN_C, STATUS_FIRE);
 
   // Always Proceed to LOGGING
   return true;
@@ -314,14 +295,20 @@ bool LoggingCheck(id_t state)
   LogBuffers();
 
   // Check if Logging is Finished
-  // Stop Signal Checked in DMA Transfer Handler
-  // See HandleTransferComplete Function in DMADAQ.cpp
-  if (finished)
+  // Logging Stops If RYLR Receives Any Data
+  if (RYLR.available())
   {
+    // Signal Logging Finish to ADC and DMA Modules
+    finished = true;
+  }
+
+  // Stay in LOGGING State Until LogFile is Closed
+  if (LogFile.availableForWrite())
+  {
+    return false;
+  } else {
     // Proceed to CONVERT State
     return true;
-  } else {
-    return false;
   }
 }
 
@@ -354,6 +341,7 @@ bool ConvertCheck(id_t state)
   // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Indicate Igniters are Safe
   digitalWrite(STATUS_PIN, HIGH);
@@ -396,6 +384,7 @@ bool FailureCheck(id_t state)
   SendRYLR("TURNING OFF IGNITERS");
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Indicate Igniter Status
   digitalWrite(STATUS_PIN, HIGH);
@@ -404,10 +393,9 @@ bool FailureCheck(id_t state)
   // Check SD Card Status
   // Reinitialize Dedicated SPI Interface to SD Card
   // Abort if Initialization Fails
-  // Use Maximum SPI SCK Frequency Provided in SAMD21 Datasheet
   SendRYLR("CHECKING SDCARD");
   SD.end();
-  if (!SD.begin(F_CPU / SPI_MIN_CLOCK_DIVIDER, SDCARD_SS_PIN))
+  if (!SD.begin())
   {
     ErrorBlink(ERR_SD_INIT);
     return false;
@@ -422,33 +410,11 @@ bool FailureCheck(id_t state)
     return false;
   }
 
-  // Assemble ADC Channel Debug Data
-  String debug = "";
-  for(short channel = A1; channel <= A6; channel++)
-  {
-    // Channel Label
-    debug += "A";
-    debug += (channel - A1 + 1);
-
-    // Separator
-    debug += '=';
-
-    // Channel Value
-    debug += (analogRead(channel) * 3.3 / 1024.0);
-
-    // Truncate Value to 3 Decimal Digits
-    debug.remove(debug.lastIndexOf('.') + 3);
-
-    // Value Units and Separator
-    debug += "V ";
-  }
-
-  // Transmit ADC Channel Debug Data over RYLR
-  SendRYLR("ADC CHANNEL STATUS");
-  SendRYLR(debug);
+  // Check Analog Inputs
+  ReadoutAnalogPins();
 
   // Disable DMA
-  DMA.abort();
+  HAL_ADC_Stop_DMA(&hadc1);
   SendRYLR("DMA DISABLED");
 
   // Wait for GroundSide Command

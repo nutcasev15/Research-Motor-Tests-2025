@@ -38,15 +38,17 @@ const uint8_t TotalTransitions =
 FiniteState FSM(StateRelationships, TotalTransitions);
 
 
-// #### Arduino MKR Zero Hardware Setup
+// #### STM32 Nucleo L412KB Hardware Setup
 void setup()
 {
   // Setup Igniters Pins
   pinMode(FIRE_PIN_A, OUTPUT);
   pinMode(FIRE_PIN_B, OUTPUT);
+  pinMode(FIRE_PIN_C, OUTPUT);
   // Ensure Igniter MOSFETS are Off
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
+  digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
   // Setup Status Pin and Initialise Indicator
   pinMode(STATUS_PIN, OUTPUT);
@@ -57,7 +59,7 @@ void setup()
 }
 
 
-// #### Arduino MKR Zero Operations
+// #### STM32 Nucleo L412KB Operations
 void loop()
 {
   // Evaluate Predicate of Current State
