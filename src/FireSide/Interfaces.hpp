@@ -18,9 +18,9 @@
 #define STATUS_PIN 2
 
 // MOSFET Latch Pins for Firing Igniters
-#define FIRE_PIN_A 4
+#define FIRE_PIN_A 3
 #define FIRE_PIN_B 6
-#define FIRE_PIN_C 8
+#define FIRE_PIN_C 9
 // D4184 Input Firing Logic
 #define STATUS_FIRE HIGH
 #define STATUS_SAFE LOW
