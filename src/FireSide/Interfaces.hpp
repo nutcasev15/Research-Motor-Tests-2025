@@ -26,7 +26,6 @@
 #define STATUS_SAFE LOW
 
 
-
 // RYLR998 Hardware Interface
 // Alias Hardware Serial (Pins D0 & D1) to RYLR
 // See REYAX RYLR998 Datasheet for UART Configuration
@@ -41,12 +40,12 @@ static inline void ParseRYLR(String &Buffer)
   if (!RYLR.available())
   {
     // Return Blank
-    Buffer = "\r\n";
+    Buffer = '\n';
     return;
   }
 
   // Load Incoming Data
-  String parsed = RYLR.readString();
+  String parsed = RYLR.readStringUntil('\n');
 
   // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
   // Remove Data from Last 2 Fields
@@ -55,9 +54,6 @@ static inline void ParseRYLR(String &Buffer)
 
   // Extract Data in 3rd Comma Separated Field
   Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
-
-  // Remove Whitespace
-  Buffer.trim();
 
   return;
 }
@@ -69,14 +65,17 @@ static inline void SendRYLR(const String &Data)
   // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
   RYLR.print("AT+SEND=0,");
 
-  // Issue Payload Length
-  RYLR.print(Data.length() + 4);
+  // Issue Payload Length Including Line End
+  RYLR.print(Data.length() + 5);
 
   // Issue FireSide PCB Header
   RYLR.print(",FS> ");
 
   // Issue Data and Complete Command with Line End
-  RYLR.println(Data);
+  RYLR.print(Data);
+  RYLR.print('\n');
+
+  return;
 }
 
 

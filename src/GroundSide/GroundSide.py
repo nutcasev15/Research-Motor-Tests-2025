@@ -59,19 +59,19 @@ RYLR = Serial(
 #### Define Interface Layer Functions to RYLR998 Module
 # Parses Incoming Data from FireSide PCB via RYLR module
 def ParseRYLR() -> str:
-  if not RYLR.in_waiting():
+  if not RYLR.in_waiting:
     # Return Blank Buffer
     return str('\n')
 
   # Load Incoming Binary Data
-  parsed = RYLR.readline().decode()
+  parsed = RYLR.read_until(b'\n').decode()
 
   # See +RCV in REYAX AT RYLRX98 Commanding Datasheet
   # Extract Data in 3rd Comma Separated Field
   parsed = parsed.split(',', maxsplit=4)[2]
 
-  # Remove Whitespace and Return Data
-  return parsed.strip()
+  # Return Parsed Data
+  return parsed
 
 # Sends State Commands to FireSide PCB via RYLR module
 def SendRYLR(State : str):
@@ -122,10 +122,10 @@ def SendRYLR(State : str):
     # Issue Payload Length
     # 4 Characters for SAFE Command
     # Complete Binary Command with Line End
-    RYLR.write('4,SAFE\n'.encode())
+    RYLR.write('5,SAFE\n'.encode())
   else:
     # Issue Payload Length
-    RYLR.write(str(len(State)).encode())
+    RYLR.write(str(len(State + '\n')).encode())
 
     # Complete Binary Command with Comma and Line End
     RYLR.write((',' + State + '\n').encode())
@@ -141,7 +141,7 @@ print('\nEstablishing FireSide Link')
 SendRYLR(input('Choose Initial State: SAFE || CONVERT'))
 
 # Wait Until FireSide Begins Response to State Command
-while not RYLR.in_waiting():
+while not RYLR.in_waiting:
   sleep(0.5)
 
 print('\nFireSide Link Acquired')
@@ -151,9 +151,7 @@ print('\nFireSide Link Acquired')
 while True:
   # Check for Incoming Data from FireSide PCB
   # Parse and Print Data to the Terminal
-  while RYLR.in_waiting():
-    # Wait to Let Transmission Complete
-    sleep(2.0)
+  while RYLR.in_waiting:
     # Load and Display Line
     print(ParseRYLR())
 
@@ -162,5 +160,5 @@ while True:
   SendRYLR(input())
 
   # Wait Until FireSide Begins Response to Sent Command
-  while not RYLR.in_waiting():
+  while not RYLR.in_waiting:
     sleep(0.5)
