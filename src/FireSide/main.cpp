@@ -16,26 +16,22 @@
 
 // #### Internal Definitions
 // Define State Transitions and Corresponding Relationships
-Transition StateRelationships[] =
+Transition StateTransitions[] =
 {
-  { BootProceedCheck,    BOOT,    SAFE,       BootSafeProcess},
-  {BootRedirectCheck,    BOOT, CONVERT,    BootConvertProcess},
-  {        SafeCheck,    SAFE,     ARM,        SafeArmProcess},
-  { ArmRedirectCheck,     ARM, FAILURE,     ArmFailureProcess},
-  {  ArmProceedCheck,     ARM,  LAUNCH,      ArmLaunchProcess},
-  {      LaunchCheck,  LAUNCH, LOGGING,  LaunchLoggingProcess},
-  {     LoggingCheck, LOGGING, CONVERT, LoggingConvertProcess},
-  {     ConvertCheck, CONVERT,    SAFE,    ConvertSafeProcess},
-  {     FailureCheck, FAILURE,    SAFE,    FailureSafeProcess}
+  {    BootCheck, CONVERT,    SAFE},
+  {    SafeCheck,    SAFE,     ARM},
+  {     ArmCheck, FAILURE,  LAUNCH},
+  {  LaunchCheck,  LAUNCH, LOGGING},
+  { LoggingCheck, LOGGING, CONVERT},
+  { ConvertCheck, CONVERT,    SAFE},
+  { FailureCheck, FAILURE,    SAFE}
 };
 
 // Calculate Total Number of Transitions
-const uint8_t TotalTransitions =
-  sizeof(StateRelationships) \
-  / sizeof(Transition);
+const uint8_t TotalTransitions = sizeof(StateTransitions) / sizeof(Transition);
 
 // Initialize Finite State Machine with Defined Transitions
-FiniteState FSM(StateRelationships, TotalTransitions);
+FiniteState FSM(StateTransitions, TotalTransitions);
 
 
 // #### STM32 Nucleo L412KB Hardware Setup

@@ -40,27 +40,17 @@ bool BootCheck(id_t state)
   // Proceed to SAFE State
   if (command == "SAFE")
   {
+    BootSafeTransition();
     return true;
   } else {
     // Received CONVERT Command
+    BootConvertTransition();
     return false;
   }
 }
 
-// Check if Boot can Proceed to SAFE
-bool BootProceedCheck(id_t state)
-{
-  return BootCheck(state);
-}
-
-// Check if Boot Should Redirect to CONVERT
-bool BootRedirectCheck(id_t state)
-{
-  return !BootCheck(state);
-}
-
 // Handle BOOT > SAFE
-void BootSafeProcess(id_t state)
+void BootSafeTransition()
 {
   SendRYLR("BOOTING FIRESIDE");
 
@@ -81,7 +71,7 @@ void BootSafeProcess(id_t state)
 }
 
 // Handle BOOT > CONVERT
-void BootConvertProcess(id_t state)
+void BootConvertTransition()
 {
   SendRYLR("BOOT OVERRIDE");
 
@@ -153,6 +143,7 @@ bool SafeCheck(id_t state)
   // Check if GroundSide Sent Correct Command
   if (command == "ARM")
   {
+    SafeArmTransition();
     return true;
   } else {
     return false;
@@ -160,7 +151,7 @@ bool SafeCheck(id_t state)
 }
 
 // Handle SAFE > ARM
-void SafeArmProcess(id_t state)
+void SafeArmTransition()
 {
   SendRYLR("ARMING FIRESIDE");
 
@@ -202,27 +193,17 @@ bool ArmCheck(id_t state)
   // Check if GroundSide Sent Correct Command
   if (command == "LAUNCH")
   {
+    ArmLaunchTransition();
     return true;
   } else {
-    // Return to SAFE State on any Other Command
+    // Return to FAILURE State on any Other Command
+    ArmFailureTransition();
     return false;
   }
 }
 
-// Check if ARM can Proceed to LAUNCH
-bool ArmProceedCheck(id_t state)
-{
-  return ArmCheck(state);
-}
-
-// Check if ARM Should Redirect to SAFE
-bool ArmRedirectCheck(id_t state)
-{
-  return !ArmCheck(state);
-}
-
 // Handle Arming Failure
-void ArmFailureProcess(id_t state)
+void ArmFailureTransition()
 {
   SendRYLR("ARMING FAILURE");
 
@@ -233,7 +214,7 @@ void ArmFailureProcess(id_t state)
 }
 
 // Handle Launch Command
-void ArmLaunchProcess(id_t state)
+void ArmLaunchTransition()
 {
   SendRYLR("FIRESIDE LAUNCH COMMAND");
 
@@ -275,15 +256,11 @@ bool LaunchCheck(id_t state)
   digitalWrite(FIRE_PIN_B, STATUS_FIRE);
   digitalWrite(FIRE_PIN_C, STATUS_FIRE);
 
-  // Always Proceed to LOGGING
-  return true;
-}
-
-// Handle Logging Indication After Firing Igniters
-void LaunchLoggingProcess(id_t state)
-{
   // Indicate Igniter Firing
   digitalWrite(STATUS_PIN, LOW);
+
+  // Always Proceed to LOGGING
+  return true;
 }
 
 
@@ -308,12 +285,13 @@ bool LoggingCheck(id_t state)
     return false;
   } else {
     // Proceed to CONVERT State
+    LoggingConvertTransition();
     return true;
   }
 }
 
 // Handle Stop of Binary Logging
-void LoggingConvertProcess(id_t state)
+void LoggingConvertTransition()
 {
   SendRYLR("LOGGING STOPPED");
 
@@ -350,11 +328,12 @@ bool ConvertCheck(id_t state)
   ConvertLog(FileName);
 
   // Always Proceed to SAFE State
+  ConvertSafeTransition();
   return true;
 }
 
 // Handle CONVERT > SAFE
-void ConvertSafeProcess(id_t state)
+void ConvertSafeTransition()
 {
   SendRYLR("BINARY CONVERSION COMPLETE");
 
@@ -431,17 +410,12 @@ bool FailureCheck(id_t state)
   if (command == "SAFE")
   {
     // Only Proceed on Receipt of Safe Command
+    SendRYLR("SAFE COMMAND RECEIVED");
+    SendRYLR("RESETTING TO SAFE");
     return true;
   } else {
     // Rerun Diagnostics
     delay(500UL);
     return false;
   }
-}
-
-// Handle Safe State Transition After Failure
-void FailureSafeProcess(id_t state)
-{
-  SendRYLR("SAFE COMMAND RECEIVED");
-  SendRYLR("RESETTING TO SAFE");
 }

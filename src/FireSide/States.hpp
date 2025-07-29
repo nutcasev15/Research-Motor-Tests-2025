@@ -21,19 +21,13 @@ enum States : id_t
 
 // #### State Machine Predicates
 // Check if Boot can Proceed to SAFE
-bool BootProceedCheck(id_t state);
-
-// Check if Boot Should Redirect to CONVERT
-bool BootRedirectCheck(id_t state);
+bool BootCheck(id_t state);
 
 // Check if System can Proceed to ARM
 bool SafeCheck(id_t state);
 
 // Check if ARM can Proceed to LAUNCH
-bool ArmProceedCheck(id_t state);
-
-// Check if ARM Should Redirect to SAFE
-bool ArmRedirectCheck(id_t state);
+bool ArmCheck(id_t state);
 
 // Check if LAUNCH can Proceed to LOGGING
 bool LaunchCheck(id_t state);
@@ -50,30 +44,24 @@ bool FailureCheck(id_t state);
 
 // #### State Machine Transition Processes
 // Handle BOOT > SAFE
-void BootSafeProcess(id_t state);
+void BootSafeTransition();
 
 // Handle BOOT > CONVERT
-void BootConvertProcess(id_t state);
+void BootConvertTransition();
 
 // Handle SAFE > ARM
-void SafeArmProcess(id_t state);
+void SafeArmTransition();
 
 // Handle Arming Failure
-void ArmFailureProcess(id_t state);
+void ArmFailureTransition();
 
 // Handle Launch Command
-void ArmLaunchProcess(id_t state);
-
-// Handle Logging Indication After Firing Igniters
-void LaunchLoggingProcess(id_t state);
+void ArmLaunchTransition();
 
 // Handle Stop of Binary Logging
-void LoggingConvertProcess(id_t state);
+void LoggingConvertTransition();
 
 // Handle CONVERT > SAFE
-void ConvertSafeProcess(id_t state);
-
-// Handle Safe State Transition After Failure
-void FailureSafeProcess(id_t state);
+void ConvertSafeTransition();
 
 #endif
