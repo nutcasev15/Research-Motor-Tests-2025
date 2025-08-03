@@ -35,7 +35,7 @@
 #define RYLR Serial
 
 // Parse Incoming GroundSide Commands via RYLR Module
-static inline void ParseRYLR(String &Buffer)
+inline void ParseRYLR(String &Buffer)
 {
   if (!RYLR.available())
   {
@@ -55,11 +55,14 @@ static inline void ParseRYLR(String &Buffer)
   // Extract Data in 3rd Comma Separated Field
   Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
 
+  // Strip Carriage Return
+  Buffer.trim();
+
   return;
 }
 
 // Send Data to GroundSide via RYLR Module
-static inline void SendRYLR(const String &Data)
+inline void SendRYLR(const String &Data)
 {
   // Issue Send AT Command
   // See +SEND in REYAX AT RYLRX98 Commanding Datasheet

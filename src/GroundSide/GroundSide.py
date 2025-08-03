@@ -70,8 +70,8 @@ def ParseRYLR() -> str:
   # Extract Data in 3rd Comma Separated Field
   parsed = parsed.split(',', maxsplit=4)[2]
 
-  # Return Parsed Data
-  return parsed
+  # Strip and Return Parsed Data
+  return parsed.strip()
 
 # Sends State Commands to FireSide PCB via RYLR module
 def SendRYLR(State : str):
