@@ -32,7 +32,12 @@ context.withdraw()
 
 
 # Set Number of ADC Channels
-ADC_PARALLEL_CHANNELS = 6
+ADC_PARALLEL_CHANNELS = 5
+
+# Define Maximum Number of ADC Channels
+# See Interfaces.hpp
+MAX_PARALLEL_CHANNELS = 7
+assert ADC_PARALLEL_CHANNELS < MAX_PARALLEL_CHANNELS
 
 # Calculate Buffer Length
 # Offset by 4 Bytes for uint32_t Variable Sequence
@@ -109,16 +114,10 @@ with open(LogPath, 'rb') as LogFile:
       # Deinterleave and Append ADC Sample Data to Dictionary
       # NOTE : See Interfaces.hpp
       for channel in range(ADC_PARALLEL_CHANNELS):
-        # Decode Data from First Channel (A7 in Pinout)
-        if channel == 0:
-          CurrentRow.update(
-            {'A7' : data[index + channel]}
-          )
-        # Decode Data From A2 Onwards in Pinout
-        else:
-          CurrentRow.update(
-            {'A' + str(channel + 1) : data[index + channel]}
-          )
+        # Decode Data From A0 Onwards in Pinout
+        CurrentRow.update(
+          {'A' + str(channel) : data[index + channel]}
+        )
 
       # Append Converted ADC Sample Data to Table
       CSVDataTable.append(CurrentRow)

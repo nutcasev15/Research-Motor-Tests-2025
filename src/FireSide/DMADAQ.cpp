@@ -46,52 +46,47 @@ volatile bool SDWriteError;
 // ADC Module Configuration
 void ConfigureADC(bool Continuous)
 {
-  ADC_MultiModeTypeDef multimode = {0};
-  ADC_ChannelConfTypeDef sConfig = {0};
+  ADC_ChannelConfTypeDef sConfig;
 
   // Select ADC Module One on MCU
   hadc1.Instance = ADC1;
 
-  // Sync ADC to Core Clock: 80 MHz
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV1;
+  // Sync ADC to Core Clock: 80 MHz / 4 = 20 MHz
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
 
   // Setup ADC Data Frame
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
 
-  // Enable Oversampling to Gain 3 Bits of Resolution
+  // Enable Oversampling to Gain 2 Bits of Extra Resolution
   // Total Sampling Speed:
   // ADC Clock / (Oversampling Ratio * No. of Channels * Cycles per Sample)
+  // See Channel Configuration for Cycles per Sample
   hadc1.Init.OversamplingMode = ENABLE;
-  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_64;
-  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_3;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_16;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_2;
   hadc1.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
   hadc1.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
 
   // Instruct ADC to Scan Input Pins in Sequence
   hadc1.Init.NbrOfConversion = ADC_PARALLEL_CHANNELS;
   hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
-
-  // // Disable Power Saving Features
-  // hadc1.Init.LowPowerAutoWait = DISABLE;
-  // hadc1.Init.DiscontinuousConvMode = DISABLE;
 
   // Set Conversion Trigger to Internal Software Only
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
 
-  // Preserve Data on Overrun Error
-  // hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-
-  // Specify if ADC Should Continue After First Scan of Inputs
+  // Specify if ADC Should Continuously Scan the Input Pins
+  // NOTE: DMA Should Not Be Used for Simple Pin Readout to Avoid Conflicts
   if (Continuous)
   {
     hadc1.Init.DMAContinuousRequests = ENABLE;
     hadc1.Init.ContinuousConvMode = ENABLE;
+    hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
   } else {
     hadc1.Init.DMAContinuousRequests = DISABLE;
     hadc1.Init.ContinuousConvMode = DISABLE;
+    hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   }
 
   // Write Settings to ADC Module
@@ -100,29 +95,25 @@ void ConfigureADC(bool Continuous)
     ErrorBlink(ERR_HAL_ADC);
   }
 
-  /** Configure the ADC multi-mode
-  */
-  // multimode.Mode = ADC_MODE_INDEPENDENT;
-  // if (HAL_ADCEx_MultiModeConfigChannel(&hadc1, &multimode) != HAL_OK)
-  // {
-  //   Error_Handler();
-  // }
-
   // Configure ADC Channels
   // Set Single Ended Conversion with No Assumed Offset
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
-  sConfig.Offset = 0;
 
   // Configure Channel Sample Time
-  sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
+  // NOTE: Cycles per Sample = 12.5 + Sampling Cycles
+  sConfig.SamplingTime = ADC_SAMPLETIME_24CYCLES_5;
 
-  // Loop Over All Channels and Write the Settings to Them
-  for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
+  // Loop Over All ADC Inputs and Write their Settings to the ADC
+  // See Interfaces.hpp for ADC Hardware Setup Definition
+  for (short input = 0; input < ADC_PARALLEL_CHANNELS; input++)
   {
+    // Configure GPIO Input Pin to Analog Mode
+    pinMode(ADCHardwareSetup[input].pin, INPUT_ANALOG);
+
     // Assign Hardware Input Channel to ADC Rank
-    sConfig.Channel = ADCInputChannels[channel];
-    sConfig.Rank = ADCRegularRanks[channel];
+    sConfig.Channel = ADCHardwareSetup[input].channel;
+    sConfig.Rank = ADCHardwareSetup[input].rank;
 
     // Write Settings to Each ADC Input Channel
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -133,12 +124,21 @@ void ConfigureADC(bool Continuous)
 
   // Enable Clock to ADC Module After Setup
   __HAL_RCC_ADC_CLK_ENABLE();
+
+  // Calibrate ADC in Single Ended Input Mode
+  HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 }
 
 
 // DMA Module Configuration
 void ConfigureDMA(bool Continuous)
 {
+  // DMA Module Should Not Be Used in Single Shot Mode
+  if (!Continuous)
+  {
+    return;
+  }
+
   // Select Channel 1 on DMA Module One
   hdma_adc1.Instance = DMA1_Channel1;
 
@@ -157,14 +157,8 @@ void ConfigureDMA(bool Continuous)
   hdma_adc1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
 
   // Specify DMA Buffer Usage
-  // Use the Buffer in Circular Mode if ADC Runs Continuously
-  // Run in Single Shot Mode for Analog Pin Readout
-  if (Continuous)
-  {
-    hdma_adc1.Init.Mode = DMA_CIRCULAR;
-  } else {
-    hdma_adc1.Init.Mode = DMA_NORMAL;
-  }
+  // Use the Buffer in Circular Mode When ADC Runs Continuously
+  hdma_adc1.Init.Mode = DMA_CIRCULAR;
 
   // Write Settings to DMA Module
   if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
@@ -177,10 +171,6 @@ void ConfigureDMA(bool Continuous)
 
   // Enable Clock to ADC Module One After Setup
   __HAL_RCC_DMA1_CLK_ENABLE();
-
-  // Enable Interrupts from Channel 1 of DMA Module
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 }
 
 
@@ -245,38 +235,47 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 // Readout Analog Pins to Check Input
 void ReadoutAnalogPins()
 {
-  // Configure ADC and DMA Modules in Single Shot Mode
+  // Configure ADC Module in Single Shot Mode
+  // Do Not Use DMA for Single Shot Pin Readout
   ConfigureADC();
-  ConfigureDMA();
 
-  // Trigger ADC for Single Scan of Input Pins
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ReadoutBuffer, ADC_PARALLEL_CHANNELS);
+  // Disable ADC DMA to Avoid Conflicts
+  HAL_ADC_Stop_DMA(&hadc1);
 
-  // Wait Some Time for Conversion to Complete
-  delay(100UL);
+  // Wait for Conversion to Finish Sequentially on Each Input Pin
+  // Save the Result in the Readout Buffer
+  for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
+  {
+    // Start ADC for Single Scan of Input Pins
+    HAL_ADC_Start(&hadc1);
 
-  // Assemble ADC Channel Debug Data
-  String debug = "";
+    // Wait for Conversion Completion
+    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+
+    // Save Converted Value
+    ReadoutBuffer[channel] = (uint16_t)(HAL_ADC_GetValue(&hadc1));
+  }
+
+  // Stop ADC After Each Input Pin has been Read Out
+  HAL_ADC_Stop(&hadc1);
+
+  // Assemble ADC Calibration Data and Channel Debug Data
+  String debug = "Calibration=";
+  debug += HAL_ADCEx_Calibration_GetValue(&hadc1, ADC_SINGLE_ENDED);
+  debug += ' ';
+
   for(short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
     // Channel Label
     // NOTE: See Interfaces.hpp
-    if (channel == 0)
-    {
-      debug += "A7";
-    } else {
-      debug += 'A';
-      debug += (channel + 1);
-    }
+    debug += 'A';
+    debug += channel;
 
     // Separator
     debug += '=';
 
-    // Channel Value
-    debug += (analogRead(channel) * 3.3 / 1024.0);
-
-    // Truncate Value to 3 Decimal Digits
-    debug.remove(debug.lastIndexOf('.') + 3);
+    // Channel Value for 14-Bit Oversampled Data
+    debug += (ReadoutBuffer[channel] * 3.3 / (1<<14));
 
     // Value Units and Separator
     debug += "V ";
@@ -447,11 +446,11 @@ void ConvertLog(const String &Path)
 
   // Reset Line Buffer and Prepare CSV Header
   // NOTE: See Interfaces.hpp
-  buffer = "Time (us), A7";
-  for (short channel = 1; channel < ADC_PARALLEL_CHANNELS; channel++)
+  buffer = "Time (us)";
+  for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
     buffer += ", A";
-    buffer += (channel + 1);
+    buffer += channel;
   }
 
   // Write Header at Start of CSV file
