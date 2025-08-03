@@ -118,21 +118,6 @@ const ADCHardwareConfig ADCHardwareSetup[] = {
 };
 
 
-// Boolean to Track SD Write State
-volatile static bool SDWriting;
-
-// Boolean to Track Finish Signal
-volatile static bool finished;
-
-// ADC and DMA Interface using STM32 HAL
-static ADC_HandleTypeDef hadc1;
-static DMA_HandleTypeDef hdma_adc1;
-
-// Binary File Object and Name on SD Card
-static File LogFile;
-static String FileName;
-
-
 // #### Error Definitions
 // Throw this if ADC HAL Initialisation Fails
 #define ERR_HAL_ADC 1
@@ -146,7 +131,7 @@ static String FileName;
 #define ERR_SD_BUFF 5
 
 // Indicate Error on Status Pin
-static inline void ErrorBlink(uint8_t CODE)
+inline void ErrorBlink(uint8_t CODE)
 {
   // Set Blink Repeating Interval (ms)
   const uint16_t period = 5000;

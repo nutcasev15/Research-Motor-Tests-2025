@@ -31,6 +31,7 @@ uint16_t ReadoutBuffer[ADC_PARALLEL_CHANNELS];
 // By Convention, Circular DMA Buffers are 2 Blocks Long
 uint16_t DMABuffer[2 * ADC_DMA_BLOCKLEN];
 
+
 // Pointer to Blocks in Circular DMA Buffer for SD Card SDWriting
 // Updated in Half and Full Transfer Complete Callbacks
 uint16_t *SDWriteBlockStart;
@@ -38,8 +39,16 @@ uint16_t *SDWriteBlockStart;
 // Boolean to Track Current Block Write Status
 volatile bool SDWriteBlockReady;
 
+// Boolean to Track SD Write State
+volatile bool SDWriting;
+
 // Boolean to Signal SD Write Buffer Error
 volatile bool SDWriteError;
+
+
+// ADC and DMA Interface using STM32 HAL
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 
 // #### Hardware Configuration Functions
@@ -179,7 +188,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
 {
   // Check If Previous Block is Still Being Written
   // Otherwise Check for Logging Finish Signal
-  if (SDWriting || finished)
+  if (SDWriting || RYLR.available())
   {
     // Stop ADC Conversion
     HAL_ADC_Stop_DMA(&hadc1);
@@ -189,9 +198,6 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
     {
       // Signal SD Buffer Write Error
       SDWriteError = true;
-
-      // Force Signal Logging Stop and Close File
-      finished = true;
     }
   }
 
@@ -208,7 +214,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
   // Check If Previous Block is Still Being Written
   // Otherwise Check for Logging Finish Signal
-  if (SDWriting || finished)
+  if (SDWriting || RYLR.available())
   {
     // Stop ADC Conversion
     HAL_ADC_Stop_DMA(&hadc1);
@@ -218,9 +224,6 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
       // Signal SD Buffer Write Error
       SDWriteError = true;
-
-      // Force Signal Logging Stop and Close File
-      finished = true;
     }
   }
 
@@ -287,8 +290,44 @@ void ReadoutAnalogPins()
 }
 
 
+// Binary Log File Name Helper
+String GetLogfileName(bool Initialise)
+{
+  static String FileName = "";
+
+  if (!FileName && Initialise)
+  {
+    // Select Fresh Logging File Path if Blank
+    // Loop Until a Free Filename is Found
+    // Avoid Overwriting Files
+    for (short id = 0; id >= 0; id++)
+    {
+      // Clear Existing Path
+      FileName = "";
+
+      // Build and Test Path
+      FileName += id;
+      FileName += ".dat";
+
+      if (!SD.exists(FileName))
+      {
+        // Select Tested Path and Stop Loop
+        break;
+      }
+    }
+
+    // Set Output File Name
+    return FileName;
+  }
+
+  // If File Name is not Blank or Initialisation is Disabled
+  // Return File Name without Changes
+  return FileName;
+}
+
+
 // Binary Log File and Initial DMA Buffer Configuration
-void ConfigureLogging(String &Name)
+void ConfigureLogging()
 {
   // Initialise Circular Buffer and Write Block Pointer
   // Log Data in 1st Block Initially
@@ -301,59 +340,47 @@ void ConfigureLogging(String &Name)
   // Initialise SD Write Buffer Error Signal Boolean
   SDWriteError = false;
 
-  // Initialise Logging Status Boolean
-  finished = false;
-
-  // Select Logging File Path
-  // Loop Until a Free Filename is Found
-  // Avoid OverSDWriting Files
-  String path;
-  for (short id = 0; id >= 0; id++)
-  {
-    // Clear Existing Path
-    path = "";
-
-    // Build and Test Path
-    path += id;
-    path += ".dat";
-
-    if (!SD.exists(path))
-    {
-      // Select Tested Path and Stop Loop
-      break;
-    }
-  }
-
-  // Open LogFile and Begin Log
-  // Abort if File does not Open
-  LogFile = SD.open(path, (O_CREAT | O_WRITE));
-  if (!LogFile) {
-    ErrorBlink(ERR_SD_FILE);
-    return;
-  }
-
-  // Set Output File Name
-  Name = path;
-
-  return;
+  // Select a Fresh Filename for the Binary Log File
+  GetLogfileName(true);
 }
 
 
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging()
 {
+  // Open LogFile and Begin Log
+  File LogFile = SD.open(GetLogfileName(), (O_CREAT | O_WRITE));
+
+  // Abort if File does not Open
+  if (!LogFile) {
+    ErrorBlink(ERR_SD_FILE);
+    return;
+  }
+
   // Enable ADC and Trigger Conversion
   HAL_ADC_Start_DMA(&hadc1, (uint32_t *)DMABuffer, sizeof(DMABuffer));
 
   // Log Starting Time
   uint32_t start = micros();
   LogFile.write((const uint8_t *)&start, sizeof(uint32_t));
+
+  // Ensure Data is Written to the File
+  LogFile.flush();
+  LogFile.close();
 }
 
 
 // Log Finalised Binary DMA Buffers to SD Card
-void LogBuffers()
+bool LogBuffers()
 {
+  static File LogFile = SD.open(GetLogfileName(), O_APPEND);
+
+  // Abort if File is not Open
+  if (!LogFile) {
+    ErrorBlink(ERR_SD_FILE);
+    return false;
+  }
+
   // Check if DMA Handler Aborted
   if (SDWriteError)
   {
@@ -365,7 +392,7 @@ void LogBuffers()
     ErrorBlink(ERR_SD_BUFF);
 
     // Abort Logging
-    return;
+    return false;
   }
 
   // Check if SD Buffer Block is Ready For Write
@@ -388,7 +415,7 @@ void LogBuffers()
     SDWriting = false;
 
     // Check if Finish Signal was Received from RYLR
-    if (finished)
+    if (RYLR.available())
     {
       // Force any Data in File Buffer to be Written to SD Card
       LogFile.flush();
@@ -396,16 +423,22 @@ void LogBuffers()
 
       // Clear Circular DMA Buffer
       memset(DMABuffer, 0X00, sizeof(DMABuffer));
+
+      // Signal Stop of Logging
+      return false;
     }
   }
+
+  // Continue Logging Otherwise
+  return true;
 }
 
 
 // Binary Log File to CSV File Converter
 void ConvertLog(const String &Path)
 {
-  // Containers for CSV File and Associated Data
-  File CSVFile;
+  // Containers for Files and Associated Data
+  File CSVFile, LogFile;
   String CSVFileName, buffer;
   uint32_t start, end, progress;
 
@@ -415,7 +448,7 @@ void ConvertLog(const String &Path)
   // Check if Last Buffer was Written Successfully
   // Ensure Log File Data is Complete Before Conversion
   // Abort on Error
-  if (SDWriting || LogFile)
+  if (SDWriting)
   {
     ErrorBlink(ERR_SD_BUFF);
     return;
@@ -432,6 +465,10 @@ void ConvertLog(const String &Path)
   {
     ErrorBlink(ERR_SD_FILE);
     return;
+  } else {
+    // Output Log File Diagnostics
+    SendRYLR("FILENAME: " + String(LogFile.name()));
+    SendRYLR("FILESIZE: " + String(LogFile.size()));
   }
 
   // Copy Log File Name for CSV File

@@ -23,14 +23,17 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc);
 // Readout Analog Pins to Check Input
 void ReadoutAnalogPins();
 
+// Binary Log File Name Helper
+String GetLogfileName(bool Initialise = true);
+
 // Binary Log File and Initial DMA Buffer Configuration
-void ConfigureLogging(String &Name);
+void ConfigureLogging();
 
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging();
 
 // Log Finalised Binary DMA Buffers to SD Card
-void LogBuffers();
+bool LogBuffers();
 
 // Binary Log File to CSV File Converter
 void ConvertLog(const String &Path);

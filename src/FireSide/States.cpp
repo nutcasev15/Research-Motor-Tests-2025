@@ -83,40 +83,6 @@ void BootConvertTransition()
     return;
   }
 
-  // Find Last Logging File Name
-  for (short id = 0; (id + 1) >= 0; id++)
-  {
-    // Clear Existing File Name
-    FileName = "";
-
-    // Build and Test File Name
-    FileName += (id + 1);
-    FileName += ".dat";
-
-    if (!SD.exists(FileName))
-    {
-      // Previous Tested ID was Last Log File
-      // Clear File Name
-      FileName = "";
-
-      // Build File Name of Last Log File
-      FileName += id;
-      FileName += ".dat";
-
-      // Select File and Stop Loop
-      break;
-    }
-  }
-  SendRYLR("BINARY FILENAME: " + FileName);
-
-  // Double Check if Selected File Exists
-  // Abort if File not Found
-  if (!SD.exists(FileName))
-  {
-    ErrorBlink(ERR_SD_FILE);
-    return;
-  }
-
   SendRYLR("OVERRIDE SUCCESSFUL");
 }
 
@@ -174,7 +140,7 @@ bool ArmCheck(id_t state)
   // Ensure SD Card Functions
   // Abort on Failure
   SendRYLR("TESTING SDCARD");
-  if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
+  if (!SD.open("Test.chk", FILE_WRITE))
   {
     ErrorBlink(ERR_SD_FILE);
     return false;
@@ -223,17 +189,15 @@ void ArmLaunchTransition()
 
   // Configure ADC for Data Acquisition
   ConfigureADC(ContinuousLogging);
-  SendRYLR("ADC READY");
+  SendRYLR("ADC GO");
 
   // Configure DMA for Data Acquisition
   ConfigureDMA(ContinuousLogging);
-  SendRYLR("DMA READY");
+  SendRYLR("DMA GO");
 
   // Configure Logging And Get Filename
-  ConfigureLogging(FileName);
-  SendRYLR("BINARY LOGGER READY");
-
-  SendRYLR("FIRING IGNITERS");
+  ConfigureLogging();
+  SendRYLR("BINARY LOGGER GO");
 }
 
 
@@ -241,12 +205,11 @@ void ArmLaunchTransition()
 // Check if LAUNCH can Proceed to LOGGING
 bool LaunchCheck(id_t state)
 {
-  SendRYLR("LAUNCH & LOGGING TRIGGERED");
-
   // Pause FireSide RYLR Communications
   // There is not Enough CPU to Log and Communicate
   SendRYLR("RADIO SILENCE FIRESIDE");
   SendRYLR("SEND ANY COMMAND TO STOP LOGGING");
+  SendRYLR("FIRING IGNITERS");
 
   // Any RYLR Input After This Point Interrupts Logging
   TriggerLogging();
@@ -269,19 +232,9 @@ bool LaunchCheck(id_t state)
 bool LoggingCheck(id_t state)
 {
   // Write ADC Samples in DMA Buffers to Log File
-  LogBuffers();
-
-  // Check if Logging is Finished
-  // Logging Stops If RYLR Receives Any Data
-  if (RYLR.available())
+  if (LogBuffers())
   {
-    // Signal Logging Finish to ADC and DMA Modules
-    finished = true;
-  }
-
-  // Stay in LOGGING State Until LogFile is Closed
-  if (LogFile.availableForWrite())
-  {
+    // Stay in LOGGING State Until LogFile is Closed
     return false;
   } else {
     // Proceed to CONVERT State
@@ -294,19 +247,6 @@ bool LoggingCheck(id_t state)
 void LoggingConvertTransition()
 {
   SendRYLR("LOGGING STOPPED");
-
-  // Open Log File to Output Diagnostics
-  // Abort if SD Card IO Fails
-  LogFile = SD.open(FileName, O_RDONLY);
-  if (!LogFile)
-  {
-    ErrorBlink(ERR_SD_FILE);
-    return;
-  } else {
-    SendRYLR("FILENAME: " + FileName);
-    SendRYLR("FILESIZE: " + String(LogFile.size()));
-    LogFile.close();
-  }
 
   SendRYLR("CONVERTING BINARY LOG");
 }
@@ -324,7 +264,47 @@ bool ConvertCheck(id_t state)
   // Indicate Igniters are Safe
   digitalWrite(STATUS_PIN, HIGH);
 
+  // Find Last Logging File Name
+  // If a Log File Name is Already Assigned, Use That
+  String FileName = GetLogfileName(false);
+
+  // Otherwise, Search File System for Last Written Log File
+  if (!FileName)
+  {
+    for (short id = 0; (id + 1) >= 0; id++)
+    {
+      // Clear Existing File Name
+      FileName = "";
+
+      // Build and Test File Name
+      FileName += (id + 1);
+      FileName += ".dat";
+
+      if (!SD.exists(FileName))
+      {
+        // Previous Tested ID was Last Log File
+        // Clear File Name
+        FileName = "";
+
+        // Build File Name of Last Log File
+        FileName += id;
+        FileName += ".dat";
+
+        // Select File and Stop Loop
+        break;
+      }
+    }
+
+    // Double Check if Selected File Exists
+    // Abort if File not Found
+    if (!SD.exists(FileName))
+    {
+      ErrorBlink(ERR_SD_FILE);
+    }
+  }
+
   // Start Binary Log Conversion to CSV
+  SendRYLR("BINARY FILENAME: " + FileName);
   ConvertLog(FileName);
 
   // Always Proceed to SAFE State
@@ -336,15 +316,6 @@ bool ConvertCheck(id_t state)
 void ConvertSafeTransition()
 {
   SendRYLR("BINARY CONVERSION COMPLETE");
-
-  // Close Log File if Open
-  if (LogFile)
-  {
-    LogFile.close();
-  }
-
-  // Reset Log File Name
-  FileName = "";
 
   // Indicate Conversion is Complete
   digitalWrite(STATUS_PIN, LOW);
@@ -383,7 +354,7 @@ bool FailureCheck(id_t state)
   // Ensure SD Card Functions
   // Abort on Failure
   SendRYLR("TESTING SDCARD");
-  if (!SD.open("TEST.ARM"), (O_CREAT | O_WRITE))
+  if (!SD.open("Test.chk", FILE_WRITE))
   {
     ErrorBlink(ERR_SD_FILE);
     return false;
@@ -391,10 +362,6 @@ bool FailureCheck(id_t state)
 
   // Check Analog Inputs
   ReadoutAnalogPins();
-
-  // Disable DMA
-  HAL_ADC_Stop_DMA(&hadc1);
-  SendRYLR("DMA DISABLED");
 
   // Wait for GroundSide Command
   while (!RYLR.available())
@@ -415,7 +382,7 @@ bool FailureCheck(id_t state)
     return true;
   } else {
     // Rerun Diagnostics
-    delay(500UL);
+    delay(5000UL);
     return false;
   }
 }
