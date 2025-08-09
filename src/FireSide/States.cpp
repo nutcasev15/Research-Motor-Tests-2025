@@ -60,7 +60,7 @@ void BootSafeTransition()
 
   // Initialize Dedicated SPI Interface to SD Card
   // Abort if Initialization Fails
-  if (!SD.begin())
+  if (!SD.begin(F_CPU / 4, SD_CHIP_SELECT_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
     return;
@@ -77,7 +77,7 @@ void BootConvertTransition()
 
   // Initialize Dedicated SPI Interface to SD Card
   // Abort if Initialization Fails
-  if (!SD.begin())
+  if (!SD.begin(F_CPU / 4, SD_CHIP_SELECT_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
     return;
@@ -187,13 +187,13 @@ void ArmLaunchTransition()
   // Override Configuration Mode to Continuous
   bool ContinuousLogging = true;
 
-  // Configure ADC for Data Acquisition
-  ConfigureADC(ContinuousLogging);
-  SendRYLR("ADC GO");
-
   // Configure DMA for Data Acquisition
   ConfigureDMA(ContinuousLogging);
   SendRYLR("DMA GO");
+
+  // Configure ADC for Data Acquisition
+  ConfigureADC(ContinuousLogging);
+  SendRYLR("ADC GO");
 
   // Configure Logging And Get Filename
   ConfigureLogging();
@@ -345,7 +345,7 @@ bool FailureCheck(id_t state)
   // Abort if Initialization Fails
   SendRYLR("CHECKING SDCARD");
   SD.end();
-  if (!SD.begin())
+  if (!SD.begin(F_CPU / 4, SD_CHIP_SELECT_PIN))
   {
     ErrorBlink(ERR_SD_INIT);
     return false;
