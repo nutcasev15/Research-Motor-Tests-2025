@@ -66,6 +66,13 @@ void BootSafeTransition()
     return;
   }
 
+  // Create Test File on SD Card
+  if (!SD.exists("Test.chk"))
+  {
+    // Immediately Close the File After Creation
+    SD.open("Test.chk", FILE_WRITE).close();
+  }
+
   SendRYLR("BOOT COMPLETE");
   SendRYLR("FIRESIDE SAFE");
 }
@@ -140,7 +147,7 @@ bool ArmCheck(id_t state)
   // Ensure SD Card Functions
   // Abort on Failure
   SendRYLR("TESTING SDCARD");
-  if (!SD.open("Test.chk", FILE_WRITE))
+  if (!SD.exists("Test.chk"))
   {
     ErrorBlink(ERR_SD_FILE);
     return false;
@@ -232,15 +239,11 @@ bool LaunchCheck(id_t state)
 bool LoggingCheck(id_t state)
 {
   // Write ADC Samples in DMA Buffers to Log File
-  if (LogBuffers())
-  {
-    // Stay in LOGGING State Until LogFile is Closed
-    return false;
-  } else {
-    // Proceed to CONVERT State
-    LoggingConvertTransition();
-    return true;
-  }
+  LogBuffersinLoop();
+
+  // Always Proceed to CONVERT State
+  LoggingConvertTransition();
+  return true;
 }
 
 // Handle Stop of Binary Logging
@@ -348,7 +351,7 @@ bool FailureCheck(id_t state)
   // Ensure SD Card Functions
   // Abort on Failure
   SendRYLR("TESTING SDCARD");
-  if (!SD.open("Test.chk", FILE_WRITE))
+  if (!SD.exists("Test.chk"))
   {
     ErrorBlink(ERR_SD_FILE);
     return false;

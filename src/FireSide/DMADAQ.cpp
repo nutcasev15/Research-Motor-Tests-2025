@@ -408,69 +408,58 @@ void TriggerLogging()
 
 
 // Log Finalised Binary DMA Buffers to SD Card
-bool LogBuffers()
+void LogBuffersinLoop()
 {
-  static File LogFile = SD.open(GetLogfileName(), FILE_WRITE);
+  // Create Binary Log File on SD Card
+  File LogFile = SD.open(GetLogfileName(), FILE_WRITE);
 
   // Abort if File is not Open
   if (!LogFile) {
     ErrorBlink(ERR_SD_FILE);
-    return false;
   }
 
-  // Check if DMA Handler Aborted
-  if (SDWriteError)
-  {
-    // Force any Data in File Buffer to be Written to SD Card
-    LogFile.flush();
-    LogFile.close();
+  // Start Logging Loop
+  do {
+    // Check if DMA Handler Aborted
+    if (SDWriteError)
+    {
+      // Close File on SD Card After Logging Loop
+      LogFile.close();
 
-    // Indicate SD Write Buffer Error on LED
-    ErrorBlink(ERR_SD_BUFF);
+      // Indicate SD Write Buffer Error on LED
+      ErrorBlink(ERR_SD_BUFF);
+    }
 
-    // Abort Logging
-    return false;
-  }
+    // Check if SD Buffer Block is Ready For Write
+    if (SDWriteBlockReady)
+    {
+      // Reset SD Write Block Status
+      SDWriteBlockReady = false;
 
-  // Check if SD Buffer Block is Ready For Write
-  if (SDWriteBlockReady)
-  {
-    // Reset SD Write Block Status
-    SDWriteBlockReady = false;
+      // Set SD Card Write Flag
+      SDWriting = true;
 
-    // Set SD Card Write Flag
-    SDWriting = true;
+      // Dump Block to SD Card
+      LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
 
-    // Dump Block to SD Card
-    LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
+      // Write Timestamp to SD Card
+      uint32_t time = micros();
+      LogFile.write((const uint8_t *)&time, sizeof(uint32_t));
 
-    // Write Timestamp to SD Card
-    uint32_t time = micros();
-    LogFile.write((const uint8_t *)&time, sizeof(uint32_t));
+      // Reset SD Card Write Flag
+      SDWriting = false;
+    }
+  } while (!RYLR.available());
 
-    // Reset SD Card Write Flag
-    SDWriting = false;
-  }
+  // Close File on SD Card After Logging Loop
+  LogFile.close();
 
-  // Check if Finish Signal was Received from RYLR
-  if (RYLR.available())
-  {
-    // Force any Data in File Buffer to be Written to SD Card
-    LogFile.flush();
-    LogFile.close();
+  // Finish Signal was Received from RYLR
+  // Signal Stop of Data Logging on SD Card for ADC-DMA Callbacks
+  SDLogStop = true;
 
-    // Signal Stop of Data Logging on SD Card for ADC DMA Callbacks
-    SDLogStop = true;
-
-    // Clear Circular DMA Buffer
-    memset(DMABuffer, 0X00, sizeof(DMABuffer));
-
-    // Signal Stop of Logging
-    return false;
-  }
-
-  // Continue Logging Otherwise
-  return true;
+  // Clear Circular DMA Buffer
+  memset(DMABuffer, 0X00, sizeof(DMABuffer));
 }
 
 

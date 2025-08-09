@@ -33,7 +33,7 @@ void ConfigureLogging();
 void TriggerLogging();
 
 // Log Finalised Binary DMA Buffers to SD Card
-bool LogBuffers();
+void LogBuffersinLoop();
 
 // Binary Log File to CSV File Converter
 void ConvertLog(const String &Path);
