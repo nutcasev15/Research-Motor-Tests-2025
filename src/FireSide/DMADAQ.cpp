@@ -158,12 +158,15 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
   SDWriteBlockReady = true;
 }
 
+
+// ADC Conversion Error Callback
 void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
 {
   UNUSED(hadc);
 
   ErrorBlink(ERR_HAL_ADC);
 }
+
 
 // ADC Module Configuration
 void ConfigureADC(bool Continuous)
@@ -348,11 +351,8 @@ String GetLogfileName(bool Initialise)
     // Avoid Overwriting Files
     for (short id = 0; id >= 0; id++)
     {
-      // Clear Existing Path
-      FileName = "";
-
       // Build and Test Path
-      FileName += id;
+      FileName = id;
       FileName += ".dat";
 
       if (!SD.exists(FileName))
@@ -361,13 +361,11 @@ String GetLogfileName(bool Initialise)
         break;
       }
     }
-
-    // Set Output File Name
-    return FileName;
   }
 
   // If File Name is not Blank or Initialisation is Disabled
-  // Return File Name without Changes
+  // Returns File Name without Changes
+  // Otherwise Returns the Allocated File Name
   return FileName;
 }
 

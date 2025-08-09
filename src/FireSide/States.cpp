@@ -273,21 +273,15 @@ bool ConvertCheck(id_t state)
   {
     for (short id = 0; (id + 1) >= 0; id++)
     {
-      // Clear Existing File Name
-      FileName = "";
-
       // Build and Test File Name
-      FileName += (id + 1);
+      FileName = (id + 1);
       FileName += ".dat";
 
       if (!SD.exists(FileName))
       {
         // Previous Tested ID was Last Log File
-        // Clear File Name
-        FileName = "";
-
         // Build File Name of Last Log File
-        FileName += id;
+        FileName = id;
         FileName += ".dat";
 
         // Select File and Stop Loop
