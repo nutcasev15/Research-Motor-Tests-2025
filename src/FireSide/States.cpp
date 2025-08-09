@@ -269,7 +269,7 @@ bool ConvertCheck(id_t state)
   String FileName = GetLogfileName(false);
 
   // Otherwise, Search File System for Last Written Log File
-  if (!FileName)
+  if (FileName.length() == 0)
   {
     for (short id = 0; (id + 1) >= 0; id++)
     {
