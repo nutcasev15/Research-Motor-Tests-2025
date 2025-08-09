@@ -359,14 +359,6 @@ void TriggerLogging()
 
   // Enable ADC and Trigger Conversion
   HAL_ADC_Start_DMA(&hadc1, (uint32_t *)DMABuffer, sizeof(DMABuffer));
-
-  // Log Starting Time
-  uint32_t start = micros();
-  LogFile.write((const uint8_t *)&start, sizeof(uint32_t));
-
-  // Ensure Data is Written to the File
-  LogFile.flush();
-  LogFile.close();
 }
 
 
@@ -404,12 +396,12 @@ bool LogBuffers()
     // Set SD Card Write Flag
     SDWriting = true;
 
+    // Dump Block to SD Card
+    LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
+
     // Write Timestamp to SD Card
     uint32_t time = micros();
     LogFile.write((const uint8_t *)&time, sizeof(uint32_t));
-
-    // Dump Block to SD Card
-    LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
 
     // Reset SD Card Write Flag
     SDWriting = false;
@@ -445,17 +437,8 @@ void ConvertLog(const String &Path)
   // Reserve Line Buffer Length
   buffer.reserve(256UL);
 
-  // Check if Last Buffer was Written Successfully
-  // Ensure Log File Data is Complete Before Conversion
-  // Abort on Error
-  if (SDWriting)
-  {
-    ErrorBlink(ERR_SD_BUFF);
-    return;
-  } else {
-    // Clear DMA Buffer for Conversion Purposes
-    memset(DMABuffer, 0X00, sizeof(DMABuffer));
-  }
+  // Clear DMA Buffer for Conversion Purposes
+  memset(DMABuffer, 0X00, sizeof(DMABuffer));
 
   // Open Log File for Reading Only
   LogFile = SD.open(Path, O_RDONLY);
@@ -479,7 +462,7 @@ void ConvertLog(const String &Path)
   CSVFileName += ".csv";
 
   // Create CSV File
-  CSVFile = SD.open(CSVFileName, (O_CREAT | O_WRITE));
+  CSVFile = SD.open(CSVFileName, FILE_WRITE);
 
   // Reset Line Buffer and Prepare CSV Header
   // NOTE: See Interfaces.hpp
@@ -496,22 +479,27 @@ void ConvertLog(const String &Path)
 
   // Start Reading Log File
   LogFile.seek(0UL);
-  progress = 0UL;
-
-  // Read Starting Time
-  LogFile.read(&start, sizeof(uint32_t));
+  start = progress = 0UL;
 
   // Iterate Through All Logged DMA Buffer Blocks
   do
   {
     // Clear Line Buffer
-    buffer = "";
+    buffer = ' ';
+
+    // Read Data from Log File into 1st Block of Circular Buffer
+    LogFile.read(DMABuffer, ADC_DMA_BLOCKLEN);
 
     // Read Timestamp from Log File
     LogFile.read(&end, sizeof(uint32_t));
 
-    // Read Data from Log File into 1st Block of Circular Buffer
-    LogFile.read(DMABuffer, ADC_DMA_BLOCKLEN);
+    // Load Starting Timestamp if Blank
+    if (!start)
+    {
+      start = end;
+      // Discard First Buffer's Data
+      continue;
+    }
 
     // Process Each ADC Sample in DMA buffer in Blocks
     for (uint16_t index = 0; index < ADC_DMA_BLOCKLEN; index += ADC_PARALLEL_CHANNELS)
@@ -538,11 +526,8 @@ void ConvertLog(const String &Path)
     {
       progress = LogFile.position();
 
-      // Clear and Reuse Line Buffer
-      buffer = "";
-
       // Build Progress Report
-      buffer += "PROGRESS: ";
+      buffer = "PROGRESS: ";
       buffer += progress;
       buffer += " / ";
       buffer += LogFile.size();

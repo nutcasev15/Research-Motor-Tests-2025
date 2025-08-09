@@ -15,8 +15,8 @@ from struct import unpack
 
 
 # The C/C++ Data Storage Sequence
-# uint32_t Timestamp
 # uint16_t Buffer[ADC_DMA_BLOCKLEN]
+# uint32_t Timestamp
 
 
 # Display Script Startup
@@ -32,7 +32,7 @@ context.withdraw()
 
 
 # Set Number of ADC Channels
-ADC_PARALLEL_CHANNELS = 5
+ADC_PARALLEL_CHANNELS = 6
 
 # Define Maximum Number of ADC Channels
 # See Interfaces.hpp
@@ -77,17 +77,13 @@ CSVDataTable = []
 # Iterate Through All Logged DMA Buffers
 print('>> Reading and Converting Binary File')
 with open(LogPath, 'rb') as LogFile:
-  # Allocate Buffers for Binary Data
-  time = 0
-
-  # Read Starting Time from 1st 4 Bytes
-  # See TriggerLogging() in DMADAQ.cpp
-  time = unpack('<I', LogFile.read(4))[0]
+  # Initialise Time Stamp Container
+  time = -1
 
   while True:
     # Read Block from Log File
     # Remove Offset and Calculate Size of Block in Bytes
-    buffer = LogFile.read(4 + 2 * ADC_DMA_BLOCKLEN)
+    buffer = LogFile.read(2 * ADC_DMA_BLOCKLEN + 4)
 
     # Check for End of File
     if not buffer:
@@ -96,10 +92,16 @@ with open(LogPath, 'rb') as LogFile:
     # Decode the DMA Buffer and Unpack the Tuple
     # See C/C++ Structure at Start of Script
     buffer = unpack(
-      f'<I{ADC_DMA_BLOCKLEN}H', buffer
+      f'<{ADC_DMA_BLOCKLEN}HI', buffer
     )
-    TimeStamp = buffer[0]
-    data = buffer[1:]
+    data = buffer[0:-1]
+    TimeStamp = buffer[-1]
+
+    # Load First Time Stamp
+    if time == -1:
+      time = TimeStamp
+      # Discard First Buffer
+      continue
 
     # Process Each ADC Sample in the DMA buffer in Blocks
     for index in range(0, len(data), ADC_PARALLEL_CHANNELS):
