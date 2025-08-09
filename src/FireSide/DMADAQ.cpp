@@ -5,9 +5,6 @@
 // Board IO Wiring Setup Wrappers
 #include <wiring_private.h>
 
-// SD Card Interface and File Class
-#include <SD.h>
-
 
 // #### Internal Headers
 // Hardware Interface Definitions and Functions
@@ -42,6 +39,9 @@ volatile bool SDWriteBlockReady;
 // Boolean to Track SD Write State
 volatile bool SDWriting;
 
+// Boolean to Track SD Logging Stop Signal
+volatile bool SDLogStop;
+
 // Boolean to Signal SD Write Buffer Error
 volatile bool SDWriteError;
 
@@ -52,93 +52,6 @@ DMA_HandleTypeDef hdma_adc1;
 
 
 // #### Hardware Configuration Functions
-// ADC Module Configuration
-void ConfigureADC(bool Continuous)
-{
-  ADC_ChannelConfTypeDef sConfig;
-
-  // Select ADC Module One on MCU
-  hadc1.Instance = ADC1;
-
-  // Sync ADC to Core Clock: 80 MHz / 4 = 20 MHz
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-
-  // Setup ADC Data Frame
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-
-  // Enable Oversampling to Gain 2 Bits of Extra Resolution
-  // Total Sampling Speed:
-  // ADC Clock / (Oversampling Ratio * No. of Channels * Cycles per Sample)
-  // See Channel Configuration for Cycles per Sample
-  hadc1.Init.OversamplingMode = ENABLE;
-  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_16;
-  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_2;
-  hadc1.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
-  hadc1.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
-
-  // Instruct ADC to Scan Input Pins in Sequence
-  hadc1.Init.NbrOfConversion = ADC_PARALLEL_CHANNELS;
-  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
-
-  // Set Conversion Trigger to Internal Software Only
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-
-  // Specify if ADC Should Continuously Scan the Input Pins
-  // NOTE: DMA Should Not Be Used for Simple Pin Readout to Avoid Conflicts
-  if (Continuous)
-  {
-    hadc1.Init.DMAContinuousRequests = ENABLE;
-    hadc1.Init.ContinuousConvMode = ENABLE;
-    hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
-  } else {
-    hadc1.Init.DMAContinuousRequests = DISABLE;
-    hadc1.Init.ContinuousConvMode = DISABLE;
-    hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  }
-
-  // Write Settings to ADC Module
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    ErrorBlink(ERR_HAL_ADC);
-  }
-
-  // Configure ADC Channels
-  // Set Single Ended Conversion with No Assumed Offset
-  sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.OffsetNumber = ADC_OFFSET_NONE;
-
-  // Configure Channel Sample Time
-  // NOTE: Cycles per Sample = 12.5 + Sampling Cycles
-  sConfig.SamplingTime = ADC_SAMPLETIME_24CYCLES_5;
-
-  // Loop Over All ADC Inputs and Write their Settings to the ADC
-  // See Interfaces.hpp for ADC Hardware Setup Definition
-  for (short input = 0; input < ADC_PARALLEL_CHANNELS; input++)
-  {
-    // Configure GPIO Input Pin to Analog Mode
-    pinMode(ADCHardwareSetup[input].pin, INPUT_ANALOG);
-
-    // Assign Hardware Input Channel to ADC Rank
-    sConfig.Channel = ADCHardwareSetup[input].channel;
-    sConfig.Rank = ADCHardwareSetup[input].rank;
-
-    // Write Settings to Each ADC Input Channel
-    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-    {
-      ErrorBlink(ERR_HAL_ADC);
-    }
-  }
-
-  // Enable Clock to ADC Module After Setup
-  __HAL_RCC_ADC_CLK_ENABLE();
-
-  // Calibrate ADC in Single Ended Input Mode
-  HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-}
-
-
 // DMA Module Configuration
 void ConfigureDMA(bool Continuous)
 {
@@ -147,6 +60,9 @@ void ConfigureDMA(bool Continuous)
   {
     return;
   }
+
+  // Enable Clock to DMA Module
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   // Select Channel 1 on DMA Module One
   hdma_adc1.Instance = DMA1_Channel1;
@@ -178,8 +94,16 @@ void ConfigureDMA(bool Continuous)
   // Link DMA and ADC Modules
   __HAL_LINKDMA(&hadc1, DMA_Handle, hdma_adc1);
 
-  // Enable Clock to ADC Module One After Setup
-  __HAL_RCC_DMA1_CLK_ENABLE();
+  // Setup DMA Global Interrupt
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+}
+
+
+// Handle DMA1 Channel1 Global Interrupt for ADC Callbacks
+extern "C" void DMA1_Channel1_IRQHandler()
+{
+  HAL_DMA_IRQHandler(&hdma_adc1);
 }
 
 
@@ -188,7 +112,7 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
 {
   // Check If Previous Block is Still Being Written
   // Otherwise Check for Logging Finish Signal
-  if (SDWriting || RYLR.available())
+  if (SDWriting || SDLogStop)
   {
     // Stop ADC Conversion
     HAL_ADC_Stop_DMA(&hadc1);
@@ -214,7 +138,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
   // Check If Previous Block is Still Being Written
   // Otherwise Check for Logging Finish Signal
-  if (SDWriting || RYLR.available())
+  if (SDWriting || SDLogStop)
   {
     // Stop ADC Conversion
     HAL_ADC_Stop_DMA(&hadc1);
@@ -234,6 +158,115 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
   SDWriteBlockReady = true;
 }
 
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+  UNUSED(hadc);
+
+  ErrorBlink(ERR_HAL_ADC);
+}
+
+// ADC Module Configuration
+void ConfigureADC(bool Continuous)
+{
+  ADC_ChannelConfTypeDef sConfig;
+
+  // Enable Clock to ADC Module
+  __HAL_RCC_ADC_CLK_ENABLE();
+
+  // Select ADC Module One on MCU
+  hadc1.Instance = ADC1;
+
+  // Sync ADC to Core Clock: 80 MHz / 4 = 20 MHz
+  // Max Allowable Clock at 12-Bit Resolution
+  // See Page 384 in ST's RM0394 Manual For More Implementation Details
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+
+  // Setup ADC 12-Bit Data Resolution
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+
+  // Enable Oversampling to Reduce Signal Noise
+  // Total Sampling Speed:
+  // ADC Clock / (Oversampling Ratio * No. of Channels * Cycles per Sample)
+  // See Channel Configuration for Cycles per Sample
+  hadc1.Init.OversamplingMode = ENABLE;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_4;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_2;
+
+  // Instruct ADC to Scan Input Pins in Sequence
+  hadc1.Init.NbrOfConversion = ADC_PARALLEL_CHANNELS;
+  hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
+
+  // Set Conversion Trigger to Internal Software Only
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+
+  // Specify How the ADC Should Scan the Input Pins
+  // NOTE: DMA Should Not Be Used for Simple Pin Readout to Avoid Conflicts
+  // See Page 395 in ST's RM0394 Manual For More Implementation Details
+  if (Continuous)
+  {
+    // Scan Continuously using DMA
+    hadc1.Init.ContinuousConvMode = ENABLE;
+    hadc1.Init.DMAContinuousRequests = ENABLE;
+    hadc1.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+
+    // Ensure Discontinuous Mode is Disabled
+    hadc1.Init.DiscontinuousConvMode = DISABLE;
+  } else {
+    // Disable Continuous Scanning to Avoid Overruns
+    hadc1.Init.ContinuousConvMode = DISABLE;
+    hadc1.Init.DMAContinuousRequests = DISABLE;
+
+    // Enable Discontinuous Mode
+    // Scan One Channel per Software Trigger
+    hadc1.Init.DiscontinuousConvMode = ENABLE;
+    hadc1.Init.NbrOfDiscConversion = 1;
+  }
+
+  // Write Settings to ADC Module
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_ADC);
+  }
+
+  // Configure ADC Channels
+  // Set Single Ended Conversion with No Assumed Offset
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+
+  // Configure Channel Sample Time
+  // NOTE: Cycles per Sample = 12.5 + Sampling Cycles
+  sConfig.SamplingTime = ADC_SAMPLETIME_92CYCLES_5;
+
+  // Loop Over All ADC Inputs and Write their Settings to the ADC
+  // See Interfaces.hpp for ADC Hardware Setup Definition
+  for (short input = 0; input < ADC_PARALLEL_CHANNELS; input++)
+  {
+    // Configure GPIO Input Pin to Analog Mode
+    pinMode(ADCHardwareSetup[input].pin, INPUT_ANALOG);
+
+    // Assign Hardware Input Channel to ADC Rank
+    sConfig.Channel = ADCHardwareSetup[input].channel;
+    sConfig.Rank = ADCHardwareSetup[input].rank;
+
+    // Write Settings to Each ADC Input Channel
+    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+    {
+      ErrorBlink(ERR_HAL_ADC);
+    }
+  }
+
+  // Setup ADC Global Interrupt
+  HAL_NVIC_SetPriority(ADC1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(ADC1_IRQn);
+}
+
+
+// Handle ADC Global Interrupt for ADC Callbacks
+extern "C" void ADC1_IRQHandler()
+{
+  HAL_ADC_IRQHandler(&hadc1);
+}
+
 
 // Readout Analog Pins to Check Input
 void ReadoutAnalogPins()
@@ -242,25 +275,38 @@ void ReadoutAnalogPins()
   // Do Not Use DMA for Single Shot Pin Readout
   ConfigureADC();
 
-  // Disable ADC DMA to Avoid Conflicts
-  HAL_ADC_Stop_DMA(&hadc1);
+  // Calibrate ADC in Single Ended Input Mode Before Converting
+  // See Errata 2.6.10 in ST's ES0456 Errata Document for L412KBU6U
+  if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_ADC);
+  }
 
   // Wait for Conversion to Finish Sequentially on Each Input Pin
   // Save the Result in the Readout Buffer
   for (short channel = 0; channel < ADC_PARALLEL_CHANNELS; channel++)
   {
     // Start ADC for Single Scan of Input Pins
-    HAL_ADC_Start(&hadc1);
+    if (HAL_ADC_Start(&hadc1) != HAL_OK)
+    {
+      ErrorBlink(ERR_HAL_ADC);
+    }
 
-    // Wait for Conversion Completion
-    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+    // Wait 100 ms for Conversion Completion
+    if (HAL_ADC_PollForConversion(&hadc1, 100UL) != HAL_OK)
+    {
+      ErrorBlink(ERR_HAL_ADC);
+    }
 
     // Save Converted Value
     ReadoutBuffer[channel] = (uint16_t)(HAL_ADC_GetValue(&hadc1));
   }
 
   // Stop ADC After Each Input Pin has been Read Out
-  HAL_ADC_Stop(&hadc1);
+  if (HAL_ADC_Stop(&hadc1) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_ADC);
+  }
 
   // Assemble ADC Calibration Data and Channel Debug Data
   String debug = "Calibration=";
@@ -277,8 +323,8 @@ void ReadoutAnalogPins()
     // Separator
     debug += '=';
 
-    // Channel Value for 14-Bit Oversampled Data
-    debug += (ReadoutBuffer[channel] * 3.3 / (1<<14));
+    // Channel Value for 12-Bit Data
+    debug += (ReadoutBuffer[channel] * 3.3 / (1<<12));
 
     // Value Units and Separator
     debug += "V ";
@@ -295,7 +341,7 @@ String GetLogfileName(bool Initialise)
 {
   static String FileName = "";
 
-  if (!FileName && Initialise)
+  if (FileName.length() == 0 && Initialise)
   {
     // Select Fresh Logging File Path if Blank
     // Loop Until a Free Filename is Found
@@ -337,6 +383,9 @@ void ConfigureLogging()
   // Initialise Current Block Status for SD Card Write
   SDWriteBlockReady = false;
 
+  // Initialise SD Logging Stop Signal Boolean
+  SDLogStop = false;
+
   // Initialise SD Write Buffer Error Signal Boolean
   SDWriteError = false;
 
@@ -348,13 +397,11 @@ void ConfigureLogging()
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging()
 {
-  // Open LogFile and Begin Log
-  File LogFile = SD.open(GetLogfileName(), (O_CREAT | O_WRITE));
-
-  // Abort if File does not Open
-  if (!LogFile) {
-    ErrorBlink(ERR_SD_FILE);
-    return;
+  // Calibrate ADC in Single Ended Input Mode Before Triggering
+  // See Errata 2.6.10 in ST's ES0456 Errata Document for L412KBU6U
+  if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
+  {
+    ErrorBlink(ERR_HAL_ADC);
   }
 
   // Enable ADC and Trigger Conversion
@@ -365,7 +412,7 @@ void TriggerLogging()
 // Log Finalised Binary DMA Buffers to SD Card
 bool LogBuffers()
 {
-  static File LogFile = SD.open(GetLogfileName(), O_APPEND);
+  static File LogFile = SD.open(GetLogfileName(), FILE_WRITE);
 
   // Abort if File is not Open
   if (!LogFile) {
@@ -405,20 +452,23 @@ bool LogBuffers()
 
     // Reset SD Card Write Flag
     SDWriting = false;
+  }
 
-    // Check if Finish Signal was Received from RYLR
-    if (RYLR.available())
-    {
-      // Force any Data in File Buffer to be Written to SD Card
-      LogFile.flush();
-      LogFile.close();
+  // Check if Finish Signal was Received from RYLR
+  if (RYLR.available())
+  {
+    // Force any Data in File Buffer to be Written to SD Card
+    LogFile.flush();
+    LogFile.close();
 
-      // Clear Circular DMA Buffer
-      memset(DMABuffer, 0X00, sizeof(DMABuffer));
+    // Signal Stop of Data Logging on SD Card for ADC DMA Callbacks
+    SDLogStop = true;
 
-      // Signal Stop of Logging
-      return false;
-    }
+    // Clear Circular DMA Buffer
+    memset(DMABuffer, 0X00, sizeof(DMABuffer));
+
+    // Signal Stop of Logging
+    return false;
   }
 
   // Continue Logging Otherwise

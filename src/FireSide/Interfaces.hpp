@@ -9,6 +9,9 @@
 // Disable Arduino Framework Access to ADC
 #define HAL_ADC_MODULE_ONLY
 
+// SPI Hardware Driver for SD Card IO
+#include <SPI.h>
+
 // File Class for Binary Data Container
 #include <SD.h>
 

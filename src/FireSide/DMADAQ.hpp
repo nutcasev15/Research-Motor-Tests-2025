@@ -8,9 +8,6 @@
 
 
 // #### DMA Data Logging Functions
-// ADC Module Configuration
-void ConfigureADC(bool Continuous = false);
-
 // DMA Module Configuration
 void ConfigureDMA(bool Continuous = false);
 
@@ -19,6 +16,9 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc);
 
 // Successful Block Two DMA Transfer Completion Callback
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc);
+
+// ADC Module Configuration
+void ConfigureADC(bool Continuous = false);
 
 // Readout Analog Pins to Check Input
 void ReadoutAnalogPins();
