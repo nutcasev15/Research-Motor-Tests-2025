@@ -335,7 +335,7 @@ void ReadoutAnalogPins()
 }
 
 
-// Binary Log File Name Helper
+// Binary Logfile Name Helper
 String GetLogfileName(bool Initialise)
 {
   static String FileName = "";
@@ -361,12 +361,12 @@ String GetLogfileName(bool Initialise)
 
   // If File Name is not Blank or Initialisation is Disabled
   // Returns File Name without Changes
-  // Otherwise Returns the Allocated File Name
+  // Otherwise Returns a New File Name
   return FileName;
 }
 
 
-// Binary Log File and Initial DMA Buffer Configuration
+// Binary Logfile and Initial DMA Buffer Configuration
 void ConfigureLogging()
 {
   // Initialise Circular Buffer and Write Block Pointer
@@ -383,12 +383,12 @@ void ConfigureLogging()
   // Initialise SD Write Buffer Error Signal Boolean
   SDWriteError = false;
 
-  // Select a Fresh Filename for the Binary Log File
+  // Select a Fresh Filename for the Binary Logfile
   GetLogfileName(true);
 }
 
 
-// Coupled ADC-DMA Transfer and Logging Trigger
+// Coupled ADC DMA Transfer and Logging Trigger
 void TriggerLogging()
 {
   // Ensure Completion of Outgoing RYLR Communications
@@ -421,7 +421,7 @@ void TriggerLogging()
 // Log Finalised Binary DMA Buffers to SD Card
 void LogBuffersinLoop()
 {
-  // Create Binary Log File on SD Card
+  // Create Binary Logfile on SD Card
   File LogFile = SD.open(GetLogfileName(), FILE_WRITE);
 
   // Abort if File is not Open
@@ -470,7 +470,7 @@ void LogBuffersinLoop()
   LogFile.close();
 
   // Finish Signal was Received from RYLR
-  // Signal Stop of Data Logging on SD Card for ADC-DMA Callbacks
+  // Signal Stop of Data Logging on SD Card for ADC Callbacks
   SDLogStop = true;
 
   // Clear Circular DMA Buffer
