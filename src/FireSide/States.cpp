@@ -131,6 +131,14 @@ void SafeArmTransition()
   // Check Analog Inputs
   ReadoutAnalogPins();
 
+  // Ensure SD Card Functions
+  // Abort on Failure
+  SendRYLR("TESTING SDCARD");
+  if (!SD.exists("Test.chk"))
+  {
+    ErrorBlink(ERR_SD_FILE);
+  }
+
   SendRYLR("FIRESIDE ARMED");
 }
 
@@ -143,15 +151,6 @@ bool ArmCheck(id_t state)
   digitalWrite(FIRE_PIN_A, STATUS_SAFE);
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
   digitalWrite(FIRE_PIN_C, STATUS_SAFE);
-
-  // Ensure SD Card Functions
-  // Abort on Failure
-  SendRYLR("TESTING SDCARD");
-  if (!SD.exists("Test.chk"))
-  {
-    ErrorBlink(ERR_SD_FILE);
-    return false;
-  }
 
   // Wait for Command from GroundSide
   while (!RYLR.available())
