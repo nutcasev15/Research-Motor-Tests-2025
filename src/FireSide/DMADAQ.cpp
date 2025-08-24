@@ -430,6 +430,7 @@ void LogBuffersinLoop()
   }
 
   // Start Logging Loop
+  // Stop Loop on Receipt of Newline Character
   do {
     // Check if DMA Handler Aborted
     if (SDWriteError)
@@ -464,7 +465,7 @@ void LogBuffersinLoop()
       // Reset SD Card Write Flag
       SDWriting = false;
     }
-  } while (!RYLR.available());
+  } while (RYLR.read() != '\n');
 
   // Close File on SD Card After Logging Loop
   LogFile.close();
