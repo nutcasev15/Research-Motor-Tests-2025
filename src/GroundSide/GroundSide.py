@@ -93,7 +93,7 @@ def SendRYLR(State : str):
     print('\nOTP for ARM State Transition: ' + OTP)
 
     # Check User Entry Against OTP
-    if input('Please Re-enter OTP to Confirm:') != OTP:
+    if input('Please Re-enter OTP to Confirm: ') != OTP:
       print('\n!!!! ARM OTP Invalid. Safing FireSide!')
       OverrideResponse = True
 
@@ -107,7 +107,7 @@ def SendRYLR(State : str):
     print('\nOTP for LAUNCH State Transition: ' + OTP)
 
     # Check User Entry Against OTP
-    if input('Please Re-enter OTP to Confirm:') != OTP:
+    if input('Please Re-enter OTP to Confirm: ') != OTP:
       print('\n!!!! LAUNCH OTP Invalid. Safing FireSide!')
       OverrideResponse = True
 
@@ -121,14 +121,14 @@ def SendRYLR(State : str):
 
     # Issue Payload Length
     # 4 Characters for SAFE Command
-    # Complete Binary Command with Line End
-    RYLR.write('5,SAFE\n'.encode())
+    # Complete Binary Command with Mandatory CRLF Line End
+    RYLR.write('4,SAFE\r\n'.encode())
   else:
     # Issue Payload Length
-    RYLR.write(str(len(State + '\n')).encode())
+    RYLR.write(str(len(State)).encode())
 
-    # Complete Binary Command with Comma and Line End
-    RYLR.write((',' + State + '\n').encode())
+    # Complete Binary Command with Comma and Mandatory CRLF Line End
+    RYLR.write((',' + State + '\r\n').encode())
 
   return
 

@@ -29,13 +29,22 @@
 #define STATUS_SAFE LOW
 
 
+// Setup Serial Communication Interface
 // RYLR998 Hardware Interface
-// Alias Hardware Serial (Pins D0 & D1) to RYLR
 // See REYAX RYLR998 Datasheet for UART Configuration
 #define RYLR_UART_BAUD 115200UL
-#define RYLR_UART_TX PIN_SERIAL_TX
-#define RYLR_UART_RX PIN_SERIAL_RX
+
+// #define USE_USB_SERIAL
+#ifdef USE_USB_SERIAL
+// Redirect RYLR to USB Communications and STLink Serial
 #define RYLR Serial
+#else
+// Link Hardware Serial (Pins D0 & D1) to RYLR
+// See CN4 on Page 29 of MB1180 Nucleo L412KB Board User Manual
+#define RYLR_UART_TX PA9
+#define RYLR_UART_RX PA10
+inline HardwareSerial RYLR(RYLR_UART_RX, RYLR_UART_TX);
+#endif
 
 // Parse Incoming GroundSide Commands via RYLR Module
 inline void ParseRYLR(String &Buffer)
@@ -71,15 +80,16 @@ inline void SendRYLR(const String &Data)
   // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
   RYLR.print("AT+SEND=0,");
 
-  // Issue Payload Length Including Line End
-  RYLR.print(Data.length() + 5);
+  // Issue Payload Length Including Header
+  RYLR.print(Data.length() + 4);
 
   // Issue FireSide PCB Header
   RYLR.print(",FS> ");
 
   // Issue Data and Complete Command with Line End
+  // CRLF Line End is Mandatory
   RYLR.print(Data);
-  RYLR.print('\n');
+  RYLR.print("\r\n");
 
   return;
 }
