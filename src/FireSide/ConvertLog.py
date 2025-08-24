@@ -36,13 +36,12 @@ ADC_PARALLEL_CHANNELS = 6
 
 # Define Maximum Number of ADC Channels
 # See Interfaces.hpp
-MAX_PARALLEL_CHANNELS = 7
-assert ADC_PARALLEL_CHANNELS < MAX_PARALLEL_CHANNELS
+MAX_PARALLEL_CHANNELS = 6
+assert ADC_PARALLEL_CHANNELS <= MAX_PARALLEL_CHANNELS
 
 # Calculate Buffer Length
-# Offset by 4 Bytes for uint32_t Variable Sequence
 # See ConvertLog Function in DMADAQ.cpp
-ADC_DMA_BLOCKLEN = (ADC_PARALLEL_CHANNELS * 512 - 4)
+ADC_DMA_BLOCKLEN = (ADC_PARALLEL_CHANNELS * 512)
 
 # Print Configuration and Notify User
 print('>> Converter Settings')
@@ -55,7 +54,7 @@ print('')
 print('>> Input File Path [Select in Popup]')
 LogPath = filedialog.askopenfilename(
   title='Select Binary Log File',
-  filetypes=[('FireSide Binary Log Files', '*.dat')]
+  filetypes=[('FireSide Binary Log Files', '*.DAT')]
 )
 print('File Location: ' + str(LogPath))
 
@@ -78,7 +77,7 @@ CSVDataTable = []
 print('>> Reading and Converting Binary File')
 with open(LogPath, 'rb') as LogFile:
   # Initialise Time Stamp Container
-  time = -1
+  LastTime = -1
 
   while True:
     # Read Block from Log File
@@ -98,8 +97,8 @@ with open(LogPath, 'rb') as LogFile:
     TimeStamp = buffer[-1]
 
     # Load First Time Stamp
-    if time == -1:
-      time = TimeStamp
+    if LastTime == -1:
+      LastTime = TimeStamp
       # Discard First Buffer
       continue
 
@@ -108,10 +107,11 @@ with open(LogPath, 'rb') as LogFile:
       # Clear Dictionary Buffer
       CurrentRow = {}
 
-      # Calculate the TimeStamp for the Current Sample Block
-      CurrentRow.update(
-        {'Time (us)' : int((TimeStamp - time) / ADC_DMA_BLOCKLEN * index)}
-      )
+      # Calculate the TimeStamp for the Current Row of Samples
+      CurrentRow.update({
+        'Time (us)':
+        int((((TimeStamp - LastTime) * index) / len(data)) + LastTime)
+      })
 
       # Deinterleave and Append ADC Sample Data to Dictionary
       # NOTE : See Interfaces.hpp
@@ -125,7 +125,7 @@ with open(LogPath, 'rb') as LogFile:
       CSVDataTable.append(CurrentRow)
 
     # Update the TimeStamp for the Next Block
-    time = TimeStamp
+    LastTime = TimeStamp
 
 
 
@@ -133,7 +133,7 @@ with open(LogPath, 'rb') as LogFile:
 print('>> Output File Path [Select in Popup]')
 CSVPath = filedialog.asksaveasfilename(
   title='Input CSV File Name',
-  filetypes=[('FireSide CSV Log Files', '*.csv')]
+  filetypes=[('FireSide CSV Log Files', '*.CSV')]
 )
 print('CSV File Location: ' + str(CSVPath))
 

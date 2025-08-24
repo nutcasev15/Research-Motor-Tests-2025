@@ -479,43 +479,51 @@ void LogBuffersinLoop()
 }
 
 
-// Binary Log File to CSV File Converter
+// Binary Logfile to CSV File Converter
 void ConvertLog(const String &Path)
 {
   // Containers for Files and Associated Data
   File CSVFile, LogFile;
   String CSVFileName, buffer;
-  uint32_t start, end, progress;
+  uint32_t StartTime, EndTime, progress;
 
   // Reserve Line Buffer Length
-  buffer.reserve(256UL);
+  buffer.reserve(64UL);
 
   // Clear DMA Buffer for Conversion Purposes
   memset(DMABuffer, 0X00, sizeof(DMABuffer));
 
-  // Open Log File for Reading Only
-  LogFile = SD.open(Path, O_RDONLY);
+  // Open Logfile for Reading Only
+  LogFile = SD.open(Path, FILE_READ);
 
-  // Check if Log File Opened Successfully
+  // Check if Logfile Opened Successfully
   if (!LogFile)
   {
     ErrorBlink(ERR_SD_FILE);
     return;
   } else {
-    // Output Log File Diagnostics
+    // Output Logfile Diagnostics
     SendRYLR("FILENAME: " + String(LogFile.name()));
     SendRYLR("FILESIZE: " + String(LogFile.size()));
   }
 
-  // Copy Log File Name for CSV File
+  // Copy Logfile Name for CSV File
   CSVFileName = LogFile.name();
 
   // Change File Extension to .csv
   CSVFileName.remove(CSVFileName.lastIndexOf('.'));
   CSVFileName += ".csv";
 
-  // Create CSV File
+  // Attempt to Open CSV File
   CSVFile = SD.open(CSVFileName, FILE_WRITE);
+
+  // Only Proceed if CSV Logfile is Blank and Ready for Conversion
+  if (!CSVFile || CSVFile.size() > 0) {
+    // Close all Files and Abort
+    LogFile.close();
+    CSVFile.close();
+    return;
+  }
 
   // Reset Line Buffer and Prepare CSV Header
   // NOTE: See Interfaces.hpp
@@ -530,35 +538,39 @@ void ConvertLog(const String &Path)
   CSVFile.seek(0UL);
   CSVFile.println(buffer);
 
-  // Start Reading Log File
+  // Start Reading Logfile
   LogFile.seek(0UL);
-  start = progress = 0UL;
+  StartTime = progress = 0UL;
 
   // Iterate Through All Logged DMA Buffer Blocks
   do
   {
-    // Clear Line Buffer
-    buffer = ' ';
+    // Read Data from Logfile into 1st Block of Circular Buffer
+    // Account for 2 Byte Width of Each ADC Sample
+    LogFile.read(DMABuffer, ADC_DMA_BLOCKLEN * sizeof(uint16_t));
 
-    // Read Data from Log File into 1st Block of Circular Buffer
-    LogFile.read(DMABuffer, ADC_DMA_BLOCKLEN);
-
-    // Read Timestamp from Log File
-    LogFile.read(&end, sizeof(uint32_t));
+    // Read Timestamp from Logfile
+    LogFile.read(&EndTime, sizeof(uint32_t));
 
     // Load Starting Timestamp if Blank
-    if (!start)
+    if (!StartTime)
     {
-      start = end;
+      StartTime = EndTime;
+
       // Discard First Buffer's Data
       continue;
     }
 
-    // Process Each ADC Sample in DMA buffer in Blocks
+    // Process Each ADC Sample in DMA buffer in Rows
     for (uint16_t index = 0; index < ADC_DMA_BLOCKLEN; index += ADC_PARALLEL_CHANNELS)
     {
-      // Calculate Timestamp for Current Sample Block
-      buffer += (uint32_t)((end - start) / ADC_DMA_BLOCKLEN * index);
+      // Clear Line Buffer
+      buffer = ' ';
+
+      // Calculate Timestamp for Current Row of Samples
+      buffer += (uint32_t)(
+        (((EndTime - StartTime) * index) / ADC_DMA_BLOCKLEN) + StartTime
+      );
 
       // Deinterleave and Append ADC Sample Data to Buffer
       // NOTE: See Interfaces.hpp
@@ -567,11 +579,13 @@ void ConvertLog(const String &Path)
         buffer += ", ";
         buffer += DMABuffer[index + channel];
       }
+
+      // Write Buffer to CSV File
+      CSVFile.println(buffer);
     }
 
-    // Update Timestamp and Write Buffer to CSV File
-    start = end;
-    CSVFile.println(buffer);
+    // Update Timestamp for Next Block
+    StartTime = EndTime;
 
     // Send Progress Update on Significant Progress
     // Updates Sent to GroundSide Every 128 KB of Processed Data
