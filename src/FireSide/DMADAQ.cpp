@@ -19,10 +19,9 @@
 uint16_t ReadoutBuffer[ADC_PARALLEL_CHANNELS];
 
 
-// Compensated ADC DMA Buffer Block Length
+// ADC DMA Buffer Block Length
 // Align Block to SD Card 512 Byte Boundary to Optimise IO
-// Compensate for Space for Timestamp Container
-#define ADC_DMA_BLOCKLEN (ADC_PARALLEL_CHANNELS * 512 - sizeof(uint32_t))
+#define ADC_DMA_BLOCKLEN (ADC_PARALLEL_CHANNELS * 512)
 
 // Circular DMA Buffer Data Storage Structure
 // By Convention, Circular DMA Buffers are 2 Blocks Long
@@ -410,7 +409,12 @@ void TriggerLogging()
   }
 
   // Enable ADC and Trigger Conversion
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t *)DMABuffer, sizeof(DMABuffer));
+  // Account for 2 Byte Size of Each ADC Sample
+  HAL_ADC_Start_DMA(
+    &hadc1,
+    (uint32_t *)DMABuffer,
+    sizeof(DMABuffer) / sizeof(uint16_t)
+  );
 }
 
 
@@ -447,7 +451,11 @@ void LogBuffersinLoop()
       SDWriting = true;
 
       // Dump Block to SD Card
-      LogFile.write((const uint8_t *)SDWriteBlockStart, ADC_DMA_BLOCKLEN);
+      // NOTE: Each ADC Sample in Block is 2 Bytes
+      LogFile.write(
+        (const uint8_t *)SDWriteBlockStart,
+        ADC_DMA_BLOCKLEN * sizeof(uint16_t)
+      );
 
       // Write Timestamp to SD Card
       uint32_t time = micros();
