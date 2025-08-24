@@ -96,18 +96,17 @@ inline void SendRYLR(const String &Data)
 
 
 // Number of Concurrently Logged ADC Channels
-// 1 Channel Corresponds to A0 on Pinout
+// 2 Channels Correspond to A0 & A1 on Pinout
 // 4 Channels Correspond to A0 to A3 on Pinout
-// 5 Channels Correspond to A0 to A6 on Pinout
+// 6 Channels Correspond to A0 to A5 on Pinout
 #define ADC_PARALLEL_CHANNELS 6
 
 // See CN4 on Page 29 of MB1180 Nucleo L412KB Board User Manual
-// A7 Excluded to Avoid Conflict with Virtual COM Peripheral
-#define MAX_PARALLEL_CHANNELS 7
+#define MAX_PARALLEL_CHANNELS 6
 #if ADC_PARALLEL_CHANNELS < 1 || ADC_PARALLEL_CHANNELS > MAX_PARALLEL_CHANNELS
 #error "Too Few or Too Many ADC Channels Configured for Logging"
 #error "Minimum Configured Channels = 1"
-#error "Maximum Configured Channels = 7"
+#error "Maximum Configured Channels = 6"
 #endif
 
 // ADC Pins, Channel and Rank Configuration Structure
@@ -126,8 +125,7 @@ const ADCHardwareConfig ADCHardwareSetup[] = {
   {PIN_A2, PA3, ADC_CHANNEL_8, ADC_REGULAR_RANK_3},
   {PIN_A3, PA4, ADC_CHANNEL_9, ADC_REGULAR_RANK_4},
   {PIN_A4, PA5, ADC_CHANNEL_10, ADC_REGULAR_RANK_5},
-  {PIN_A5, PA6, ADC_CHANNEL_11, ADC_REGULAR_RANK_6},
-  {PIN_A6, PA7, ADC_CHANNEL_12, ADC_REGULAR_RANK_7}
+  {PIN_A5, PA6, ADC_CHANNEL_11, ADC_REGULAR_RANK_6}
 };
 
 

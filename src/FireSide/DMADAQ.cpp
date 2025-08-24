@@ -67,10 +67,6 @@ void ConfigureDMA(bool Continuous)
   // Select Channel 1 on DMA Module One
   hdma_adc1.Instance = DMA1_Channel1;
 
-  // Select Highest Priority Request
-  hdma_adc1.Init.Request = DMA_REQUEST_0;
-  hdma_adc1.Init.Priority = DMA_PRIORITY_HIGH;
-
   // Configure Transfer Direction and Address Increment
   // Only Memory Addresses Should Increment
   hdma_adc1.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -192,8 +188,8 @@ void ConfigureADC(bool Continuous)
   // ADC Clock / (Oversampling Ratio * No. of Channels * Cycles per Sample)
   // See Channel Configuration for Cycles per Sample
   hadc1.Init.OversamplingMode = ENABLE;
-  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_4;
-  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_2;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_8;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_3;
 
   // Instruct ADC to Scan Input Pins in Sequence
   hadc1.Init.NbrOfConversion = ADC_PARALLEL_CHANNELS;
@@ -259,7 +255,8 @@ void ConfigureADC(bool Continuous)
   }
 
   // Setup ADC Global Interrupt
-  HAL_NVIC_SetPriority(ADC1_IRQn, 0, 0);
+  // Select Lower Priority than DMA Channel Interrupt
+  HAL_NVIC_SetPriority(ADC1_IRQn, 1, 1);
   HAL_NVIC_EnableIRQ(ADC1_IRQn);
 }
 
@@ -395,6 +392,16 @@ void ConfigureLogging()
 // Coupled ADC-DMA Transfer and Logging Trigger
 void TriggerLogging()
 {
+  // Ensure Completion of Outgoing RYLR Communications
+  RYLR.flush();
+
+  // Empty Received Data in RYLR Communications Buffer
+  // Remove Chances of Premature Logging Termination
+  while (RYLR.available())
+  {
+    RYLR.read();
+  }
+
   // Calibrate ADC in Single Ended Input Mode Before Triggering
   // See Errata 2.6.10 in ST's ES0456 Errata Document for L412KBU6U
   if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
