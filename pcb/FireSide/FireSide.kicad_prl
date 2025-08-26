@@ -1,7 +1,7 @@
 {
   "board": {
-    "active_layer": 5,
-    "active_layer_preset": "Front Assembly View",
+    "active_layer": 2,
+    "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [],
     "hidden_nets": [],
@@ -49,7 +49,7 @@
       "conflict_shadows",
       "shapes"
     ],
-    "visible_layers": "00000000_00000000_00000008_82000022",
+    "visible_layers": "00000000_00000000_0000000a_aa0000af",
     "zone_display_mode": 0
   },
   "git": {
@@ -116,14 +116,14 @@
   },
   "schematic": {
     "selection_filter": {
-      "graphics": true,
-      "images": true,
-      "labels": true,
+      "graphics": false,
+      "images": false,
+      "labels": false,
       "lockedItems": false,
-      "otherItems": true,
-      "pins": true,
-      "symbols": true,
-      "text": true,
+      "otherItems": false,
+      "pins": false,
+      "symbols": false,
+      "text": false,
       "wires": true
     }
   }

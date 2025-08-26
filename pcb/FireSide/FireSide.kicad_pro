@@ -60,16 +60,8 @@
       ],
       "drc_exclusions": [
         [
-          "clearance|54480000|42780000|203c049e-2e97-43f8-a520-2da52dbff242|34d0ecf6-f452-4594-a60b-373664a77b5b",
-          ""
-        ],
-        [
-          "clearance|62713207|77000000|61953a29-604b-4841-be7d-edde830867bf|ea8e3865-2dd1-4ff3-a648-25c8f66d1e81",
-          ""
-        ],
-        [
-          "clearance|64480000|37780000|be5f9e3d-faf4-45a7-9fd8-f2fb6b0d8401|8ba3beb6-a446-4cd2-8a7d-e7d707f2a52d",
-          ""
+          "lib_footprint_mismatch|63500000|62500000|b50e58a9-5237-4e3e-9101-c3230b9335e3|00000000-0000-0000-0000-000000000000",
+          "Removed Extra Through Hole"
         ]
       ],
       "meta": {
@@ -115,7 +107,7 @@
         "shorting_items": "error",
         "silk_edge_clearance": "ignore",
         "silk_over_copper": "ignore",
-        "silk_overlap": "warning",
+        "silk_overlap": "ignore",
         "skew_out_of_range": "error",
         "solder_mask_bridge": "error",
         "starved_thermal": "error",
@@ -137,21 +129,21 @@
       "rules": {
         "max_error": 0.005,
         "min_clearance": 0.3,
-        "min_connection": 1.0,
+        "min_connection": 0.2,
         "min_copper_edge_clearance": 1.5,
         "min_groove_width": 0.0,
-        "min_hole_clearance": 0.6,
-        "min_hole_to_hole": 1.5,
+        "min_hole_clearance": 0.5,
+        "min_hole_to_hole": 1.0,
         "min_microvia_diameter": 0.0,
         "min_microvia_drill": 0.0,
-        "min_resolved_spokes": 8,
+        "min_resolved_spokes": 2,
         "min_silk_clearance": 0.0,
         "min_text_height": 1.0,
         "min_text_thickness": 0.1,
-        "min_through_hole_diameter": 0.6,
+        "min_through_hole_diameter": 0.5,
         "min_track_width": 1.0,
-        "min_via_annular_width": 0.6,
-        "min_via_diameter": 0.6,
+        "min_via_annular_width": 0.2,
+        "min_via_diameter": 0.5,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -258,7 +250,16 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [],
+    "erc_exclusions": [
+      [
+        "lib_symbol_mismatch|292100|266700|b2ee2de8-8d94-4e89-a146-2a778b662e5a|00000000-0000-0000-0000-000000000000|||",
+        "Changed Pins to Active Power Inputs"
+      ],
+      [
+        "pin_to_pin|1765300|330200|2ded3a91-a523-467c-97c3-959a60cc1057|2740b842-3e96-4c38-b8c5-b8625e964414|/a07bc954-927c-4b4a-9453-0e46d58f2fca|/a07bc954-927c-4b4a-9453-0e46d58f2fca|/a07bc954-927c-4b4a-9453-0e46d58f2fca",
+        "SB9 and SB1 On Nucleo Must Be Disabled (See MB1180 Page 18)"
+      ]
+    ],
     "meta": {
       "version": 0
     },
@@ -449,7 +450,7 @@
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
       "label_dangling": "error",
-      "label_multiple_wires": "warning",
+      "label_multiple_wires": "ignore",
       "lib_symbol_issues": "warning",
       "lib_symbol_mismatch": "warning",
       "missing_bidi_pin": "warning",
@@ -472,6 +473,7 @@
       "single_global_label": "ignore",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
+      "undefined_netclass": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
       "wire_dangling": "error"
