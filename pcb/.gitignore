@@ -1,0 +1,7 @@
+# KiCAD Top Level Ignore File
+
+# Ignore Project Backup Files
+**/*-backups
+
+# Ignore Project Edit Locking Files
+**/*.lck

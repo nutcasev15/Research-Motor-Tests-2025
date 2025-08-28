@@ -1,0 +1,20 @@
+# Top Level Git Ignore List
+
+# PlatformIO Working Files and Folders
+.pio/*
+
+# VSCode Working Files and Folders
+.vscode/*
+
+# Ignore PyInstaller Build Files for GroundSide
+**/build
+**/dist
+**/*.exe
+**/*.spec
+
+# Ignore Binary and CSV Logger Outputs
+**/*.dat
+**/*.csv
+
+# Ignore Any Python Script Output PDFs
+**/*.pdf
