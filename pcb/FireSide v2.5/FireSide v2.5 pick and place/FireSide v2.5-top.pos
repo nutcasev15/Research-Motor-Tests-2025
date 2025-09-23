@@ -1,0 +1,20 @@
+### Footprint positions - created on 2025-09-22T20:21:04+0530 ###
+### Printed by KiCad version 9.0.4
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val          Package                   PosX       PosY       Rot  Side
+C1        22uF         C_0805_2012Metric     112.0965   -44.4607  180.0000  top
+C2        10uF         C_0805_2012Metric     100.0000   -44.7500  180.0000  top
+C3        10uF         C_0805_2012Metric     106.9500   -46.7500   90.0000  top
+C4        22uF         C_0805_2012Metric      90.8412   -50.4637  180.0000  top
+C5        100nF        C_0805_2012Metric     130.9432   -67.5584    0.0000  top
+C6        4.7uF        C_0805_2012Metric     130.9392   -70.9878    0.0000  top
+D1        YELLOW       LED_0805_2012Metric   108.9216   -61.7877    0.0000  top
+D2        GREEN        LED_0805_2012Metric   108.9593   -64.7030    0.0000  top
+Q1        MMBT2222A    SOT-23                129.0846   -58.9127   90.0000  top
+R1        165          R_0805_2012Metric     113.5875   -61.7500    0.0000  top
+R3        165          R_0805_2012Metric     113.6625   -64.7500    0.0000  top
+R4        1k           R_0805_2012Metric     128.1625   -54.0000  180.0000  top
+U1        AMS1117-3.3  SOT-223-3_TabPin2      97.7918   -50.4604  180.0000  top
+U4        AMS1117-5.0  SOT-223-3_TabPin2     113.0500   -50.8500  -90.0000  top
+## End
