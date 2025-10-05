@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.5] - Latest
+## [1.1.6] - Latest
+### Changed
+- All open channels and thermistor connectors changed to JST connectors
+- Labelling and silkscreen updated 
+- SD card module footprint modified
+- BOM updated
+
+### Removed
+- FSM indicating LEDs removed
+
+
+### Generated
+- Drill files and Gerbers
+- ERC and DRC checks completed
+
+---
+
+## [1.1.5]
 ### Added
 - BJT-based status indicator circuit
 
@@ -15,7 +32,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.4]
+## [1.1.4]
 ### Added
 - LEDs to indicate ARM and LAUNCH
 - 3.3V switch for RYLR998
@@ -31,7 +48,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.3]
+## [1.1.3]
 ### Added
 - 100nF and 4.7uF capacitors to 5Vin line before MCU
 - Testpoints for 5V and 3.3V
@@ -42,7 +59,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.2]
+## [1.1.2]
 ### Added
 - AMS1117 3.3V regulator to power open channels and RYLR998 independently
 
@@ -53,7 +70,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.1]
+## [1.1.1]
 ### Added
 - Thermistor circuitry
 - 5V switch for microcontroller
@@ -63,7 +80,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [2.0]
+## [1.1.0]
 ### Added
 - Labels in schematic for clarity
 - 5V and 3.3V open power channels
