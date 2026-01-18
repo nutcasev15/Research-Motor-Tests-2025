@@ -430,6 +430,7 @@ void LogBuffersinLoop()
   }
 
   // Start Logging Loop
+  // Stop Loop on Receipt of a Newline if on USB Serial Monitor
   // Stop Loop on Receipt of Initial '+' of AT Command
   // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993

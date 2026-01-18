@@ -67,6 +67,12 @@ inline void ParseRYLR(String &Buffer)
     parsed = RYLR.readStringUntil('\n');
   }
 #else
+  // Wait Until USB Serial Sends Data
+  while (!RYLR.available())
+  {
+    delay(500UL);
+  }
+
   // Load Data from USB Serial Monitor
   parsed = RYLR.readStringUntil('\n');
 #endif

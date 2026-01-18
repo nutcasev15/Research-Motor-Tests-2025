@@ -26,7 +26,16 @@ bool BootCheck(id_t state)
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
 
-#ifndef USE_USB_SERIAL
+#ifdef USE_USB_SERIAL
+  // Wait for USB Serial Monitor Link
+  while (!RYLR.available())
+  {
+    delay(500UL);
+  }
+
+  // Notify User on USB Serial Monitor to Change State
+  RYLR.println("ENTER COMMAND (SAFE || CONVERT): ");
+#else
   // Check RYLR Link on FireSide PCB
   // See AT in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
