@@ -46,21 +46,28 @@
 inline HardwareSerial RYLR(RYLR_UART_RX, RYLR_UART_TX);
 #endif
 
-// Parse Incoming GroundSide Commands via RYLR Module
+// Poll RYLR Module & Parse Incoming GroundSide Commands
 inline void ParseRYLR(String &Buffer)
 {
-  if (!RYLR.available())
+  // Setup Persistent Receive Buffer
+  static String parsed;
+  parsed.reserve(64UL);
+
+  // Clear Receive Buffer
+  parsed = "";
+
+  // Check if Data is from GroundSide
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  while (parsed.indexOf("+RCV") == -1)
   {
-    // Return Blank
-    Buffer = '\n';
-    return;
+    // Delay to Allow GroundSide Personnel to Respond
+    delay(500UL);
+    parsed = RYLR.readStringUntil('\n');
   }
 
-  // Load Incoming Data
-  String parsed = RYLR.readStringUntil('\n');
-
   // Extract Data from Parsed String
-  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
   // Remove Data from Last 2 Fields
   parsed.remove(parsed.lastIndexOf(','));
@@ -78,6 +85,13 @@ inline void ParseRYLR(String &Buffer)
 // Send Data to GroundSide via RYLR Module
 inline void SendRYLR(const String &Data)
 {
+  // Setup Persistent Response Buffer
+  static String response;
+  response.reserve(64UL);
+
+  // Clear Past RYLR Responses to SEND Commands
+  response = "";
+
   // Issue Send AT Command
   // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
@@ -95,22 +109,24 @@ inline void SendRYLR(const String &Data)
   RYLR.print("\r\n");
 
 #ifndef USE_USB_SERIAL
-  // Wait for RYLR to Confirm Transmission
-  while (!RYLR.available())
+  // Wait for RYLR Response to SEND Command
+  while (response.length() == 0)
   {
+    // Delay to Allow RYLR to Respond
     delay(500UL);
-  }
+    response = RYLR.readStringUntil('\n');
 
-  // Parse RYLR Response to SEND Command
-  String response = RYLR.readStringUntil('\n');
-  response.trim();
+    // Remove Newline & Whitespace Characters
+    response.trim();
+  }
 
   // Send Debug Data if Transmission Fails
   // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
-  if (response.indexOf("OK") != -1)
+  if (response.indexOf("OK") == -1)
   {
-    // Try to Communicate Error
+    // Try to Communicate Error to GroundSide
+    // Often GroundSide Receives Data Despite FireSide Errors
     SendRYLR(response);
   }
 #endif

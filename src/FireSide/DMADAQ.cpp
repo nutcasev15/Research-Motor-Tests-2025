@@ -394,7 +394,7 @@ void TriggerLogging()
   // Ensure Completion of Outgoing RYLR Communications
   RYLR.flush();
 
-  // Empty Received Data in RYLR Communications Buffer
+  // Empty Received Data in STM32 Serial Buffer
   // Remove Chances of Premature Logging Termination
   while (RYLR.available())
   {

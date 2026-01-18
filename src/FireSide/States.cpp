@@ -26,8 +26,13 @@ bool BootCheck(id_t state)
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
 
-  // Wait for GroundSide Contact
-  while (!RYLR.available())
+  // Check RYLR Link on FireSide PCB
+  // See AT in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  RYLR.write("AT\r\n");
+
+  // Wait Until RYLR Begins Response with "OK"
+  while (RYLR.read() != 'O')
   {
     delay(500UL);
   }
@@ -105,10 +110,6 @@ bool SafeCheck(id_t state)
 
   // Request for GroundSide Command
   SendRYLR("REQUEST COMMAND");
-  while (!RYLR.available())
-  {
-    delay(500UL);
-  }
 
   // Parse Command from GroundSide
   String command;
@@ -155,10 +156,6 @@ bool ArmCheck(id_t state)
 
   // Request for Command from GroundSide
   SendRYLR("REQUEST COMMAND");
-  while (!RYLR.available())
-  {
-    delay(500UL);
-  }
 
   // Parse Command from GroundSide
   String command;
@@ -364,10 +361,6 @@ bool FailureCheck(id_t state)
 
   // Request for GroundSide Command
   SendRYLR("REQUEST COMMAND");
-  while (!RYLR.available())
-  {
-    delay(500UL);
-  }
 
   // Parse Command from GroundSide
   String command;
