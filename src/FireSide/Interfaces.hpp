@@ -105,13 +105,13 @@ inline void SendRYLR(const String &Data)
   String response = RYLR.readStringUntil('\n');
   response.trim();
 
-  // Retry if Transmission Fails
+  // Send Debug Data if Transmission Fails
   // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
-  if (response != "+OK")
+  if (response.indexOf("OK") != -1)
   {
-    // Recursive Call to Restart Send Sequence
-    SendRYLR(Data);
+    // Try to Communicate Error
+    SendRYLR(response);
   }
 #endif
 
