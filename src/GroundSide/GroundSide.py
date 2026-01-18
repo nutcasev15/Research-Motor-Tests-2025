@@ -220,7 +220,7 @@ try:
     print(RXBuffer)
 
     # Check Last Line for Request for Commands from FireSide PCB
-    if RXBuffer == 'FS> REQUEST COMMAND':
+    if 'FS> REQUEST COMMAND' in RXBuffer:
       # Block for Input and Fill Line Buffer
       TXBuffer = input('Enter Command: ')
 
