@@ -322,11 +322,11 @@ void ReadoutAnalogPins()
     // Separator
     debug += '=';
 
-    // Channel Value for 12-Bit Data
-    debug += (ReadoutBuffer[channel] * 3.3 / (1<<12));
+    // Raw Channel Value
+    debug += ReadoutBuffer[channel];
 
-    // Value Units and Separator
-    debug += "V ";
+    // Separator
+    debug += ' ';
   }
 
   // Transmit ADC Channel Debug Data over RYLR
