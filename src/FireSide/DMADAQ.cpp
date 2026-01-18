@@ -467,7 +467,11 @@ void LogBuffersinLoop()
       // Reset SD Card Write Flag
       SDWriting = false;
     }
+#ifdef USE_USB_SERIAL
+  } while (RYLR.read() != '\n');
+#else
   } while (RYLR.read() != '+');
+#endif
 
   // Close File on SD Card After Logging Loop
   LogFile.close();

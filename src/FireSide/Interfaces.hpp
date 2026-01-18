@@ -59,36 +59,6 @@ inline void ParseRYLR(String &Buffer)
   // Load Incoming Data
   String parsed = RYLR.readStringUntil('\n');
 
-  // Check if Data is from GroundSide
-  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
-  // https://reyax.com//products/RYLR998
-  if (parsed.indexOf("+RCV=") == -1)
-  {
-    // Return Blank
-    Buffer = '\n';
-    return;
-  }
-
-  // Check Data Format Validity
-  // Count Number of Commas in Parsed Data
-  short fields = 1;
-  for (short i = 0; i < parsed.length(); i++)
-  {
-    if (parsed[i] == ',')
-    {
-      fields += 1;
-    }
-  }
-
-  // Ignore Parsed Data if RCV Command is Malformed
-  // Valid RCV Commands have 5 Fields
-  if (fields != 5)
-  {
-    // Return Blank
-    Buffer = '\n';
-    return;
-  }
-
   // Extract Data from Parsed String
   // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
   // https://reyax.com//products/RYLR998
@@ -124,6 +94,7 @@ inline void SendRYLR(const String &Data)
   RYLR.print(Data);
   RYLR.print("\r\n");
 
+#ifndef USE_USB_SERIAL
   // Wait for RYLR to Confirm Transmission
   while (!RYLR.available())
   {
@@ -142,6 +113,7 @@ inline void SendRYLR(const String &Data)
     // Recursive Call to Restart Send Sequence
     SendRYLR(Data);
   }
+#endif
 
   return;
 }
