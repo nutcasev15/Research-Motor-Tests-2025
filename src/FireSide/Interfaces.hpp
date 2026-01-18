@@ -30,9 +30,9 @@
 
 
 // #### Serial Communication Interface Configuration
-// RYLR998 Hardware Interface
-// See REYAX RYLR998 Datasheet for UART Configuration
-#define RYLR_UART_BAUD 115200UL
+// RYLR993 Hardware Interface
+// See REYAX RYLR993 Datasheet for UART Configuration
+#define RYLR_UART_BAUD 9600UL
 
 // #define USE_USB_SERIAL
 #ifdef USE_USB_SERIAL
@@ -61,7 +61,7 @@ inline void ParseRYLR(String &Buffer)
 
   // Extract Data from Parsed String
   // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
-  // https://reyax.com//products/RYLR998
+  // https://reyax.com//products/RYLR993
   // Remove Data from Last 2 Fields
   parsed.remove(parsed.lastIndexOf(','));
   parsed.remove(parsed.lastIndexOf(','));
@@ -79,8 +79,8 @@ inline void ParseRYLR(String &Buffer)
 inline void SendRYLR(const String &Data)
 {
   // Issue Send AT Command
-  // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-  // https://reyax.com//products/RYLR998
+  // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
   RYLR.print("AT+SEND=0,");
 
   // Issue Payload Length Including Header
@@ -106,8 +106,8 @@ inline void SendRYLR(const String &Data)
   response.trim();
 
   // Retry if Transmission Fails
-  // See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-  // https://reyax.com//products/RYLR998
+  // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
   if (response != "+OK")
   {
     // Recursive Call to Restart Send Sequence

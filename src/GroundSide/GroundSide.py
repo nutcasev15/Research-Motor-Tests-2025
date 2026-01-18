@@ -70,7 +70,7 @@ RYLR = Serial(
 )
 
 
-#### Define Interface Layer Functions to RYLR998 Module
+#### Define Interface Layer Functions to RYLR Module
 # Parses Incoming Data from FireSide PCB via RYLR module
 def ParseRYLR() -> str:
   if not RYLR.in_waiting:
@@ -83,8 +83,8 @@ def ParseRYLR() -> str:
 
   # Check if Data is from FireSide PCB
   # Validate the Data Format
-  # See +RCV in REYAX AT RYLRX98 Commanding Datasheet
-  # https://reyax.com//products/RYLR998
+  # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  # https://reyax.com//products/RYLR993
   if parsed.startswith('+RCV='):
     if parsed.count(',') != 4:
       # 4 Commas Expected in Valid RCV Command
@@ -145,8 +145,8 @@ def SendRYLR(State : str):
     print('\nSending SAFE Command')
 
     # Issue Send AT Command
-    # See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-    # https://reyax.com//products/RYLR998
+    # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+    # https://reyax.com//products/RYLR993
     RYLR.write('AT+SEND=0,'.encode())
 
     # Issue Payload Length
@@ -155,8 +155,8 @@ def SendRYLR(State : str):
     RYLR.write('4,SAFE\r\n'.encode())
   else:
     # Issue Send AT Command
-    # See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-    # https://reyax.com//products/RYLR998
+    # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+    # https://reyax.com//products/RYLR993
     RYLR.write('AT+SEND=0,'.encode())
 
     # Issue Payload Length
@@ -174,8 +174,8 @@ def SendRYLR(State : str):
   response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
 
   # Check Response & Retry if Transmission Fails
-  # See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-  # https://reyax.com//products/RYLR998
+  # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  # https://reyax.com//products/RYLR993
   if 'OK' not in response:
     # Notify User of Transmission Failure
     print(f'\n!!!! RYLR Commanding Failed. Response: {response.strip()}\n')

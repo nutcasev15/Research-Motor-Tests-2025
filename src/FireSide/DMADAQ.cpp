@@ -431,8 +431,8 @@ void LogBuffersinLoop()
 
   // Start Logging Loop
   // Stop Loop on Receipt of Initial '+' of AT Command
-  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
-  // https://reyax.com//products/RYLR998
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
   do {
     // Check if DMA Handler Aborted
     if (SDWriteError)
