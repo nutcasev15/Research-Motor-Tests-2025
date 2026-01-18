@@ -26,6 +26,7 @@ bool BootCheck(id_t state)
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
 
+#ifndef USE_USB_SERIAL
   // Check RYLR Link on FireSide PCB
   // See AT in REYAX AT RYLRX93 Commanding Datasheet
   // https://reyax.com//products/RYLR993
@@ -36,6 +37,7 @@ bool BootCheck(id_t state)
   {
     delay(500UL);
   }
+#endif
 
   // Parse Command from GroundSide
   String command;

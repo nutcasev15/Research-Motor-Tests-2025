@@ -53,6 +53,7 @@ inline void ParseRYLR(String &Buffer)
   static String parsed;
   parsed.reserve(64UL);
 
+#ifndef USE_USB_SERIAL
   // Clear Receive Buffer
   parsed = "";
 
@@ -65,6 +66,10 @@ inline void ParseRYLR(String &Buffer)
     delay(500UL);
     parsed = RYLR.readStringUntil('\n');
   }
+#else
+  // Load Data from USB Serial Monitor
+  parsed = RYLR.readStringUntil('\n');
+#endif
 
   // Extract Data from Parsed String
   // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
