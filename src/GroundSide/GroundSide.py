@@ -26,20 +26,19 @@ print('---')
 #### Setup COM Port
 # Ask User to Select COM Port
 print('\nLoaded COM Ports:')
-for port in comports():
-  print(port)
+for index, port in zip(range(len(comports())), comports()):
+  print(index, ' : ', port)
 
-PortID = input('\nEnter COM Port Number:')
+PortIndex = input('\nEnter COM Device Index: ')
 
 # Check User Input String
 try:
   # Verify the Selected Port Exists
-  if not (('COM' + PortID) in [port.name for port in comports()]):
-    raise IndexError
-
+  COMPort = comports()[int(PortIndex)]
+  print('Selected Device: ', COMPort)
 except IndexError:
   # Notify User of Invalid Input
-  print('\n!!!! Invalid COM Port ID Entered: ' + PortID)
+  print('\n!!!! Invalid COM Port Index Entered: ' + PortIndex)
   input('!!!! Press Any Key to Exit')
   exit()
 
@@ -60,45 +59,49 @@ except ValueError:
   exit()
 
 # Notify User of Serial Startup
-print('\nStarting Serial on COM' + PortID)
+print('\nStarting Serial on ' + COMPort[0])
 
 # Create and Configure Serial Object
 RYLR = Serial(
-  port='COM' + PortID,
+  port=COMPort[0],
   baudrate=RYLR_UART_BAUD,
   timeout=0.5
 )
 
 
 #### Define Interface Layer Functions to RYLR Module
-# Parses Incoming Data from FireSide PCB via RYLR module
+# Poll RYLR module & Parse Incoming Data from FireSide PCB
 def ParseRYLR() -> str:
-  if not RYLR.in_waiting:
-    # Return Blank Buffer
-    return str('\n')
+  # Setup Receive Buffer
+  parsed = ''
 
   # Load Incoming Binary Data
-  # Ignore any Bad Bytes during Conversion
-  parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
+  # Check if Data is from FireSide PCB & Ignore any RYLR Responses
+  while not parsed.startswith('+RCV='):
+    # Wait for FireSide to Respond
+    sleep(0.5)
 
-  # Check if Data is from FireSide PCB
-  # Validate the Data Format
-  # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
-  # https://reyax.com//products/RYLR993
-  if parsed.startswith('+RCV='):
-    if parsed.count(',') != 4:
-      # 4 Commas Expected in Valid RCV Command
-      return f'\n!!!! Malformed +RCV Response: {parsed}\n'
-    else:
+    # Ignore Bad Bytes during Conversion
+    parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
+
+    # Validate the Data Format
+    # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+    # https://reyax.com//products/RYLR993
+    if parsed.startswith('+RCV=') and parsed.count(',') == 4:
       # Extract & Return the Data in 3rd Comma Separated Field
-      return parsed.split(',', maxsplit=4)[2]
+      # Also Return RSSI in 4th Comma Separated Field
+      return f'{parsed.split(',', maxsplit=4)[2]} \
+        (RSSI: {parsed.split(',', maxsplit=4)[3]} dBm)'
 
-  # Return Blank for Empty Lines
-  return str('\n')
+  # Invalid RCV Command
+  return f'\n!!!! Malformed +RCV Response: {parsed}\n'
 
 
 # Sends State Commands to FireSide PCB via RYLR module
 def SendRYLR(State : str):
+  # Setup Response Buffer
+  response = ''
+
   # Check for Invalid Commands or Switches
   OverrideResponse = False
 
@@ -132,11 +135,12 @@ def SendRYLR(State : str):
       OverrideResponse = True
 
   # Clear RYLR Serial Write Buffer
-  # Wait for Response from RYLR
   RYLR.flush()
+
+  # Wait for Response from RYLR
   sleep(0.5)
 
-  # Clear Existing Data in RYLR Serial Read Buffer
+  # Clear Existing Data in COM Serial Read Buffer
   while RYLR.in_waiting:
     RYLR.read()
 
@@ -165,54 +169,55 @@ def SendRYLR(State : str):
     # Complete Binary Command with Comma and Mandatory CRLF Line End
     RYLR.write((',' + State + '\r\n').encode())
 
-  # Wait for RYLR to Confirm Transmission
-  while not RYLR.in_waiting:
+  # Wait for RYLR Response to SEND Command
+  while len(response) == 0:
+    # Allow RYLR to Respond
     sleep(0.5)
 
-  # Parse RYLR Response to SEND Command
-  # Ignore any Bad Bytes during Conversion
-  response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
+    # Ignore any Bad Bytes during Conversion
+    response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
 
-  # Check Response & Retry if Transmission Fails
+    # Remove Whitespace and Newlines from RYLR Response
+    response.strip()
+
+  # Check Response & Notify User if Transmission Fails
   # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
   # https://reyax.com//products/RYLR993
   if 'OK' not in response:
-    # Notify User of Transmission Failure
-    print(f'\n!!!! RYLR Commanding Failed. Response: {response.strip()}\n')
+    print(f'\n!!!! RYLR Commanding Failed. Response: {response}\n')
 
   return
 
 
 #### Establish Communication via RYLR module
-print('\nEstablishing FireSide Link')
+# See AT in REYAX AT RYLRX93 Commanding Datasheet
+# https://reyax.com//products/RYLR993
+print('\nEstablishing RYLR Link')
+RYLR.write('AT'.encode())
 
-# Prompt User for FireSide PCB Initial State
-# Send the Initial State
-SendRYLR(input('Choose Initial State (SAFE || CONVERT): '))
-
-# Wait Until FireSide Begins Response to State Command
-while not RYLR.in_waiting:
+# Wait Until RYLR Begins Response with "OK"
+while RYLR.read().decode('utf-8', errors='ignore') != 'O':
   sleep(0.5)
-
-print('FireSide Link Acquired\n')
 
 
 #### Start RYLR Communication Loop
 # Allow Graceful Termination with Ctrl+C Interrupt
 print('Starting RYLR Communication Loop with FireSide')
 print('Ctrl+C to Exit Communication Loop\n')
+
+# Prompt User for FireSide PCB Initial State
+# Send the Initial State
+SendRYLR(input('Choose Initial State (SAFE || CONVERT): '))
+
 try:
   # Initialise Single Line Buffers for RYLR Data
   RXBuffer = ''
   TXBuffer = ''
 
   while True:
-    # Check for Incoming Data from FireSide PCB
-    # Parse and Print Data to the Terminal
-    while RYLR.in_waiting:
-      # Load and Display Line
-      RXBuffer = ParseRYLR()
-      print(RXBuffer)
+    # Poll for Incoming Data from FireSide PCB
+    RXBuffer = ParseRYLR()
+    print(RXBuffer)
 
     # Check Last Line for Request for Commands from FireSide PCB
     if RXBuffer == 'FS> REQUEST COMMAND':
@@ -222,13 +227,6 @@ try:
       # Send Command while Ignoring New Lines
       if TXBuffer and TXBuffer.strip():
         SendRYLR(TXBuffer)
-
-      # Wait Until FireSide PCB Begins Response to Sent Command
-      while not RYLR.in_waiting:
-        sleep(0.5)
-
-    # Slow Down Loop Execution to Limit CPU Time
-    sleep(0.1)
 
 # Graceful Exit on Ctrl+C Interrupt
 except KeyboardInterrupt:
