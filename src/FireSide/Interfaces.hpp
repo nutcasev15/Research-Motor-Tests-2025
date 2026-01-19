@@ -63,14 +63,14 @@ inline void ParseRYLR(String &Buffer)
   while (parsed.indexOf("+RCV") == -1)
   {
     // Delay to Allow GroundSide Personnel to Respond
-    delay(500UL);
+    delay(100UL);
     parsed = RYLR.readStringUntil('\n');
   }
 #else
   // Wait Until USB Serial Sends Data
   while (!RYLR.available())
   {
-    delay(500UL);
+    delay(100UL);
   }
 
   // Load Data from USB Serial Monitor
@@ -124,7 +124,7 @@ inline void SendRYLR(const String &Data)
   while (response.length() == 0)
   {
     // Delay to Allow RYLR to Respond
-    delay(500UL);
+    delay(100UL);
     response = RYLR.readStringUntil('\n');
 
     // Remove Newline & Whitespace Characters
