@@ -30,7 +30,7 @@ bool BootCheck(id_t state)
   // Wait for USB Serial Monitor Link
   while (!RYLR.available())
   {
-    delay(100UL);
+    delay(500UL);
   }
 
   // Notify User on USB Serial Monitor to Change State
@@ -44,7 +44,7 @@ bool BootCheck(id_t state)
   // Wait Until RYLR Begins Response with "OK"
   while (RYLR.read() != 'O')
   {
-    delay(100UL);
+    delay(500UL);
   }
 #endif
 
@@ -385,7 +385,7 @@ bool FailureCheck(id_t state)
     SendRYLR("RESETTING TO SAFE");
     return true;
   } else {
-    // Rerun Diagnostics Every 5 Seconds
+    // Rerun Diagnostics
     delay(5000UL);
     return false;
   }
