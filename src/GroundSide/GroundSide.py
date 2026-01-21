@@ -76,7 +76,7 @@ try:
   # Verify the Selected Port Exists
   COMPort = comports()[int(PortIndex)]
   LoggedPrint('Selected Device: ', COMPort)
-except IndexError:
+except IndexError, ValueError:
   # Notify User of Invalid Input
   LoggedPrint('\n!!!! Invalid COM Port Index Entered: ' + PortIndex)
   input('!!!! Press Any Key to Exit')
@@ -124,14 +124,18 @@ def ParseRYLR() -> str:
     # Ignore Bad Bytes during Conversion
     parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
 
-    # Validate the Data Format
-    # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
-    # https://reyax.com//products/RYLR993
-    if parsed.startswith('+RCV=') and parsed.count(',') == 4:
-      # Extract & Return the Data in 3rd Comma Separated Field
-      # Also Return RSSI in 4th Comma Separated Field
-      return f'{parsed.split(',', maxsplit=4)[2]} \
-        (RSSI: {parsed.split(',', maxsplit=4)[3]} dBm)'
+  # Validate the Data Format
+  # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  # https://reyax.com//products/RYLR993
+  if parsed.count(',') == 4:
+    # Extract the 2nd, 3rd & 4th Comma Separated Fields
+    _, length, data, signal,_ = parsed.split(',', maxsplit=4)
+
+    # Check for Missing Characters
+    if len(data) == length:
+      # Received Data is Valid
+      # Also Return Received Signal Strength at GroundSide
+      return f'{data} (RSSI: {signal} dBm)'
 
   # Invalid RCV Command
   return f'\n!!!! Malformed +RCV Response: {parsed}\n'
