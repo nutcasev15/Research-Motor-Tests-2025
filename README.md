@@ -2,7 +2,7 @@
 FireSide PCB & Firmware and GroundSide Software
 
 ## Project Overview
-This repository contains the firmware and operator‑side software used during the 2025 research motor test campaign. The project includes both the **FireSide** embedded system (responsible for ignition, data acquisition, and logging) and the **GroundSide** command/telemetry interface.
+This repository contains the support equipment and software developed for the 2025 research motor test campaign. The project includes both the **FireSide** embedded system with its PCB design (responsible for ignition, data sampling, and SD card logging) and the **GroundSide** software telemetry & command interface.
 
 ---
 
