@@ -9,7 +9,7 @@ This repository contains the support equipment and software developed for the 20
 ## Test Execution Hardware
 The `pcb` directory contains the FireSide PCB schematics, design, and manufacturing Bill of Materials as a KiCAD 9.0 project. The FireSide system includes ignition control, data acquisition, and high speed logging built around a Nucleo32 STM32L412KB board. Key capabilities include:
 
-- Upto 6 parallel >3 kHz per sensors logging using 12-bit ADC with circular DMA
+- Upto 6 parallel >3 kHz channels logging using 12-bit ADC with a circular buffer
 - Binary logging to SD card with onboard CSV conversion utility
 - Reyax RYLR LoRa‑based command, debugging, and telemetry exchange
 - MOSFET D4184 module‑based ignition control with safety interlocks

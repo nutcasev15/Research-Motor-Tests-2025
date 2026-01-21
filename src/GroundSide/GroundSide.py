@@ -6,7 +6,7 @@
 from datetime import datetime
 import logging
 
-# Serial and Delays for RYLR Communication
+# PySerial Interface and Delays for RYLR Communication
 from serial import Serial
 from time import sleep
 
@@ -51,7 +51,7 @@ try:
     Logger.info(DataString.strip())
 except Exception as e:
   # Handle Unexpected Error
-  print(f'\n Unable to Start Logger: Unexpected {e}')
+  print(f'\nUnable to Start Logger: Unexpected {e}')
   # Do Not Proceed
   input('!!!! Press Any Key to Exit')
   exit()
@@ -117,7 +117,7 @@ def ParseRYLR() -> str:
 
   # Load Incoming Binary Data
   # Ignore any RYLR Responses
-  while not parsed.startswith('+RCV='):
+  while not parsed.startswith('+RCV'):
     # Wait for FireSide to Respond
     sleep(0.25)
 
@@ -129,7 +129,7 @@ def ParseRYLR() -> str:
   # https://reyax.com//products/RYLR993
   if parsed.count(',') == 4:
     # Extract the 2nd, 3rd & 4th Comma Separated Fields
-    _, length, data, signal,_ = parsed.split(',', maxsplit=4)
+    _, length, data, signal, _ = parsed.split(',', maxsplit=4)
 
     # Check for Missing Characters
     if len(data) == length:
