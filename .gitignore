@@ -17,7 +17,7 @@
 **/*.csv
 
 # Ignore GroundSide Log Outputs
-src/GroundSide/*.log
+**/*.log
 
 # Ignore Any Python Script Output PDFs
 **/*.pdf

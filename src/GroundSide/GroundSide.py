@@ -25,7 +25,7 @@ from sys import exit
 # Reference for Format Codes:
 # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 LogfileName = datetime.now().astimezone().strftime(
-  r'GroundSide-Run-%Y%m%d-%H%M%Z.log'
+  r'GroundSide-%Y%m%d-%H%M%S%Z.log'
 )
 
 # Create Logger Instance
@@ -37,7 +37,7 @@ try:
     filename=LogfileName,
     filemode='x',
     format=r'%(asctime)s : %(message)s',
-    datefmt=r'%Y%m%d-%H%M%Z'
+    datefmt=r'%Y/%m/%d-%H%M%S%Z'
   )
 
   # Test Logger Instance
@@ -58,9 +58,9 @@ except Exception as e:
 
 
 #### Display Startup to User
-LoggedPrint('\n---')
+LoggedPrint('\n#########')
 LoggedPrint(' GroundSide: An Interface to the FireSide PCB')
-LoggedPrint('---')
+LoggedPrint('#########')
 
 
 #### Setup COM Port
@@ -84,7 +84,7 @@ except IndexError:
 
 # Notify User of Baud Rate Defaults
 # See REYAX RYLR998 Datasheet for UART Configuration Defaults
-LoggedPrint('\n Default Baud Rate for RYLR998: 115200')
+LoggedPrint('\nDefault Baud Rate for RYLR998: 115200')
 # See REYAX RYLR993 Datasheet for UART Configuration Defaults
 LoggedPrint('Default Baud Rate for RYLR993: 9600')
 
@@ -116,7 +116,7 @@ def ParseRYLR() -> str:
   parsed = ''
 
   # Load Incoming Binary Data
-  # Check if Data is from FireSide PCB & Ignore any RYLR Responses
+  # Ignore any RYLR Responses
   while not parsed.startswith('+RCV='):
     # Wait for FireSide to Respond
     sleep(0.25)
@@ -264,7 +264,7 @@ try:
     # Check Last Line for Request for Commands from FireSide PCB
     if 'FS> REQUEST COMMAND' in RXBuffer:
       # Block for Input and Fill Line Buffer
-      TXBuffer = input('Enter Command: ')
+      TXBuffer = input('Enter Command [Case Sensitive]: ')
 
       # Send Command while Ignoring New Lines
       if TXBuffer and TXBuffer.strip():
