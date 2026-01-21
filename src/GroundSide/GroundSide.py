@@ -76,7 +76,7 @@ try:
   # Verify the Selected Port Exists
   COMPort = comports()[int(PortIndex)]
   LoggedPrint('Selected Device: ', COMPort)
-except IndexError, ValueError:
+except (IndexError, ValueError):
   # Notify User of Invalid Input
   LoggedPrint('\n!!!! Invalid COM Port Index Entered: ' + PortIndex)
   input('!!!! Press Any Key to Exit')
