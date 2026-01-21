@@ -87,6 +87,9 @@ inline void ParseRYLR(String &Buffer)
   // Extract Data in 3rd Comma Separated Field
   Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
 
+  // Strip Carriage Return
+  Buffer.trim();
+
   return;
 }
 
