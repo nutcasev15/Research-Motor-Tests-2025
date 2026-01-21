@@ -119,7 +119,7 @@ def ParseRYLR() -> str:
   # Check if Data is from FireSide PCB & Ignore any RYLR Responses
   while not parsed.startswith('+RCV='):
     # Wait for FireSide to Respond
-    sleep(0.5)
+    sleep(0.25)
 
     # Ignore Bad Bytes during Conversion
     parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
@@ -178,7 +178,7 @@ def SendRYLR(State : str):
   RYLR.flush()
 
   # Wait for Response from RYLR
-  sleep(0.5)
+  sleep(0.25)
 
   # Clear Existing Data in COM Serial Read Buffer
   while RYLR.in_waiting:
@@ -214,7 +214,7 @@ def SendRYLR(State : str):
   # Wait for RYLR Response to SEND Command
   while len(response) == 0:
     # Allow RYLR to Respond
-    sleep(0.5)
+    sleep(0.25)
 
     # Ignore any Bad Bytes during Conversion
     response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')

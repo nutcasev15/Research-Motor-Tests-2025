@@ -41,10 +41,10 @@ bool BootCheck(id_t state)
   // https://reyax.com//products/RYLR993
   RYLR.write("AT\r\n");
 
-  // Wait Until RYLR Begins Response with "OK"
-  while (RYLR.read() != 'O')
+  // Wait Until RYLR Responds with "OK"
+  while (RYLR.readStringUntil('\n').indexOf("OK") == -1)
   {
-    delay(500UL);
+    delay(250UL);
   }
 #endif
 

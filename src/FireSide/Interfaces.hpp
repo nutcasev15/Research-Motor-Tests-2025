@@ -63,7 +63,7 @@ inline void ParseRYLR(String &Buffer)
   while (parsed.indexOf("+RCV") == -1)
   {
     // Delay to Allow GroundSide Personnel to Respond
-    delay(500UL);
+    delay(250UL);
     parsed = RYLR.readStringUntil('\n');
   }
 #else
@@ -86,9 +86,6 @@ inline void ParseRYLR(String &Buffer)
 
   // Extract Data in 3rd Comma Separated Field
   Buffer = parsed.substring(parsed.lastIndexOf(',') + 1);
-
-  // Strip Carriage Return
-  Buffer.trim();
 
   return;
 }
@@ -124,7 +121,7 @@ inline void SendRYLR(const String &Data)
   while (response.length() == 0)
   {
     // Delay to Allow RYLR to Respond
-    delay(500UL);
+    delay(250UL);
     response = RYLR.readStringUntil('\n');
 
     // Remove Newline & Whitespace Characters
