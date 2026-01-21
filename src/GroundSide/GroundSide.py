@@ -2,233 +2,283 @@
 
 
 #### Library Imports
-# Serial and Delays for RYLR Communication
+# Output and Execution Logging
+from datetime import datetime
+import logging
+
+# PySerial Interface and Delays for RYLR Communication
 from serial import Serial
 from time import sleep
-import time
-import msvcrt
 
 # Serial COM Port Selection
 from serial.tools.list_ports import comports
 
 # Launch Confirmation Sequence Generation
 from secrets import choice
-from string import ascii_letters, digits, punctuation
+from string import digits
 
 # Graceful Script Termination
 from sys import exit
 
+#### Setup Logging for Execution Run
+# Assemble Logfile Name
+# Reference for Format Codes:
+# https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+LogfileName = datetime.now().astimezone().strftime(
+  r'GroundSide-%Y%m%d-%H%M%S%Z.log'
+)
+
+# Create Logger Instance
+# See https://docs.python.org/3/howto/logging.html#logging-basic-tutorial
+try:
+  # Configure Logging Format & Filename
+  logging.basicConfig(
+    level=logging.INFO,
+    filename=LogfileName,
+    filemode='x',
+    format=r'%(asctime)s : %(message)s',
+    datefmt=r'%Y/%m/%d-%H%M%S%Z'
+  )
+
+  # Test Logger Instance
+  Logger = logging.getLogger()
+  Logger.info('LOG START')
+
+  # Define Wrapper for Console Print Function
+  def LoggedPrint(*args, **kwargs) -> None:
+    DataString = ' '.join(str(a) for a in args)
+    print(DataString, **kwargs)
+    Logger.info(DataString.strip())
+except Exception as e:
+  # Handle Unexpected Error
+  print(f'\nUnable to Start Logger: Unexpected {e}')
+  # Do Not Proceed
+  input('!!!! Press Any Key to Exit')
+  exit()
+
 
 #### Display Startup to User
-print('\n---')
-print(' GroundSide: An Interface to the FireSide PCB')
-print('---')
+LoggedPrint('\n#########')
+LoggedPrint(' GroundSide: An Interface to the FireSide PCB')
+LoggedPrint('#########')
 
 
 #### Setup COM Port
 # Ask User to Select COM Port
-print('\nLoaded COM Ports:')
-for port in comports():
-  print(port)
+LoggedPrint('\nLoaded COM Ports:')
+for index, port in zip(range(len(comports())), comports()):
+  LoggedPrint(index, ' : ', port)
 
-PortID = input('\nEnter COM Port Number:')
+PortIndex = input('\nEnter COM Device Index: ')
 
 # Check User Input String
 try:
   # Verify the Selected Port Exists
-  if not (('COM' + PortID) in [port.name for port in comports()]):
-    raise IndexError
-
-except IndexError:
+  COMPort = comports()[int(PortIndex)]
+  LoggedPrint('Selected Device: ', COMPort)
+except (IndexError, ValueError):
   # Notify User of Invalid Input
-  print('\n!!!! Invalid COM Port ID Entered: ' + PortID)
+  LoggedPrint('\n!!!! Invalid COM Port Index Entered: ' + PortIndex)
+  input('!!!! Press Any Key to Exit')
+  exit()
+
+# Notify User of Baud Rate Defaults
+# See REYAX RYLR998 Datasheet for UART Configuration Defaults
+LoggedPrint('\nDefault Baud Rate for RYLR998: 115200')
+# See REYAX RYLR993 Datasheet for UART Configuration Defaults
+LoggedPrint('Default Baud Rate for RYLR993: 9600')
+
+# Ask User for Port Baud Rate and Validate Input
+RYLR_UART_BAUD = input('Enter Port Baud Rate: ')
+try:
+  LoggedPrint('Selected Baud Rate: ', int(RYLR_UART_BAUD))
+except ValueError:
+  # Notify User of Invalid Input
+  LoggedPrint('\n!!!! Invalid Port Baud Rate Entered: ' + RYLR_UART_BAUD)
   input('!!!! Press Any Key to Exit')
   exit()
 
 # Notify User of Serial Startup
-print('\nStarting Serial on COM' + PortID)
+LoggedPrint('\nStarting Serial on ' + COMPort[0])
 
-# Create and Configure Serial Object for RYLR998
-# See REYAX RYLR998 Datasheet for UART Configuration Defaults
-RYLR_UART_BAUD = 9600
+# Create and Configure Serial Object
 RYLR = Serial(
-  port='COM' + PortID,
-  baudrate=RYLR_UART_BAUD,
-  timeout=0.1
+  port=COMPort[0],
+  baudrate=int(RYLR_UART_BAUD),
+  timeout=0.5
 )
 
 
-#### Define Interface Layer Functions to RYLR998 Module
-# Parses Incoming Data from FireSide PCB via RYLR module
+#### Define Interface Layer Functions to RYLR Module
+# Poll RYLR module & Parse Incoming Data from FireSide PCB
 def ParseRYLR() -> str:
-  if not RYLR.in_waiting:
-    # Return Blank Buffer
-    return str('\n')
+  # Setup Receive Buffer
+  parsed = ''
 
-  # 1. READ: Load Incoming Binary Data
-  # 2. DECODE: Decode from bytes to string, IGNORING any bad bytes
-  # 3. STRIP: Remove whitespace (like \r\n)
-  parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore').strip()
+  # Load Incoming Binary Data
+  # Ignore any RYLR Responses
+  while not parsed.startswith('+RCV'):
+    # Wait for FireSide to Respond
+    sleep(0.25)
 
-  # Check if this is an actual Data Reception message
-  if parsed.startswith('+RCV='):
-    # Format: +RCV=<Address>,<Length>,<Data>,<RSSI>,<SNR>
+    # Ignore Bad Bytes during Conversion
+    parsed = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
+
+  # Validate the Data Format
+  # See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  # https://reyax.com//products/RYLR993
+  if parsed.count(',') == 4:
+    # Extract the 2nd, 3rd & 4th Comma Separated Fields
+    _, length, data, signal, _ = parsed.split(',', maxsplit=4)
+
+    # Check for Missing Characters
     try:
-      # Extract Data in 3rd Comma Separated Field
-      data = parsed.split(',', maxsplit=4)[2]
-      return data  # Return just the payload
-    except IndexError:
-      # This could happen if the +RCV packet is malformed
-      print(f"!!!! Malformed +RCV packet: {parsed}")
-      return str('\n')
-  
-  # If it's not a data packet, it's an AT response (+OK, +ERR, etc.)
-  # Return the whole line so it gets printed for debugging.
-  if parsed: # Only return if it's not an empty line
-    return "-> " + parsed # The "->" helps you see AT responses
-  
-  return str('\n') # Return blank for empty/unhandled lines
+      if len(data) == int(length):
+        # Received Data is Valid
+        # Also Return Received Signal Strength at GroundSide
+        return f'{data} (RSSI: {signal} dBm)'
+    except ValueError:
+      # Response Length Data Corrupted
+      # No Recovery Needed Here
+      # Final Return Handles Invalid Packets
+      pass
+
+  # Invalid +RCV Command
+  return f'\n!!!! Malformed +RCV Response: {parsed}\n'
+
+
 # Sends State Commands to FireSide PCB via RYLR module
 def SendRYLR(State : str):
+  # Setup Response Buffer
+  response = ''
+
   # Check for Invalid Commands or Switches
   OverrideResponse = False
 
   # Validate State Command
   if State not in ['SAFE', 'ARM', 'LAUNCH', 'CONVERT']:
-    print('\n!!!! Invalid Command To FireSide')
+    LoggedPrint(f'\n!!!! Invalid Command To FireSide: {State}')
     OverrideResponse = True
 
   # Confirm Entry into ARM State
   if State == 'ARM':
     # Generate and Output OPT for User
-    OTP : str = ''.join(choice( digits
-    ) for i in range(4))
+    OTP : str = ''.join(choice(digits) for i in range(6))
 
-    print('\nOTP for ARM State Transition: ' + OTP)
+    LoggedPrint('\nOTP for ARM State Transition: ' + OTP)
 
     # Check User Entry Against OTP
     if input('Please Re-enter OTP to Confirm: ') != OTP:
-      print('\n!!!! ARM OTP Invalid. Safing FireSide!')
+      LoggedPrint('\n!!!! ARM OTP Invalid. Safing FireSide!')
       OverrideResponse = True
 
   # Confirm Entry into LAUNCH State
   if State == 'LAUNCH':
     # Generate and Output OPT for User
-    OTP : str = ''.join(choice( digits
-    ) for i in range(4))
+    OTP : str = ''.join(choice(digits) for i in range(6))
 
-    print('\nOTP for LAUNCH State Transition: ' + OTP)
+    LoggedPrint('\nOTP for LAUNCH State Transition: ' + OTP)
 
     # Check User Entry Against OTP
     if input('Please Re-enter OTP to Confirm: ') != OTP:
-      print('\n!!!! LAUNCH OTP Invalid. Safing FireSide!')
+      LoggedPrint('\n!!!! LAUNCH OTP Invalid. Safing FireSide!')
       OverrideResponse = True
 
-  # Issue Send AT Command
-  # See +SEND in REYAX AT RYLRX98 Commanding Datasheet
-  RYLR.write('AT+SEND=0,'.encode())
+  # Clear RYLR Serial Write Buffer
+  RYLR.flush()
+
+  # Wait for Response from RYLR
+  sleep(0.25)
+
+  # Clear Existing Data in COM Serial Read Buffer
+  while RYLR.in_waiting:
+    RYLR.read()
 
   # Default to SAFE State if Above Checks Fail
   if OverrideResponse:
-    print('\nSending SAFE Command')
+    LoggedPrint('\nSending SAFE Command')
+
+    # Issue Send AT Command
+    # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+    # https://reyax.com//products/RYLR993
+    RYLR.write('AT+SEND=0,'.encode())
 
     # Issue Payload Length
     # 4 Characters for SAFE Command
     # Complete Binary Command with Mandatory CRLF Line End
     RYLR.write('4,SAFE\r\n'.encode())
   else:
+    LoggedPrint(f'\nSending {State} Command')
+
+    # Issue Send AT Command
+    # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+    # https://reyax.com//products/RYLR993
+    RYLR.write('AT+SEND=0,'.encode())
+
     # Issue Payload Length
     RYLR.write(str(len(State)).encode())
 
     # Complete Binary Command with Comma and Mandatory CRLF Line End
     RYLR.write((',' + State + '\r\n').encode())
 
+  # Wait for RYLR Response to SEND Command
+  # Ignore Whitespace and Newlines
+  while len(response.strip()) == 0:
+    # Allow RYLR to Respond
+    sleep(0.25)
+
+    # Ignore any Bad Bytes during Conversion
+    response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
+
+  # Check Response & Notify User if Transmission Fails
+  # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  # https://reyax.com//products/RYLR993
+  if 'OK' not in response:
+    LoggedPrint(f'\n!!!! RYLR Commanding Failed. Response: {response}\n')
+
   return
 
 
 #### Establish Communication via RYLR module
-print('\nEstablishing FireSide Link')
+# See AT in REYAX AT RYLRX93 Commanding Datasheet
+# https://reyax.com//products/RYLR993
+LoggedPrint('\nEstablishing RYLR Link')
+RYLR.write('AT\r\n'.encode())
+
+# Wait Until RYLR Responds with "OK"
+while 'OK' not in RYLR.read_until(b'\n').decode('utf-8', errors='ignore'):
+  sleep(0.25)
+
+#### Start RYLR Communication Loop
+# Allow Graceful Termination with Ctrl+C Interrupt
+LoggedPrint('Starting RYLR Communication Loop with FireSide')
+LoggedPrint('Ctrl+C to Exit Communication Loop\n')
 
 # Prompt User for FireSide PCB Initial State
 # Send the Initial State
 SendRYLR(input('Choose Initial State (SAFE || CONVERT): '))
 
-# Wait Until FireSide Begins Response to State Command
-while not RYLR.in_waiting:
-  sleep(0.5)
+try:
+  # Initialise Single Line Buffers for RYLR Data
+  RXBuffer = ''
+  TXBuffer = ''
 
-print('\nFireSide Link Acquired')
+  while True:
+    # Poll for Incoming Data from FireSide PCB
+    RXBuffer = ParseRYLR()
+    LoggedPrint(RXBuffer)
 
-#### Start Non-Blocking Main Loop
-input_buffer = ""
-prompt = "> "
-print(prompt, end="", flush=True) # Print the first prompt
+    # Check Last Line for Request for Commands from FireSide PCB
+    if 'FS> REQUEST COMMAND' in RXBuffer:
+      # Block for Input and Fill Line Buffer
+      TXBuffer = input('Enter Command [Case Sensitive]: ')
 
-#### Start RYLR Communication Loop
-while True:
-    try:
-        # --- 1. Check for Serial Data (Receiving) ---
-        # This is non-blocking
-        while RYLR.in_waiting:
-            line = ParseRYLR()
-            if line and line.strip():
-                
-                # --- This block handles printing data without messing up your typing ---
-                # 1. Clear the current line you're typing on
-                print(f"\r{' ' * (len(prompt) + len(input_buffer))}\r", end="") 
-                
-                # 2. Print the received message on its own line
-                print(f"{line}")
-                
-                # 3. Re-print the prompt and whatever you had typed so far
-                print(f"{prompt}{input_buffer}", end="", flush=True)
+      # Send Command while Ignoring New Lines
+      if TXBuffer and TXBuffer.strip():
+        SendRYLR(TXBuffer)
 
-
-        # --- 2. Check for Keyboard Data (Sending) ---
-        # This is non-blocking
-        if msvcrt.kbhit():
-            # A key has been pressed, get it
-            char_bytes = msvcrt.getch()
-
-            try:
-                char = char_bytes.decode('utf-8')
-
-                # Check if the user pressed Enter
-                if char == '\r': 
-                    print() # Move to the next line
-                    
-                    # Only send if the buffer isn't empty
-                    if input_buffer:
-                        SendRYLR(input_buffer)
-                    
-                    # Reset the buffer for the next command
-                    input_buffer = ""
-                    print(prompt, end="", flush=True) # Print new prompt
-
-                # Check if the user pressed Backspace
-                elif char == '\b': 
-                    if len(input_buffer) > 0:
-                        # Remove last char from buffer and screen
-                        input_buffer = input_buffer[:-1]
-                        print('\b \b', end="", flush=True) 
-                
-                # It's a regular character
-                else: 
-                    input_buffer += char
-                    print(char, end="", flush=True) # Echo the character to the screen
-
-            except UnicodeDecodeError:
-                # User pressed a special key (like an arrow or F-key)
-                # We just ignore it in this simple version
-                pass
-
-        # --- 3. Sleep ---
-        # This is CRITICAL to prevent 100% CPU usage
-        # A small sleep gives the OS time to breathe.
-        sleep(0.01) # Sleep for 10 milliseconds
-
-    except KeyboardInterrupt:
-        # Allow exiting with Ctrl+C
-        print("\nExiting...")
-        RYLR.close()
-        exit()
+# Graceful Exit on Ctrl+C Interrupt
+except KeyboardInterrupt:
+    LoggedPrint('\nStopping GroundSide Control\n')
+    RYLR.close()
+    exit()

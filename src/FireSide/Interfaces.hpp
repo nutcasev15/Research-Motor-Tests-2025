@@ -16,7 +16,7 @@
 #include <SD.h>
 
 
-// #### HW Configuration Declarations
+// #### STM32 L412KB Pin Configuration
 // Status Pin for Visual Output
 #define STATUS_PIN 2
 
@@ -29,10 +29,10 @@
 #define STATUS_SAFE LOW
 
 
-// Setup Serial Communication Interface
-// RYLR998 Hardware Interface
-// See REYAX RYLR998 Datasheet for UART Configuration
-#define RYLR_UART_BAUD 115200UL
+// #### Serial Communication Interface Configuration
+// RYLR993 Hardware Interface
+// See REYAX RYLR993 Datasheet for UART Configuration
+#define RYLR_UART_BAUD 9600UL
 
 // #define USE_USB_SERIAL
 #ifdef USE_USB_SERIAL
@@ -46,20 +46,40 @@
 inline HardwareSerial RYLR(RYLR_UART_RX, RYLR_UART_TX);
 #endif
 
-// Parse Incoming GroundSide Commands via RYLR Module
+// Poll RYLR Module & Parse Incoming GroundSide Commands
 inline void ParseRYLR(String &Buffer)
 {
-  if (!RYLR.available())
+  // Setup Persistent Receive Buffer
+  static String parsed;
+  parsed.reserve(64UL);
+
+#ifndef USE_USB_SERIAL
+  // Clear Receive Buffer
+  parsed = "";
+
+  // Check if Data is from GroundSide
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  while (parsed.indexOf("+RCV") == -1)
   {
-    // Return Blank
-    Buffer = '\n';
-    return;
+    // Delay to Allow GroundSide Personnel to Respond
+    delay(250UL);
+    parsed = RYLR.readStringUntil('\n');
+  }
+#else
+  // Wait Until USB Serial Sends Data
+  while (!RYLR.available())
+  {
+    delay(500UL);
   }
 
-  // Load Incoming Data
-  String parsed = RYLR.readStringUntil('\n');
+  // Load Data from USB Serial Monitor
+  parsed = RYLR.readStringUntil('\n');
+#endif
 
-  // See +RCV in REYAX AT RYLRX98 Commanding Datasheet
+  // Extract Data from Parsed String
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
   // Remove Data from Last 2 Fields
   parsed.remove(parsed.lastIndexOf(','));
   parsed.remove(parsed.lastIndexOf(','));
@@ -74,44 +94,59 @@ inline void ParseRYLR(String &Buffer)
 }
 
 // Send Data to GroundSide via RYLR Module
-// Send Data to GroundSide via RYLR Module (with max 5 retries)
 inline void SendRYLR(const String &Data)
 {
-  const uint8_t MAX_RETRIES = 5;
-  uint8_t attempt = 0;
+  // Setup Persistent Response Buffer
+  static String response;
+  response.reserve(64UL);
 
-  while (attempt < MAX_RETRIES)
+  // Clear Past RYLR Responses to SEND Commands
+  response = "";
+
+  // Issue Send AT Command
+  // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  RYLR.print("AT+SEND=0,");
+
+  // Issue Payload Length Including Header
+  RYLR.print(Data.length() + 4);
+
+  // Issue FireSide PCB Header
+  RYLR.print(",FS> ");
+
+  // Issue Data and Complete Command with Line End
+  // CRLF Line End is Mandatory
+  RYLR.print(Data);
+  RYLR.print("\r\n");
+
+#ifndef USE_USB_SERIAL
+  // Wait for RYLR Response to SEND Command
+  while (response.length() == 0)
   {
-    // ---- Send Command ----
-    RYLR.print("AT+SEND=0,");
-    RYLR.print(Data.length() + 4);
-    RYLR.print(",FS> ");
-    RYLR.print(Data);
-    RYLR.print("\r\n");
+    // Delay to Allow RYLR to Respond
+    delay(250UL);
+    response = RYLR.readStringUntil('\n');
 
-    // ---- Wait for Module Reply ----
-    unsigned long startTime = millis();
-    while (!RYLR.available() && (millis() - startTime < 1000UL))
-    {
-      delayMicroseconds(100UL);
-    }
-
-    // ---- Read Reply ----
-    if (RYLR.available())
-    {
-      String reply = RYLR.readString();
-      if (reply.indexOf("OK") != -1)
-      {
-        return; // ✅ Success
-      }
-    }
-
-    // ---- Retry ----
-    attempt++;
-    delay(50); // small gap before retry
+    // Remove Newline & Whitespace Characters
+    response.trim();
   }
+
+  // Send Debug Data if Transmission Fails
+  // See +SEND in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  if (response.indexOf("OK") == -1)
+  {
+    // Try to Communicate Error to GroundSide
+    // Often GroundSide Receives Data Despite FireSide Errors
+    SendRYLR(response);
+  }
+#endif
+
+  return;
 }
 
+
+// #### STM32 L412KB ADC-DMA Configuration
 // Number of Concurrently Logged ADC Channels
 // 2 Channels Correspond to A0 & A1 on Pinout
 // 4 Channels Correspond to A0 to A3 on Pinout

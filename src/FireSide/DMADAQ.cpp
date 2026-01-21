@@ -322,11 +322,11 @@ void ReadoutAnalogPins()
     // Separator
     debug += '=';
 
-    // Channel Value for 12-Bit Data
-    debug += (ReadoutBuffer[channel] * 3.3 / (1<<12));
+    // Raw Channel Value
+    debug += ReadoutBuffer[channel];
 
-    // Value Units and Separator
-    debug += "V ";
+    // Separator
+    debug += ' ';
   }
 
   // Transmit ADC Channel Debug Data over RYLR
@@ -394,7 +394,7 @@ void TriggerLogging()
   // Ensure Completion of Outgoing RYLR Communications
   RYLR.flush();
 
-  // Empty Received Data in RYLR Communications Buffer
+  // Empty Received Data in STM32 Serial Buffer
   // Remove Chances of Premature Logging Termination
   while (RYLR.available())
   {
@@ -430,7 +430,10 @@ void LogBuffersinLoop()
   }
 
   // Start Logging Loop
-  // Stop Loop on Receipt of Newline Character
+  // Stop Loop on Receipt of a Newline if on USB Serial Monitor
+  // Stop Loop on Receipt of Initial '+' of AT Command
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
   do {
     // Check if DMA Handler Aborted
     if (SDWriteError)
@@ -465,7 +468,11 @@ void LogBuffersinLoop()
       // Reset SD Card Write Flag
       SDWriting = false;
     }
+#ifdef USE_USB_SERIAL
   } while (RYLR.read() != '\n');
+#else
+  } while (RYLR.read() != '+');
+#endif
 
   // Close File on SD Card After Logging Loop
   LogFile.close();
@@ -476,6 +483,14 @@ void LogBuffersinLoop()
 
   // Clear Circular DMA Buffer
   memset(DMABuffer, 0X00, sizeof(DMABuffer));
+
+#ifndef USE_USB_SERIAL
+  // Clear STM32 Serial Buffer of Remaining Data in +RCV Packet
+  // Avoid Data Loss in Next Packet
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  RYLR.readStringUntil('\n');
+#endif
 }
 
 

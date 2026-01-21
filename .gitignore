@@ -16,5 +16,8 @@
 **/*.dat
 **/*.csv
 
+# Ignore GroundSide Log Outputs
+**/*.log
+
 # Ignore Any Python Script Output PDFs
 **/*.pdf

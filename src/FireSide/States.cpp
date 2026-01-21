@@ -26,11 +26,27 @@ bool BootCheck(id_t state)
   // Start RYLR Communication to GroundSide PCB
   RYLR.begin(RYLR_UART_BAUD);
 
-  // Wait for GroundSide Contact
+#ifdef USE_USB_SERIAL
+  // Wait for USB Serial Monitor Link
   while (!RYLR.available())
   {
     delay(500UL);
   }
+
+  // Notify User on USB Serial Monitor to Change State
+  RYLR.println("ENTER COMMAND (SAFE || CONVERT): ");
+#else
+  // Check RYLR Link on FireSide PCB
+  // See AT in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  RYLR.write("AT\r\n");
+
+  // Wait Until RYLR Responds with "OK"
+  while (RYLR.readStringUntil('\n').indexOf("OK") == -1)
+  {
+    delay(250UL);
+  }
+#endif
 
   // Parse Command from GroundSide
   String command;
@@ -103,11 +119,8 @@ bool SafeCheck(id_t state)
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
   digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
-  // Wait for GroundSide Command
-  while (!RYLR.available())
-  {
-    delay(100UL);
-  }
+  // Request for GroundSide Command
+  SendRYLR("REQUEST COMMAND");
 
   // Parse Command from GroundSide
   String command;
@@ -152,18 +165,14 @@ bool ArmCheck(id_t state)
   digitalWrite(FIRE_PIN_B, STATUS_SAFE);
   digitalWrite(FIRE_PIN_C, STATUS_SAFE);
 
-  // Wait for Command from GroundSide
-  while (!RYLR.available())
-  {
-    delay(100UL);
-  }
+  // Request for Command from GroundSide
+  SendRYLR("REQUEST COMMAND");
 
   // Parse Command from GroundSide
   String command;
   ParseRYLR(command);
 
   // Check if GroundSide Sent Correct Command
-  
   if (command == "LAUNCH")
   {
     ArmLaunchTransition();
@@ -215,8 +224,9 @@ bool LaunchCheck(id_t state)
   // Pause FireSide RYLR Communications
   // There is not Enough CPU to Log and Communicate
   SendRYLR("RADIO SILENCE FIRESIDE");
-  SendRYLR("SEND ANY COMMAND TO STOP LOGGING");
   SendRYLR("FIRING IGNITERS");
+  SendRYLR("SEND ANY COMMAND TO STOP LOGGING");
+  SendRYLR("REQUEST COMMAND");
 
   // Any RYLR Input After This Point Interrupts Logging
   TriggerLogging();
@@ -360,11 +370,8 @@ bool FailureCheck(id_t state)
   // Check Analog Inputs
   ReadoutAnalogPins();
 
-  // Wait for GroundSide Command
-  while (!RYLR.available())
-  {
-    delay(500UL);
-  }
+  // Request for GroundSide Command
+  SendRYLR("REQUEST COMMAND");
 
   // Parse Command from GroundSide
   String command;

@@ -14,7 +14,6 @@
 #include "States.hpp"
 
 
-
 // #### Internal Definitions
 // Define State Transitions and Corresponding Relationships
 Transition StateTransitions[] =
