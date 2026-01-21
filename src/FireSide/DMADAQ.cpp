@@ -483,6 +483,14 @@ void LogBuffersinLoop()
 
   // Clear Circular DMA Buffer
   memset(DMABuffer, 0X00, sizeof(DMABuffer));
+
+#ifndef USE_USB_SERIAL
+  // Clear STM32 Serial Buffer of Remaining Data in +RCV Packet
+  // Avoid Data Loss in Next Packet
+  // See +RCV in REYAX AT RYLRX93 Commanding Datasheet
+  // https://reyax.com//products/RYLR993
+  RYLR.readStringUntil('\n');
+#endif
 }
 
 

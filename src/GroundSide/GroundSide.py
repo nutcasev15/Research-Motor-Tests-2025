@@ -212,15 +212,13 @@ def SendRYLR(State : str):
     RYLR.write((',' + State + '\r\n').encode())
 
   # Wait for RYLR Response to SEND Command
-  while len(response) == 0:
+  # Ignore Whitespace and Newlines
+  while len(response.strip()) == 0:
     # Allow RYLR to Respond
     sleep(0.25)
 
     # Ignore any Bad Bytes during Conversion
     response = RYLR.read_until(b'\n').decode('utf-8', errors='ignore')
-
-    # Remove Whitespace and Newlines from RYLR Response
-    response.strip()
 
   # Check Response & Notify User if Transmission Fails
   # See +SEND in REYAX AT RYLRX93 Commanding Datasheet
@@ -235,12 +233,11 @@ def SendRYLR(State : str):
 # See AT in REYAX AT RYLRX93 Commanding Datasheet
 # https://reyax.com//products/RYLR993
 LoggedPrint('\nEstablishing RYLR Link')
-RYLR.write('AT'.encode())
+RYLR.write('AT\r\n'.encode())
 
-# Wait Until RYLR Begins Response with "OK"
-while RYLR.read().decode('utf-8', errors='ignore') != 'O':
-  sleep(0.5)
-
+# Wait Until RYLR Responds with "OK"
+while 'OK' not in RYLR.read_until(b'\n').decode('utf-8', errors='ignore'):
+  sleep(0.25)
 
 #### Start RYLR Communication Loop
 # Allow Graceful Termination with Ctrl+C Interrupt
