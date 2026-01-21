@@ -132,12 +132,18 @@ def ParseRYLR() -> str:
     _, length, data, signal, _ = parsed.split(',', maxsplit=4)
 
     # Check for Missing Characters
-    if len(data) == length:
-      # Received Data is Valid
-      # Also Return Received Signal Strength at GroundSide
-      return f'{data} (RSSI: {signal} dBm)'
+    try:
+      if len(data) == int(length):
+        # Received Data is Valid
+        # Also Return Received Signal Strength at GroundSide
+        return f'{data} (RSSI: {signal} dBm)'
+    except ValueError:
+      # Response Length Data Corrupted
+      # No Recovery Needed Here
+      # Final Return Handles Invalid Packets
+      pass
 
-  # Invalid RCV Command
+  # Invalid +RCV Command
   return f'\n!!!! Malformed +RCV Response: {parsed}\n'
 
 
