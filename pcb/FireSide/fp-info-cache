@@ -1,11 +1,4 @@
-26829203081750140
-85_SMA-50-0-144_111_YH
-HUBER_SUHNER_85_SMA-50-0-144_111_YH
-
-
-0
-5
-5
+26829207627085768
 104031-0811
 MOLEX_104031-0811
 
@@ -13,6 +6,13 @@ MOLEX_104031-0811
 0
 14
 14
+AOD4184A
+MPXV5100DP
+MPXV5100DP-2
+Integrated Circuit
+0
+8
+8
 AOD4184A (1)
 DPAK228P994X240-4N
 
@@ -34,13 +34,6 @@ audio belton reverb
 0
 7
 7
-BNO086
-IC_BNO086
-
-
-0
-28
-28
 Battery
 BatteryClip_Keystone_54_D16-19mm
 Battery clip for batteries with a diameter between 16-19 mm: https://www.keyelco.com/product.cfm/product_id/826
@@ -69362,6 +69355,13 @@ solder jumper open
 0
 3
 3
+L86M33
+XCVR_L86M33
+
+
+0
+12
+12
 LED_SMD
 LED-APA102-2020
 http://www.led-color.com/upload/201604/APA102-2020%20SMD%20LED.pdf
@@ -70622,6 +70622,13 @@ PQFN24P43_350X300X102L35X23N
 0
 24
 24
+Library_rylr
+Untitled
+
+
+0
+44
+44
 Module
 A20_OLINUXINO_LIME2
 A20 Olinuxino LIME2, 1.2GHz, 512-1024MB RAM, Micro-SD, NAND or eMMC, 1000Mbit Ethernet
@@ -95094,13 +95101,6 @@ RP2350A_QFN-60_EP_7.75x7.75_Pitch0.4mm
 0
 86
 61
-RP2350_KiCad-main
-RP2350B_QFN-80_EP_10.573x10.573_Pitch0.4mm
-
-
-0
-106
-81
 Relay_SMD
 Relay_2P2T_10x6mm_TE_IMxxG
 Signal Relay, 10x6mm, 2 Form C, Gull Wings, https://www.te.com/commerce/DocumentDelivery/DDEController?Action=showdoc&DocId=Data+Sheet%7F108-98001%7FZ.1%7Fpdf%7FEnglish%7FENG_DS_108-98001_Z.1.pdf

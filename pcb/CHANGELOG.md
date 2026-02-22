@@ -2,7 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.6] - Latest
+## [1.2.0] - Latest
+### Changed
+- Voltage regulators changed from AMS1117 to MIC5209
+
+### Added
+- 1M ohm resistor added to the analog channels.
+
+### Generated
+- Drill files and Gerbers
+- ERC and DRC checks completed
+
+---
+
+## [1.1.6]
 ### Changed
 - All open channels and thermistor connectors changed to JST connectors
 - Labelling and silkscreen updated 
@@ -11,7 +24,6 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - FSM indicating LEDs removed
-
 
 ### Generated
 - Drill files and Gerbers
