@@ -1,6 +1,27 @@
 # FireSide PCB Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this PCB will be documented in this file.
+
+## [2.0.0] - Latest
+### Changed
+- Thermistor resistors changed to lower tolerance SMD
+- Cleaned up schematic & PCB labelling & placement
+- Cleaned up symbols & footprints for MIC5209 & RYLR993
+- Moved to internal paths for symbols & footprints
+- Removed 3D view for 3 pin terminals & SD module
+- Updated symbol table with Robu.in links
+
+### Added
+- Tolerance data for SMD resistors
+- GND plane on top copper layer to reduce signal noise & dissipate heat
+- Via holes to create GND buffer between signal traces of RYLR & SD modules
+- TMIT logo to project symbol library
+
+### Generated
+- Drill files and Gerbers
+- ERC and DRC checks completed without any ignored criteria
+
+---
 
 ## [1.2.0] - Latest
 ### Changed
@@ -18,7 +39,7 @@ All notable changes to this project will be documented in this file.
 ## [1.1.6]
 ### Changed
 - All open channels and thermistor connectors changed to JST connectors
-- Labelling and silkscreen updated 
+- Labelling and silkscreen updated
 - SD card module footprint modified
 - BOM updated
 

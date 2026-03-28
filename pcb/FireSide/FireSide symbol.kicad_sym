@@ -20,9 +20,10 @@
 				(font
 					(size 1.27 1.27)
 				)
+				(hide yes)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "FireSide Footprint:D4184"
 			(at 0 0 0)
 			(effects
 				(font
@@ -31,7 +32,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://robu.in/product/d4184-mosfet-control-module-replacement-relay/"
 			(at 0 0 0)
 			(effects
 				(font
@@ -40,7 +41,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "D4184 Mosfet Control Module Relay"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "relay mosfet module"
 			(at 0 0 0)
 			(effects
 				(font
@@ -59,6 +69,14 @@
 				)
 				(fill
 					(type background)
+				)
+			)
+			(text "D4184"
+				(at 0 -4.572 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
 				)
 			)
 			(pin power_in line
@@ -154,6 +172,143 @@
 		)
 		(embedded_fonts no)
 	)
+	(symbol "MIC5209"
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "U"
+			(at -3.81 3.175 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "MIC5209"
+			(at 0 3.175 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-223-3_TabPin2"
+			(at 0 5.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://robu.in/product/mic5209-5-0ys-tr-microchip-fixed-ldo-voltage-regulator-2-5v-to-16v-350mv-drop-5v-500ma-out-sot-223-3"
+			(at 2.54 -6.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "500 mA Low-Noise LDO Regulator"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "linear regulator ldo adjustable positive"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_fp_filters" "SOT?223*TabPin2*"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "MIC5209_0_1"
+			(rectangle
+				(start -5.08 -5.08)
+				(end 5.08 1.905)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type background)
+				)
+			)
+		)
+		(symbol "MIC5209_1_1"
+			(pin input line
+				(at -7.62 0 0)
+				(length 2.54)
+				(name "VI"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin power_in line
+				(at 0 -7.62 90)
+				(length 2.54)
+				(name "ADJ"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin output line
+				(at 7.62 0 180)
+				(length 2.54)
+				(name "VO"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
 	(symbol "NUCLEO-L412KB"
 		(pin_names
 			(offset 1.016)
@@ -179,7 +334,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Footprint" "NUCLEO-L412KB:MODULE_NUCLEO-L412KB"
+		(property "Footprint" "FireSide Footprint:NUCLEO-L412KB"
 			(at 0 0 0)
 			(effects
 				(font
@@ -189,7 +344,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://robu.in/product/nucleo-l412kb-development-board-nucleo-32-32-bit-stml412kb-mcu-arduino-st-morpho-compatible/"
 			(at 0 0 0)
 			(effects
 				(font
@@ -198,7 +353,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "NUCLEO-L412KB Development Board"
 			(at 0 0 0)
 			(effects
 				(font
@@ -324,6 +479,15 @@
 					(size 1.27 1.27)
 				)
 				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "STM32 controller nucleo arduino"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -882,7 +1046,7 @@
 		)
 		(embedded_fonts no)
 	)
-	(symbol "RYLR998"
+	(symbol "RYLR993"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -902,7 +1066,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "FireSide Footprint:RYLR993"
 			(at 0 0 0)
 			(effects
 				(font
@@ -911,7 +1075,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://robu.in/product/reyax-rylr993_lite-868-915mhz-lorawan-transceiver-module-helium-compatible-lite-evaluation-boarddip-version/"
 			(at 0 0 0)
 			(effects
 				(font
@@ -920,7 +1084,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "LoRaWAN Transceiver Module Evaluation Board"
 			(at 0 0 0)
 			(effects
 				(font
@@ -929,7 +1093,16 @@
 				(hide yes)
 			)
 		)
-		(symbol "RYLR998_0_1"
+		(property "ki_keywords" "RYLR radio module"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "RYLR993_0_1"
 			(circle
 				(center 4.826 1.016)
 				(radius 1.016)
@@ -976,7 +1149,7 @@
 				)
 			)
 		)
-		(symbol "RYLR998_1_1"
+		(symbol "RYLR993_1_1"
 			(rectangle
 				(start -7.62 -2.286)
 				(end 7.62 -17.78)
@@ -988,7 +1161,7 @@
 					(type background)
 				)
 			)
-			(text "RYLR998\n"
+			(text "RYLR993"
 				(at -0.254 -4.826 0)
 				(effects
 					(font
@@ -1109,7 +1282,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "FireSide Footprint:XT60-M"
 			(at 0 0 0)
 			(effects
 				(font
@@ -1118,7 +1291,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://robu.in/product/amass-xt60-male-connector-xt60-m-g-y/"
 			(at 0 0 0)
 			(effects
 				(font
@@ -1127,7 +1300,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Amass XT60 Male Connector"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "XT battery connector"
 			(at 0 0 0)
 			(effects
 				(font

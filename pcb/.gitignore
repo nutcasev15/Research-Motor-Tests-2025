@@ -2,6 +2,10 @@
 
 # Ignore Project Backup Files
 **/*-backups
+**/*.bak
 
 # Ignore Project Edit Locking Files
 **/*.lck
+
+# Ignore Generated BOM Files
+**/*.csv

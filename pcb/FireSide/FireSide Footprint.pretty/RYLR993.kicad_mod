@@ -1,4 +1,4 @@
-(footprint "RYLR998"
+(footprint "RYLR993"
 	(version 20241229)
 	(generator "pcbnew")
 	(generator_version "9.0")
@@ -15,7 +15,7 @@
 			)
 		)
 	)
-	(property "Value" "RYLR998"
+	(property "Value" "RYLR993"
 		(at 0 1 0)
 		(unlocked yes)
 		(layer "F.Fab")
@@ -53,7 +53,7 @@
 			)
 		)
 	)
-	(attr smd)
+	(attr through_hole)
 	(fp_line
 		(start -6.27 10.05)
 		(end -6.27 12.71)
@@ -408,15 +408,15 @@
 		(uuid "c91cc2fb-540c-43d2-9fd3-51ab763d3439")
 	)
 	(fp_rect
-		(start 1.66 -20.99)
-		(end 7.22 -4.72)
+		(start -7.5 -5.5)
+		(end 8 19.5)
 		(stroke
-			(width 0.1)
+			(width 0.05)
 			(type default)
 		)
 		(fill no)
-		(layer "F.SilkS")
-		(uuid "f5df00a8-d385-4acd-8cbf-62add536d54d")
+		(layer "F.CrtYd")
+		(uuid "8462be85-fccb-42e4-8538-a5e4d37a0146")
 	)
 	(fp_line
 		(start -6.21 10.11)
@@ -790,17 +790,6 @@
 		(layer "F.Fab")
 		(uuid "b50ca6bb-85a9-482c-8ecb-e4c910e80a7f")
 	)
-	(fp_rect
-		(start 1.66 -4.72)
-		(end 7.16 -20.92)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(fill no)
-		(layer "F.Fab")
-		(uuid "df60a555-b770-4468-978d-159bd3fa5997")
-	)
 	(fp_text user "RXD"
 		(at -1.25 20.68 0)
 		(unlocked yes)
@@ -975,4 +964,15 @@
 		(uuid "79fde984-b1f2-4147-862e-d42a5b516837")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/FireSide step files/RYLR993_Lite.step"
+		(offset
+			(xyz -7.5 -4 4.5)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )

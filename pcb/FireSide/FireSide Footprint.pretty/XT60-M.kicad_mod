@@ -170,7 +170,7 @@
 			)
 		)
 	)
-	(attr smd)
+	(attr through_hole)
 	(fp_line
 		(start -9 8.7)
 		(end -8 8.7)
@@ -433,4 +433,15 @@
 		(uuid "dae94ae1-db0d-4c2e-89ae-dd379c220972")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/FireSide step files/XT60-M.step"
+		(offset
+			(xyz 0.5 -8.75 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )

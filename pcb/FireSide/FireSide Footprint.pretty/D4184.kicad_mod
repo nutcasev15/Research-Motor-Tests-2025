@@ -53,7 +53,7 @@
 			)
 		)
 	)
-	(attr smd)
+	(attr through_hole)
 	(fp_rect
 		(start -8.5 -12.5)
 		(end 7.5 20.5)
@@ -64,6 +64,17 @@
 		(fill no)
 		(layer "F.SilkS")
 		(uuid "dcc95672-ee30-4ec6-b19d-283176524f93")
+	)
+	(fp_rect
+		(start -9.5 -13.5)
+		(end 8.5 21.5)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "bfb153c0-ab93-46ed-8680-a6ee29c5fcaf")
 	)
 	(fp_text user "PWM"
 		(at -4.25 -6.25 0)
@@ -238,4 +249,15 @@
 		(uuid "93114225-8ca7-4018-8383-222d9be1932a")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/FireSide step files/D4184.step"
+		(offset
+			(xyz -0.5 -4 1)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 90)
+		)
+	)
 )

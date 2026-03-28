@@ -703,4 +703,15 @@
 		(uuid "bf61b98b-c093-40eb-8f00-581e88d2c5c1")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/FireSide step files/NUCLEO-L412KB.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )
